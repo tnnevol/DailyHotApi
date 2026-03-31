@@ -1,0 +1,95 @@
+name: Daily Hot News Push
+
+on:
+  schedule:
+    # UTC 0:00 = 北京时间 8:00 (UTC+8)
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+    # 支持手动触发测试
+
+jobs:
+  push-hot-news:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch and push hot news
+        run: |
+          # 定义要推送的平台
+          PLATFORMS="weibo zhihu douyin baidu bilibili"
+          
+          # 构建 Webhook URL
+          WEBHOOK_URL="${WEBHOOK_BASE}/hooks/agent"
+          
+          # 构建消息内容
+          MESSAGE="📰 **每日新闻热榜 TOP5** - $(date +'%Y-%m-%d %H:%M:%S')\n\n"
+          
+          # 获取各平台热榜
+          for platform in $PLATFORMS; do
+            echo "🔍 Fetching $platform..."
+            
+            # 调用 API 获取数据
+            RESPONSE=$(curl -s "https://api-hot.imsyy.top/$platform?limit=5" || echo '{"code":500,"message":"Request failed"}')
+            
+            # 解析数据
+            CODE=$(echo "$RESPONSE" | jq -r '.code // 500')
+            TITLE=$(echo "$RESPONSE" | jq -r '.title // "Unknown"')
+            
+            if [ "$CODE" = "200" ]; then
+              MESSAGE+="🔥 **$TITLE**\n"
+              
+              # 解析每条热榜
+              COUNT=$(echo "$RESPONSE" | jq -r '.data | length')
+              for i in $(seq 0 $((COUNT - 1))); do
+                ITEM_TITLE=$(echo "$RESPONSE" | jq -r ".data[$i].title")
+                HOT=$(echo "$RESPONSE" | jq -r ".data[$i].hot // 0")
+                URL=$(echo "$RESPONSE" | jq -r ".data[$i].url // \"\"")
+                
+                # 格式化热度数字
+                if [ "$HOT" != "null" ] && [ "$HOT" != "0" ]; then
+                  if [ "$HOT" -ge 100000000 ]; then
+                    HOT_FORMATTED="$(echo "scale=2; $HOT / 100000000" | bc)亿"
+                  elif [ "$HOT" -ge 10000 ]; then
+                    HOT_FORMATTED="$(echo "scale=2; $HOT / 10000" | bc)万"
+                  else
+                    HOT_FORMATTED="$HOT"
+                  fi
+                  MESSAGE+="  $((i + 1)). $ITEM_TITLE 🔥 $HOT_FORMATTED\n"
+                else
+                  MESSAGE+="  $((i + 1)). $ITEM_TITLE\n"
+                fi
+              done
+              MESSAGE+="\n"
+            else
+              ERROR_MSG=$(echo "$RESPONSE" | jq -r '.message // "Unknown error"')
+              MESSAGE+="❌ $TITLE 获取失败：$ERROR_MSG\n\n"
+              echo "⚠️ Error fetching $platform: $ERROR_MSG"
+            fi
+          done
+          
+          # 添加尾部信息
+          MESSAGE+="\n---\n🤖 自动推送 | 数据来源：DailyHotApi"
+          
+          # 输出最终消息（用于调试）
+          echo "📤 Final message:"
+          echo -e "$MESSAGE"
+          
+          # 推送到 OpenClaw Webhook
+          echo "📡 Sending to DingTalk via: $WEBHOOK_URL"
+          curl -X POST "$WEBHOOK_URL" \
+            -H 'Authorization: Bearer $WEBHOOK_TOKEN' \
+            -H 'Content-Type: application/json' \
+            -d "{
+              \"message\": \"$(echo -e "$MESSAGE" | sed 's/"/\\"/g' | tr '\n' ' ')\",
+              \"name\": \"DailyHot\",
+              \"agentId\": \"main\",
+              \"wakeMode\": \"now\",
+              \"deliver\": true,
+              \"channel\": \"dingtalk-connector\",
+              \"to\": \"$DINGTALK_GROUP_ID\"
+            }" || echo "❌ Webhook request failed"
+          
+          echo "✅ Push completed!"
+
+env:
+  WEBHOOK_BASE: ${{ secrets.WEBHOOK_BASE }}
+  WEBHOOK_TOKEN: ${{ secrets.WEBHOOK_TOKEN }}
+  DINGTALK_GROUP_ID: ${{ secrets.DINGTALK_GROUP_ID }}
