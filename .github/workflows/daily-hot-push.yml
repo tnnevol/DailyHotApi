@@ -26,42 +26,77 @@ jobs:
           for platform in $PLATFORMS; do
             echo "🔍 Fetching $platform..."
             
-            # 调用 API 获取数据
-            RESPONSE=$(curl -s "https://api-hot.imsyy.top/$platform?limit=5" || echo '{"code":500,"message":"Request failed"}')
-            
-            # 解析数据
-            CODE=$(echo "$RESPONSE" | jq -r '.code // 500')
-            TITLE=$(echo "$RESPONSE" | jq -r '.title // "Unknown"')
-            
-            if [ "$CODE" = "200" ]; then
-              MESSAGE+="🔥 **$TITLE**\n"
-              
-              # 解析每条热榜
-              COUNT=$(echo "$RESPONSE" | jq -r '.data | length')
-              for i in $(seq 0 $((COUNT - 1))); do
-                ITEM_TITLE=$(echo "$RESPONSE" | jq -r ".data[$i].title")
-                HOT=$(echo "$RESPONSE" | jq -r ".data[$i].hot // 0")
-                URL=$(echo "$RESPONSE" | jq -r ".data[$i].url // \"\"")
-                
-                # 格式化热度数字
-                if [ "$HOT" != "null" ] && [ "$HOT" != "0" ]; then
-                  if [ "$HOT" -ge 100000000 ]; then
-                    HOT_FORMATTED="$(echo "scale=2; $HOT / 100000000" | bc)亿"
-                  elif [ "$HOT" -ge 10000 ]; then
-                    HOT_FORMATTED="$(echo "scale=2; $HOT / 10000" | bc)万"
+            # 百度使用 hot_news 的接口（更稳定）
+            if [ "$platform" = "baidu" ]; then
+              RESPONSE=$(curl -s "https://orz.ai/api/v1/dailynews/?platform=baidu" || echo '{"status":"500","msg":"Request failed"}')
+              # 解析 hot_news 格式
+              STATUS=$(echo "$RESPONSE" | jq -r '.status // "500"')
+              if [ "$STATUS" = "200" ]; then
+                TITLE="百度热搜"
+                DATA=$(echo "$RESPONSE" | jq -r '.data')
+                COUNT=$(echo "$DATA" | jq -r 'length')
+                MESSAGE+="🔥 **百度热搜**\n"
+                for i in $(seq 0 $(($COUNT < 5 ? $COUNT - 1 : 4))); do
+                  ITEM_TITLE=$(echo "$DATA" | jq -r ".[$i].title")
+                  SCORE=$(echo "$DATA" | jq -r ".[$i].score // 0")
+                  URL=$(echo "$DATA" | jq -r ".[$i].url // \"\"")
+                  if [ "$SCORE" != "null" ] && [ "$SCORE" != "0" ]; then
+                    if [ "$SCORE" -ge 100000000 ]; then
+                      SCORE_FORMATTED="$(echo "scale=2; $SCORE / 100000000" | bc)亿"
+                    elif [ "$SCORE" -ge 10000 ]; then
+                      SCORE_FORMATTED="$(echo "scale=2; $SCORE / 10000" | bc)万"
+                    else
+                      SCORE_FORMATTED="$SCORE"
+                    fi
+                    MESSAGE+="  $((i + 1)). $ITEM_TITLE 🔥 $SCORE_FORMATTED\n"
                   else
-                    HOT_FORMATTED="$HOT"
+                    MESSAGE+="  $((i + 1)). $ITEM_TITLE\n"
                   fi
-                  MESSAGE+="  $((i + 1)). $ITEM_TITLE 🔥 $HOT_FORMATTED\n"
-                else
-                  MESSAGE+="  $((i + 1)). $ITEM_TITLE\n"
-                fi
-              done
-              MESSAGE+="\n"
+                done
+                MESSAGE+="\n"
+              else
+                MSG=$(echo "$RESPONSE" | jq -r '.msg // "Unknown error"')
+                MESSAGE+="❌ 百度热搜 获取失败：$MSG\n\n"
+                echo "⚠️ Error fetching baidu: $MSG"
+              fi
             else
-              ERROR_MSG=$(echo "$RESPONSE" | jq -r '.message // "Unknown error"')
-              MESSAGE+="❌ $TITLE 获取失败：$ERROR_MSG\n\n"
-              echo "⚠️ Error fetching $platform: $ERROR_MSG"
+              # 其他平台使用 DailyHotApi 公共接口
+              RESPONSE=$(curl -s "https://api-hot.imsyy.top/$platform?limit=5" || echo '{"code":500,"message":"Request failed"}')
+              
+              # 解析数据
+              CODE=$(echo "$RESPONSE" | jq -r '.code // 500')
+              TITLE=$(echo "$RESPONSE" | jq -r '.title // "Unknown"')
+              
+              if [ "$CODE" = "200" ]; then
+                MESSAGE+="🔥 **$TITLE**\n"
+                
+                # 解析每条热榜
+                COUNT=$(echo "$RESPONSE" | jq -r '.data | length')
+                for i in $(seq 0 $((COUNT - 1))); do
+                  ITEM_TITLE=$(echo "$RESPONSE" | jq -r ".data[$i].title")
+                  HOT=$(echo "$RESPONSE" | jq -r ".data[$i].hot // 0")
+                  URL=$(echo "$RESPONSE" | jq -r ".data[$i].url // \"\"")
+                  
+                  # 格式化热度数字
+                  if [ "$HOT" != "null" ] && [ "$HOT" != "0" ]; then
+                    if [ "$HOT" -ge 100000000 ]; then
+                      HOT_FORMATTED="$(echo "scale=2; $HOT / 100000000" | bc)亿"
+                    elif [ "$HOT" -ge 10000 ]; then
+                      HOT_FORMATTED="$(echo "scale=2; $HOT / 10000" | bc)万"
+                    else
+                      HOT_FORMATTED="$HOT"
+                    fi
+                    MESSAGE+="  $((i + 1)). $ITEM_TITLE 🔥 $HOT_FORMATTED\n"
+                  else
+                    MESSAGE+="  $((i + 1)). $ITEM_TITLE\n"
+                  fi
+                done
+                MESSAGE+="\n"
+              else
+                ERROR_MSG=$(echo "$RESPONSE" | jq -r '.message // "Unknown error"')
+                MESSAGE+="❌ $TITLE 获取失败：$ERROR_MSG\n\n"
+                echo "⚠️ Error fetching $platform: $ERROR_MSG"
+              fi
             fi
           done
           
