@@ -35,19 +35,19 @@
 
 **进度**:
 - [x] 创建 GitHub Actions workflow 文件 (2026-04-01 00:47)
-- [x] 配置协议/Host/端口自定义环境变量 (2026-04-01 00:48)
-- [x] Git commit 完成 (commit: 07d8657)
+- [x] 优化为统一 Secrets 管理 (2026-04-01 01:20)
+- [x] Git commit 完成 (commit: 58cf5d1)
 - [ ] ⏳ 配置 GitHub Secrets (需要海操作)
 - [ ] ⏳ 手动触发测试
 - [ ] ⏳ 验证定时任务
 
-**GitHub Secrets 配置指引**:
+**GitHub Secrets 配置指引** (3 个):
 ```
 Settings → Secrets and variables → Actions → New repository secret
 
-WEBHOOK_PROTOCOL=https
-WEBHOOK_HOST=<你的域名或 IP>
-WEBHOOK_PORT=18789
+WEBHOOK_BASE=https://openclaw.tnnevol.cn
+WEBHOOK_TOKEN=dailyhot-webhook-2026
+DINGTALK_GROUP_ID=cid/Em5KFq3Ba5pIeZf5SxS6Q==
 ```
 
 **下一步**: 海配置 Secrets → 手动测试 workflow → 验证推送效果
