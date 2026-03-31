@@ -58,6 +58,34 @@ DINGTALK_GROUP_ID=cid/Em5KFq3Ba5pIeZf5SxS6Q==
 
 - [x] 项目初始化 (2026-03-31)
 - [x] AGENTS.md 创建 (2026-03-31)
+- [x] **百度热搜接口替换** (2026-04-01 02:08)
+  - 从 hot_news 项目移植爬虫逻辑
+  - 使用百度官方 API 替代第三方接口
+  - 代码已提交到 dev 分支 (commit: 7b7d9c3)
+
+---
+
+## 📝 开发日志
+
+### 2026-04-01 - 百度接口替换
+
+**任务**: 将百度热搜接口从第三方 API 替换为直接爬虫
+
+**实现**:
+- 源文件：`hot_news/app/services/sites/baidu.py`
+- 目标：`DailyHotApi/src/routes/baidu.ts`
+- 技术栈：Python → TypeScript
+- API: `https://top.baidu.com/api/board?platform=wise&tab=realtime`
+
+**测试**:
+- ✅ 本地启动成功
+- ✅ 返回 20 条热搜数据
+- ✅ 响应格式符合 DailyHotApi 规范
+
+**提交**:
+- 分支：dev
+- Commit: `7b7d9c3`
+- 文件：`src/routes/baidu.ts`, `package.json`, `tsconfig.json`
 
 ---
 
