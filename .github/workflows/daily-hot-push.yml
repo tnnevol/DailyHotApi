@@ -109,7 +109,7 @@ jobs:
           
           # 推送到 OpenClaw Webhook
           echo "📡 Sending to DingTalk via: $WEBHOOK_URL"
-          curl -X POST "$WEBHOOK_URL" \
+          HTTP_CODE=$(curl -s -w "\n%{http_code}" -X POST "$WEBHOOK_URL" \
             -H 'Authorization: Bearer $WEBHOOK_TOKEN' \
             -H 'Content-Type: application/json' \
             -d "{
@@ -120,7 +120,13 @@ jobs:
               \"deliver\": true,
               \"channel\": \"dingtalk-connector\",
               \"to\": \"$DINGTALK_GROUP_ID\"
-            }" || echo "❌ Webhook request failed"
+            }")
+          echo "HTTP Status: $HTTP_CODE"
+          if echo "$HTTP_CODE" | grep -q "^200"; then
+            echo "✅ Webhook push successful!"
+          else
+            echo "❌ Webhook request failed with status: $HTTP_CODE"
+          fi
           
           echo "✅ Push completed!"
 
