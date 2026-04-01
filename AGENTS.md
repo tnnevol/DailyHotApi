@@ -194,4 +194,67 @@ chore: 构建/配置
 
 ---
 
-*最后更新：2026-03-31*
+## 💡 Skills 技能管理
+
+### 目录结构
+```
+skills/
+├── hono/              # Hono 技能（符号链接）
+│   └── SKILL.md
+└── .agents/skills/    # 实际技能存储位置
+```
+
+### 技能安装（pnpm install 后执行）
+
+```bash
+# 安装依赖
+pnpm install
+
+# 安装技能（自动创建符号链接）
+npx skills experimental_install -y
+```
+
+### 技能管理
+
+**符号链接机制**:
+- `skills/` 目录中的技能以**符号链接**形式存在
+- 实际文件存储在 `.agents/skills/` 目录
+- 避免重复，便于共享和更新
+
+**手动管理**:
+```bash
+# 查看技能列表
+ls -la skills/
+
+# 查看技能详情
+cat skills/<skill-name>/SKILL.md
+
+# 添加技能
+cd .agents/skills/
+git clone <skill-repo-url> <skill-name>
+cd ../skills/
+ln -s ../.agents/skills/<skill-name> <skill-name>
+
+# 移除技能
+rm <skill-name>
+```
+
+### SKILL.md 格式
+```markdown
+---
+name: <skill-name>
+description: <技能描述>
+---
+
+# <Skill Name> Skill
+
+技能详细说明...
+```
+
+### Git 忽略
+- ✅ `skills/` 目录已添加到 `.gitignore`（不提交）
+- ✅ `skills-lock.json` 已添加到 `.gitignore`（不提交）
+
+---
+
+*最后更新：2026-04-01*
