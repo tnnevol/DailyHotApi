@@ -94,6 +94,45 @@
 
 ## ⚙️ 使用
 
+### 开发环境
+
+**本地开发（推荐）**:
+```bash
+# 使用 .env.local 本地配置启动（实时重载）
+npm run dev:local
+
+# 使用 .env.local 本地配置启动（带缓存）
+npm run dev:cache:local
+```
+
+**开发环境测试**:
+```bash
+# 使用 .env.development 开发配置启动
+npm run dev
+
+# 使用 .env.development 开发配置启动（带缓存）
+npm run dev:cache
+```
+
+**生产环境**:
+```bash
+# 编译项目
+npm run build
+
+# 启动服务（使用 .env.development 配置）
+npm run start
+
+# 启动服务（使用 .env.local 配置）
+npm run start:local
+```
+
+**环境配置说明**:
+- `.env.local` - 本地个人配置（真实 Token，**禁止提交**）
+- `.env.development` - 开发环境配置（占位符，**可提交**）
+- 详见 [开发指南](./docs/DEVELOPMENT.md)
+
+---
+
 本项目支持 `Node.js` 调用，可在安装完成后调用 `serveHotApi` 来开启服务器
 
 > 该方式无法使用部分需要 Puppeteer 环境的接口
