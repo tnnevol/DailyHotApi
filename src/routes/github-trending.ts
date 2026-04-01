@@ -19,20 +19,21 @@ export const handleRoute = async (c: ListContext, noCache: boolean) => {
 
 const getList = async (options: Options, noCache: boolean): Promise<RouterResType> => {
   const url = "https://api.github.com/search/repositories?q=stars:%3E1&sort=stars&per_page=25";
-  
+
   try {
     const response = await axios.get(url, {
       timeout: 10000,
       httpsAgent: false,
       headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/122.0.0.0 Safari/537.36 AppleWebKit/537.36 (KHTML, like Gecko)",
-        "Accept": "application/vnd.github.v3+json",
-        "Referer": "https://github.com/",
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/122.0.0.0 Safari/537.36 AppleWebKit/537.36 (KHTML, like Gecko)",
+        Accept: "application/vnd.github.v3+json",
+        Referer: "https://github.com/",
       },
     });
 
     const items = response.data?.items || [];
-    
+
     if (items.length === 0) {
       return {
         fromCache: false,
@@ -63,7 +64,7 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
       fromCache: false,
       updateTime: new Date().toISOString(),
       data: [],
-      message: `GitHub Trending 接口暂时不可用：${error.message || '未知错误'}`,
+      message: `GitHub Trending 接口暂时不可用：${error.message || "未知错误"}`,
     };
   }
 };

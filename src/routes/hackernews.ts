@@ -20,29 +20,31 @@ export const handleRoute = async (c: ListContext, noCache: boolean) => {
 
 const getList = async (options: Options, noCache: boolean): Promise<RouterResType> => {
   const url = "https://news.ycombinator.com/";
-  
+
   try {
     const response = await axios.get(url, {
       timeout: 10000,
       httpsAgent: false,
       headers: {
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+        "User-Agent":
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        Accept:
+          "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
       },
     });
 
     const html = response.data;
     const $ = load(html);
-    
+
     const items: ListItem[] = [];
-    
-    $('tr.athing').each((_, element) => {
-      const titleElem = $(element).find('.titleline a');
+
+    $("tr.athing").each((_, element) => {
+      const titleElem = $(element).find(".titleline a");
       if (!titleElem.length) return;
-      
+
       const title = titleElem.text().trim();
-      const url = titleElem.attr('href') || "";
-      
+      const url = titleElem.attr("href") || "";
+
       items.push({
         id: items.length + 1,
         title: title,
@@ -54,9 +56,9 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
         mobileUrl: url,
       });
     });
-    
+
     if (items.length === 0) {
-      logger.warn('Hacker News 接口返回空数据');
+      logger.warn("Hacker News 接口返回空数据");
       return {
         fromCache: false,
         updateTime: new Date().toISOString(),
@@ -77,7 +79,7 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
       fromCache: false,
       updateTime: new Date().toISOString(),
       data: [],
-      message: `Hacker News 接口暂时不可用：${error.message || '未知错误'}`,
+      message: `Hacker News 接口暂时不可用：${error.message || "未知错误"}`,
     };
   }
 };

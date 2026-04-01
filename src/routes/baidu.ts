@@ -38,15 +38,17 @@ interface BaiduHotResponse {
 
 const getList = async (options: Options, noCache: boolean): Promise<RouterResType> => {
   const url = "https://top.baidu.com/api/board?platform=wise&tab=realtime";
-  
+
   try {
     const response = await axios.get<BaiduHotResponse>(url, {
       timeout: 10000,
       httpsAgent: false, // 禁用 HTTPS 验证
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-        'Accept-Language': 'zh-CN,zh;q=0.9',
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36",
+        Accept:
+          "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+        "Accept-Language": "zh-CN,zh;q=0.9",
       },
     });
 
@@ -58,7 +60,7 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
         data: [],
       };
     }
-    
+
     const contents = cards[0]?.content?.[0]?.content || [];
     if (!contents || contents.length === 0) {
       return {
@@ -89,7 +91,7 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
       fromCache: false,
       updateTime: new Date().toISOString(),
       data: [],
-      message: `百度热搜接口暂时不可用：${error.message || '未知错误'}`,
+      message: `百度热搜接口暂时不可用：${error.message || "未知错误"}`,
     };
   }
 };

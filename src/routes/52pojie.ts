@@ -20,35 +20,37 @@ export const handleRoute = async (c: ListContext, noCache: boolean) => {
 
 const getList = async (options: Options, noCache: boolean): Promise<RouterResType> => {
   const url = "https://www.52pojie.cn/forum.php?mod=guide&view=hot";
-  
+
   try {
     const response = await axios.get(url, {
       timeout: 10000,
       httpsAgent: false,
       headers: {
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+        "User-Agent":
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        Accept:
+          "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
       },
     });
 
     // 设置 GBK 编码（吾爱破解使用 GBK）
     const html = response.data;
     const $ = load(html);
-    
+
     const hotThreads = $('tbody[id^="normalthread_"]');
     const items: ListItem[] = [];
-    
+
     hotThreads.each((_, element) => {
-      const titleElem = $(element).find('a.xst');
+      const titleElem = $(element).find("a.xst");
       if (!titleElem.length) return;
-      
+
       const title = titleElem.text().trim();
-      const href = titleElem.attr('href') || "";
-      const url = href.startsWith('/') ? `https://www.52pojie.cn/${href}` : href;
-      
-      const infoElem = $(element).find('td.by');
+      const href = titleElem.attr("href") || "";
+      const url = href.startsWith("/") ? `https://www.52pojie.cn/${href}` : href;
+
+      const infoElem = $(element).find("td.by");
       const info = infoElem.text().trim() || "";
-      
+
       items.push({
         id: items.length + 1,
         title: title,
@@ -60,9 +62,9 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
         mobileUrl: url,
       });
     });
-    
+
     if (items.length === 0) {
-      logger.warn('吾爱破解热榜接口返回空数据');
+      logger.warn("吾爱破解热榜接口返回空数据");
       return {
         fromCache: false,
         updateTime: new Date().toISOString(),
@@ -79,12 +81,12 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
     };
   } catch (error: any) {
     logger.error(`吾爱破解热榜获取失败：${error.message || error}`);
-    
+
     return {
       fromCache: false,
       updateTime: new Date().toISOString(),
       data: [],
-      message: `吾爱破解热榜接口暂时不可用：${error.message || '未知错误'}`,
+      message: `吾爱破解热榜接口暂时不可用：${error.message || "未知错误"}`,
     };
   }
 };

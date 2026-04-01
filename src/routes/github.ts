@@ -3,7 +3,7 @@ import fetch from "node-fetch";
 import * as cheerio from "cheerio";
 import { ListContext } from "../types";
 import logger from "../utils/logger.js";
-import {  getCache, setCache } from "../utils/cache.js";
+import { getCache, setCache } from "../utils/cache.js";
 
 /**
  * 定义 Trending 仓库信息的类型
@@ -49,7 +49,7 @@ export const handleRoute = async (c: ListContext) => {
     type: typeMap[type],
     params: {
       type: {
-        name: '排行榜分区',
+        name: "排行榜分区",
         type: typeMap,
       },
     },
@@ -57,16 +57,16 @@ export const handleRoute = async (c: ListContext) => {
     total: listData?.data?.length || 0,
     ...{
       ...listData,
-      data: listData?.data?.map((v, index)=>{
-         return {
-          id:index,
+      data: listData?.data?.map((v, index) => {
+        return {
+          id: index,
           title: v.repo,
           desc: v.description,
           hot: v.stars,
-          ...v
-         }
-      })
-    }
+          ...v,
+        };
+      }),
+    },
   };
   return routeData;
 };
@@ -95,17 +95,18 @@ export async function getTrendingRepos(
 
   // 更新请求头
   const headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-    'Accept-Language': 'en-US,en;q=0.5',
-    'Accept-Encoding': 'gzip, deflate, br',
-    'Connection': 'keep-alive',
-    'Upgrade-Insecure-Requests': '1',
-    'Sec-Fetch-Dest': 'document',
-    'Sec-Fetch-Mode': 'navigate',
-    'Sec-Fetch-Site': 'none',
-    'Sec-Fetch-User': '?1',
-    'Cache-Control': 'max-age=0',
+    "User-Agent":
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+    Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.5",
+    "Accept-Encoding": "gzip, deflate, br",
+    Connection: "keep-alive",
+    "Upgrade-Insecure-Requests": "1",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "none",
+    "Sec-Fetch-User": "?1",
+    "Cache-Control": "max-age=0",
   };
 
   // 添加重试逻辑
@@ -118,9 +119,9 @@ export async function getTrendingRepos(
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 20000);
 
-      const response = await fetch(url, { 
+      const response = await fetch(url, {
         headers,
-        signal: controller.signal
+        signal: controller.signal,
       });
       clearTimeout(timeout);
 
@@ -187,20 +188,20 @@ export async function getTrendingRepos(
       return { fromCache: false, updateTime, data };
     } catch (error: Error | unknown) {
       lastError = error;
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
       logger.error(`❌ [ERROR] 第 ${i + 1} 请求失败: ${errorMessage}`);
-      
+
       // 如果是最后一次重试，则抛出错误
       if (i === maxRetries - 1) {
         logger.error("❌ [ERROR] 所有尝试请求失败！");
         throw lastError;
       }
-      
+
       // 等待一段时间后重试 (1秒、2秒、4秒...)
-      await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+      await new Promise((resolve) => setTimeout(resolve, Math.pow(2, i) * 1000));
       continue;
     }
   }
-  
+
   throw new Error("请求失败！");
 }

@@ -35,23 +35,24 @@ interface JueJinResponse {
 
 const getList = async (options: Options, noCache: boolean): Promise<RouterResType> => {
   const url = "https://api.juejin.cn/content_api/v1/content/article_rank?category_id=1&type=hot";
-  
+
   try {
     const response = await axios.get<JueJinResponse>(url, {
       timeout: 10000,
       httpsAgent: false,
       headers: {
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Accept": "application/json, text/javascript, */*; q=0.01",
-        "Origin": "https://juejin.cn",
-        "Referer": "https://juejin.cn/",
+        "User-Agent":
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        Accept: "application/json, text/javascript, */*; q=0.01",
+        Origin: "https://juejin.cn",
+        Referer: "https://juejin.cn/",
       },
     });
 
     const dataList = response.data?.data || [];
-    
+
     if (!dataList || dataList.length === 0) {
-      logger.warn('掘金热榜接口返回空数据');
+      logger.warn("掘金热榜接口返回空数据");
       return {
         fromCache: false,
         updateTime: new Date().toISOString(),
@@ -70,7 +71,7 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
           const articleId = (item.content as any)?.content_id || "";
           const title = (item.content as any)?.title || "";
           const articleUrl = `https://juejin.cn/post/${articleId}`;
-          
+
           const listItem: ListItem = {
             id: articleId,
             title: title,
@@ -86,12 +87,12 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
     };
   } catch (error: any) {
     logger.error(`掘金热榜获取失败：${error.message || error}`);
-    
+
     return {
       fromCache: false,
       updateTime: new Date().toISOString(),
       data: [],
-      message: `掘金热榜接口暂时不可用：${error.message || '未知错误'}`,
+      message: `掘金热榜接口暂时不可用：${error.message || "未知错误"}`,
     };
   }
 };

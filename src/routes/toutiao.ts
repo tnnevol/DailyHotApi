@@ -30,21 +30,22 @@ interface ToutiaoResponse {
 
 const getList = async (options: Options, noCache: boolean): Promise<RouterResType> => {
   const url = "https://www.toutiao.com/hot-event/hot-board/?origin=toutiao_pc";
-  
+
   try {
     const response = await axios.get<ToutiaoResponse>(url, {
       timeout: 10000,
       httpsAgent: false,
       headers: {
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Accept": "application/json, text/javascript, */*; q=0.01",
+        "User-Agent":
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        Accept: "application/json, text/javascript, */*; q=0.01",
       },
     });
 
     const items = response.data?.data || [];
-    
+
     if (!items || items.length === 0) {
-      logger.warn('今日头条热榜接口返回空数据');
+      logger.warn("今日头条热榜接口返回空数据");
       return {
         fromCache: false,
         updateTime: new Date().toISOString(),
@@ -75,12 +76,12 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
     };
   } catch (error: any) {
     logger.error(`今日头条热榜获取失败：${error.message || error}`);
-    
+
     return {
       fromCache: false,
       updateTime: new Date().toISOString(),
       data: [],
-      message: `今日头条热榜接口暂时不可用：${error.message || '未知错误'}`,
+      message: `今日头条热榜接口暂时不可用：${error.message || "未知错误"}`,
     };
   }
 };

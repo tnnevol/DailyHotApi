@@ -5,7 +5,14 @@ import tseslint from "typescript-eslint";
 /** @type {import('eslint').Linter.Config[]} */
 export default [
   {
-    ignores: ["**/node_modules", "**/dist", "**/.gitignore", "**/logs", "**/docker-compose.yml", "**/skills/"],
+    ignores: [
+      "**/node_modules",
+      "**/dist",
+      "**/.gitignore",
+      "**/logs",
+      "**/docker-compose.yml",
+      "**/skills/",
+    ],
   },
   { files: ["**/*.{js,mjs,cjs,ts}"] },
   { languageOptions: { globals: globals.node } },

@@ -101,6 +101,4 @@ for (let index = 0; index < allRoutePath.length; index++) {
   listApp.all("*", (c) => c.json({ code: 405, message: "Method Not Allowed" }, 405));
 }
 
-
-
 export default app;

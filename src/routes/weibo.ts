@@ -35,23 +35,24 @@ interface WeiboResponse {
 
 const getList = async (options: Options, noCache: boolean): Promise<RouterResType> => {
   const url = "https://weibo.com/ajax/side/hotSearch";
-  
+
   try {
     const response = await axios.get<WeiboResponse>(url, {
       timeout: 10000,
       httpsAgent: false,
       headers: {
-        "accept": "application/json, text/javascript, */*; q=0.01",
-        "host": "weibo.com",
-        "Referer": "https://weibo.com",
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        accept: "application/json, text/javascript, */*; q=0.01",
+        host: "weibo.com",
+        Referer: "https://weibo.com",
+        "User-Agent":
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
       },
     });
 
     const realtime = response.data?.data?.realtime || [];
-    
+
     if (!realtime || realtime.length === 0) {
-      logger.warn('微博热搜接口返回空数据');
+      logger.warn("微博热搜接口返回空数据");
       return {
         fromCache: false,
         updateTime: new Date().toISOString(),
@@ -83,12 +84,12 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
     };
   } catch (error: any) {
     logger.error(`微博热搜获取失败：${error.message || error}`);
-    
+
     return {
       fromCache: false,
       updateTime: new Date().toISOString(),
       data: [],
-      message: `微博热搜接口暂时不可用：${error.message || '未知错误'}`,
+      message: `微博热搜接口暂时不可用：${error.message || "未知错误"}`,
     };
   }
 };

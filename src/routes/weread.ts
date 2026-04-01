@@ -49,7 +49,7 @@ interface WereadResponse {
   books: WereadBookItem[];
 }
 
-const getList = async (noCache: boolean, type='rising') => {
+const getList = async (noCache: boolean, type = "rising") => {
   const url = `https://weread.qq.com/web/bookListInCategory/${type}?rank=1`;
   const result = await get<WereadResponse>({
     url,

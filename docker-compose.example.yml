@@ -12,7 +12,7 @@ services:
       - TZ=Asia/Shanghai
       - PORT=6688
       - API_TOKEN=${API_TOKEN:-your-secret-token-here}
-    
+
     # 使用说明：
     # 1. 复制此文件为 docker-compose.yml
     # 2. 修改 API_TOKEN 为你的实际 Token

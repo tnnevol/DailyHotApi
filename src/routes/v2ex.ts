@@ -19,20 +19,21 @@ export const handleRoute = async (c: ListContext, noCache: boolean) => {
 
 const getList = async (options: Options, noCache: boolean): Promise<RouterResType> => {
   const url = "https://www.v2ex.com/api/topics/hot.json";
-  
+
   try {
     const response = await axios.get(url, {
       timeout: 10000,
       httpsAgent: false,
       headers: {
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Accept": "application/json",
-        "Referer": "https://www.v2ex.com/",
+        "User-Agent":
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        Accept: "application/json",
+        Referer: "https://www.v2ex.com/",
       },
     });
 
     const items = response.data || [];
-    
+
     if (items.length === 0) {
       return {
         fromCache: false,
@@ -63,7 +64,7 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
       fromCache: false,
       updateTime: new Date().toISOString(),
       data: [],
-      message: `V2EX 接口暂时不可用：${error.message || '未知错误'}`,
+      message: `V2EX 接口暂时不可用：${error.message || "未知错误"}`,
     };
   }
 };

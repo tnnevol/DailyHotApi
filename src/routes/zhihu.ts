@@ -39,21 +39,22 @@ interface ZhihuResponse {
 
 const getList = async (options: Options, noCache: boolean): Promise<RouterResType> => {
   const url = "https://www.zhihu.com/api/v3/explore/guest/feeds?limit=30&ws_qiangzhisafe=0";
-  
+
   try {
     const response = await axios.get<ZhihuResponse>(url, {
       timeout: 10000,
       httpsAgent: false,
       headers: {
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Referer": "https://www.zhihu.com",
+        "User-Agent":
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        Referer: "https://www.zhihu.com",
       },
     });
 
     const items = response.data?.data || [];
-    
+
     if (!items || items.length === 0) {
-      logger.warn('知乎热榜接口返回空数据');
+      logger.warn("知乎热榜接口返回空数据");
       return {
         fromCache: false,
         updateTime: new Date().toISOString(),
@@ -72,7 +73,7 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
           const question = item.target!.question!;
           const title = question.title || "";
           const questionId = question.id || index;
-          
+
           const listItem: ListItem = {
             id: questionId,
             title: title,
@@ -88,12 +89,12 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
     };
   } catch (error: any) {
     logger.error(`知乎热榜获取失败：${error.message || error}`);
-    
+
     return {
       fromCache: false,
       updateTime: new Date().toISOString(),
       data: [],
-      message: `知乎热榜接口暂时不可用：${error.message || '未知错误'}`,
+      message: `知乎热榜接口暂时不可用：${error.message || "未知错误"}`,
     };
   }
 };

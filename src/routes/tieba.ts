@@ -36,21 +36,22 @@ interface TieBaResponse {
 
 const getList = async (options: Options, noCache: boolean): Promise<RouterResType> => {
   const url = "http://tieba.baidu.com/hottopic/browse/topicList";
-  
+
   try {
     const response = await axios.get<TieBaResponse>(url, {
       timeout: 10000,
       httpsAgent: false,
       headers: {
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Accept": "application/json, text/javascript, */*; q=0.01",
+        "User-Agent":
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        Accept: "application/json, text/javascript, */*; q=0.01",
       },
     });
 
     const topicList = response.data?.data?.bang_topic?.topic_list || [];
-    
+
     if (!topicList || topicList.length === 0) {
-      logger.warn('贴吧热议榜接口返回空数据');
+      logger.warn("贴吧热议榜接口返回空数据");
       return {
         fromCache: false,
         updateTime: new Date().toISOString(),
@@ -67,10 +68,10 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
         .filter((item) => item.topic_name)
         .map((item, index) => {
           let url = item.topic_url || "";
-          if (url && !url.startsWith('http')) {
+          if (url && !url.startsWith("http")) {
             url = `http://tieba.baidu.com${url}`;
           }
-          
+
           const listItem: ListItem = {
             id: index + 1,
             title: item.topic_name || "",
@@ -86,12 +87,12 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
     };
   } catch (error: any) {
     logger.error(`贴吧热议榜获取失败：${error.message || error}`);
-    
+
     return {
       fromCache: false,
       updateTime: new Date().toISOString(),
       data: [],
-      message: `贴吧热议榜接口暂时不可用：${error.message || '未知错误'}`,
+      message: `贴吧热议榜接口暂时不可用：${error.message || "未知错误"}`,
     };
   }
 };

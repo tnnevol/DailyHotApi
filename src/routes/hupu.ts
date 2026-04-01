@@ -20,36 +20,38 @@ export const handleRoute = async (c: ListContext, noCache: boolean) => {
 
 const getList = async (options: Options, noCache: boolean): Promise<RouterResType> => {
   const url = "https://bbs.hupu.com/all-gambia";
-  
+
   try {
     const response = await axios.get(url, {
       timeout: 10000,
       httpsAgent: false,
       headers: {
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+        "User-Agent":
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        Accept:
+          "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
       },
     });
 
     const html = response.data;
     const $ = load(html);
-    
-    const postList = $('div.t-info');
+
+    const postList = $("div.t-info");
     const items: ListItem[] = [];
-    
+
     postList.each((_, element) => {
-      const titleElem = $(element).find('span.t-title');
-      const linkElem = $(element).find('a');
-      
+      const titleElem = $(element).find("span.t-title");
+      const linkElem = $(element).find("a");
+
       if (!titleElem.length || !linkElem.length) return;
-      
+
       const title = titleElem.text().trim();
-      let href = linkElem.attr('href') || '';
-      const url = href.startsWith('/') ? `https://bbs.hupu.com${href}` : href;
-      
-      const infoElem = $(element).find('span.t-replies');
+      let href = linkElem.attr("href") || "";
+      const url = href.startsWith("/") ? `https://bbs.hupu.com${href}` : href;
+
+      const infoElem = $(element).find("span.t-replies");
       const info = infoElem.text().trim() || "";
-      
+
       items.push({
         id: items.length + 1,
         title: title,
@@ -61,9 +63,9 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
         mobileUrl: url,
       });
     });
-    
+
     if (items.length === 0) {
-      logger.warn('虎扑热帖接口返回空数据');
+      logger.warn("虎扑热帖接口返回空数据");
       return {
         fromCache: false,
         updateTime: new Date().toISOString(),
@@ -80,12 +82,12 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
     };
   } catch (error: any) {
     logger.error(`虎扑热帖获取失败：${error.message || error}`);
-    
+
     return {
       fromCache: false,
       updateTime: new Date().toISOString(),
       data: [],
-      message: `虎扑热帖接口暂时不可用：${error.message || '未知错误'}`,
+      message: `虎扑热帖接口暂时不可用：${error.message || "未知错误"}`,
     };
   }
 };

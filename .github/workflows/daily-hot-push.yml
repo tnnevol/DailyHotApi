@@ -3,7 +3,7 @@ name: Daily Hot News Push
 on:
   schedule:
     # UTC 0:00 = 北京时间 8:00 (UTC+8)
-    - cron: '0 0 * * *'
+    - cron: "0 0 * * *"
   workflow_dispatch:
     # 支持手动触发测试
 
@@ -18,17 +18,17 @@ jobs:
           echo "时间：$(date +'%Y-%m-%d %H:%M:%S')"
           echo "API 地址：https://newsapi.tnnevol.cn"
           echo "========================"
-          
+
           # 定义要推送的平台（6 个稳定平台）
           PLATFORMS="baidu weibo zhihu douyin bilibili sspai"
-          
+
           # 构建 Webhook URL
           WEBHOOK_URL="${WEBHOOK_BASE}/hooks/agent"
-          
+
           # 构建消息内容
           MESSAGE="📰 每日新闻热榜 - $(date +'%Y-%m-%d %H:%M')\n\n"
           SUCCESS_COUNT=0
-          
+
           # 统一调用 newsapi.tnnevol.cn
           for platform in $PLATFORMS; do
             echo ""
@@ -65,19 +65,19 @@ jobs:
               echo "  ❌ 失败：$CODE"
             fi
           done
-          
+
           echo ""
           echo "===== 汇总 ====="
           echo "成功平台数：$SUCCESS_COUNT / 6"
-          
+
           # 如果没有数据，使用默认消息
           if [ "$SUCCESS_COUNT" -eq 0 ]; then
             MESSAGE="暂无数据，请稍后再试。\n"
             echo "⚠️ 无可用数据，使用默认消息"
           fi
-          
+
           MESSAGE+="-- 自动推送 by DailyHotApi"
-          
+
           # 使用 jq 正确转义 JSON
           MESSAGE_JSON=$(echo -e "$MESSAGE" | jq -Rs '.')
           echo ""
@@ -85,23 +85,23 @@ jobs:
           echo -e "$MESSAGE"
           echo "===================="
           echo ""
-          
+
           # 发送 Webhook
           echo "📡 发送到钉钉..."
           WEBHOOK_RESULT=$(curl -s -w "\nHTTP_CODE:%{http_code}" -X POST "$WEBHOOK_URL" \
             -H "Authorization: Bearer $WEBHOOK_TOKEN" \
             -H 'Content-Type: application/json' \
             -d "{\"message\":${MESSAGE_JSON},\"name\":\"DailyHot\",\"agentId\":\"main\",\"wakeMode\":\"now\",\"deliver\":true,\"channel\":\"dingtalk-connector\",\"to\":\"$DINGTALK_GROUP_ID\"}")
-          
+
           HTTP_CODE=$(echo "$WEBHOOK_RESULT" | grep "HTTP_CODE:" | cut -d':' -f2)
           echo "响应状态码：$HTTP_CODE"
-          
+
           if [ "$HTTP_CODE" = "200" ]; then
             echo "✅ 推送成功！"
           else
             echo "❌ 推送失败：HTTP $HTTP_CODE"
           fi
-          
+
           echo ""
           echo "===== 执行完成 ====="
 

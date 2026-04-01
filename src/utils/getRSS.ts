@@ -43,12 +43,14 @@ const getRSS = (data: RouterData) => {
                   url: item.cover,
                 },
               },
-              "media:description": item.desc ? {
-                _cdata: item.desc
-              } : "",
-            }
-          }
-        ]
+              "media:description": item.desc
+                ? {
+                    _cdata: item.desc,
+                  }
+                : "",
+            },
+          },
+        ],
       });
     });
     const rssData = feed.rss2();

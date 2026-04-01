@@ -18,20 +18,22 @@ export const handleRoute = async (c: ListContext, noCache: boolean) => {
 };
 
 const getList = async (options: Options, noCache: boolean): Promise<RouterResType> => {
-  const url = "https://i.news.qq.com/gw/event/pc_hot_ranking_list?ids_hash=&offset=0&page_size=51&appver=15.5_qqnews_7.1.60&rank_id=hot";
-  
+  const url =
+    "https://i.news.qq.com/gw/event/pc_hot_ranking_list?ids_hash=&offset=0&page_size=51&appver=15.5_qqnews_7.1.60&rank_id=hot";
+
   try {
     const response = await axios.get(url, {
       timeout: 10000,
       httpsAgent: false,
       headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/122.0.0.0 Safari/537.36 AppleWebKit/537.36 (KHTML, like Gecko)",
-        "Referer": "https://news.qq.com/",
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/122.0.0.0 Safari/537.36 AppleWebKit/537.36 (KHTML, like Gecko)",
+        Referer: "https://news.qq.com/",
       },
     });
 
     const newsList = response.data?.idlist?.[0]?.newslist?.slice(1) || [];
-    
+
     if (newsList.length === 0) {
       return {
         fromCache: false,
@@ -62,7 +64,7 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
       fromCache: false,
       updateTime: new Date().toISOString(),
       data: [],
-      message: `腾讯网热榜接口暂时不可用：${error.message || '未知错误'}`,
+      message: `腾讯网热榜接口暂时不可用：${error.message || "未知错误"}`,
     };
   }
 };

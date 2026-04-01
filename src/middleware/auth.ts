@@ -26,7 +26,7 @@ export const authMiddleware = async (c: Context, next: Next) => {
         code: 401,
         message: "Unauthorized: Invalid or missing token",
       },
-      401
+      401,
     );
   }
 

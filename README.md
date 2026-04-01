@@ -42,8 +42,8 @@
 
 > 示例站点运行于海外服务器，部分国内站点可能存在访问异常，请以实际情况为准
 
-| **站点**         | **类别**     | **调用名称**   | **状态**                                                                                                                                                            |
-| ---------------- | ------------ | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **站点**         | **类别**     | **调用名称**   | **状态**                                                                                                                                                              |
+| ---------------- | ------------ | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 哔哩哔哩         | 热门榜       | bilibili       | ![https://newsapi.tnnevol.cn/bilibili](https://img.shields.io/website.svg?label=bilibili&url=https://newsapi.tnnevol.cn/bilibili&cacheSeconds=7200)                   |
 | AcFun            | 排行榜       | acfun          | ![https://newsapi.tnnevol.cn/acfun](https://img.shields.io/website.svg?label=acfun&url=https://newsapi.tnnevol.cn/acfun&cacheSeconds=7200)                            |
 | 微博             | 热搜榜       | weibo          | ![https://newsapi.tnnevol.cn/weibo](https://img.shields.io/website.svg?label=weibo&url=https://newsapi.tnnevol.cn/weibo&cacheSeconds=7200)                            |
@@ -99,6 +99,7 @@
 **默认所有 API 接口需要 Token 验证**（`/health` 和 `/all` 除外）
 
 **传递 Token**:
+
 ```bash
 # 方式 1: URL 参数（推荐）
 curl "http://localhost:6688/baidu?token=YOUR_API_TOKEN"
@@ -108,6 +109,7 @@ curl -H "Authorization: Bearer YOUR_API_TOKEN" "http://localhost:6688/baidu"
 ```
 
 **配置 Token**:
+
 ```bash
 # .env.local（本地配置，禁止提交）
 API_TOKEN=your-secret-token-here
@@ -117,6 +119,7 @@ API_TOKEN=<YOUR_API_TOKEN>
 ```
 
 **错误响应**:
+
 ```json
 {
   "code": 401,
@@ -129,6 +132,7 @@ API_TOKEN=<YOUR_API_TOKEN>
 ### 开发环境
 
 **本地开发（推荐）**:
+
 ```bash
 # 使用 .env.local 本地配置启动（实时重载）
 npm run dev:local
@@ -138,6 +142,7 @@ npm run dev:cache:local
 ```
 
 **开发环境测试**:
+
 ```bash
 # 使用 .env.development 开发配置启动
 npm run dev
@@ -147,6 +152,7 @@ npm run dev:cache
 ```
 
 **生产环境**:
+
 ```bash
 # 编译项目
 npm run build
@@ -159,6 +165,7 @@ npm run start:local
 ```
 
 **环境配置说明**:
+
 - `.env.local` - 本地个人配置（真实 Token，**禁止提交**）
 - `.env.development` - 开发环境配置（占位符，**可提交**）
 - 详见 [开发指南](./docs/DEVELOPMENT.md)

@@ -45,9 +45,7 @@ const getList = async (noCache: boolean) => {
       const contentBuilder: string[] = [];
       const { NEW_DID, LOCATION_C, M } = v;
       for (const mappingsKey in mappings) {
-        contentBuilder.push(
-          `${mappings[mappingsKey]}：${v[mappingsKey]}`,
-        );
+        contentBuilder.push(`${mappings[mappingsKey]}：${v[mappingsKey]}`);
       }
       return {
         id: NEW_DID,

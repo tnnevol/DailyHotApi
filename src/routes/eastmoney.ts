@@ -37,24 +37,25 @@ interface EastMoneyResponse {
 const getList = async (options: Options, noCache: boolean): Promise<RouterResType> => {
   const timestamp = Date.now();
   const url = `https://np-weblist.eastmoney.com/comm/web/getFastNewsList?client=web&biz=web_724&fastColumn=102&pageSize=50&req_trace=${timestamp}`;
-  
+
   try {
     const response = await axios.get<EastMoneyResponse>(url, {
       timeout: 10000,
       httpsAgent: false,
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Accept': 'application/json, text/plain, */*',
-        'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
-        'Referer': 'https://kuaixun.eastmoney.com/',
-        'Origin': 'https://kuaixun.eastmoney.com',
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        Accept: "application/json, text/plain, */*",
+        "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+        Referer: "https://kuaixun.eastmoney.com/",
+        Origin: "https://kuaixun.eastmoney.com",
       },
     });
 
     const fastNewsList = response.data?.data?.fastNewsList || [];
-    
+
     if (!fastNewsList || fastNewsList.length === 0) {
-      logger.warn('东方财富快讯接口返回空数据');
+      logger.warn("东方财富快讯接口返回空数据");
       return {
         fromCache: false,
         updateTime: new Date().toISOString(),
@@ -72,8 +73,10 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
         .slice(0, 20)
         .map((item, index) => {
           const code = item.code || "";
-          const url = code ? `https://finance.eastmoney.com/a/${code}` : "https://kuaixun.eastmoney.com/";
-          
+          const url = code
+            ? `https://finance.eastmoney.com/a/${code}`
+            : "https://kuaixun.eastmoney.com/";
+
           const listItem: ListItem = {
             id: index + 1,
             title: item.title || "",
@@ -89,12 +92,12 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
     };
   } catch (error: any) {
     logger.error(`东方财富快讯获取失败：${error.message || error}`);
-    
+
     return {
       fromCache: false,
       updateTime: new Date().toISOString(),
       data: [],
-      message: `东方财富快讯接口暂时不可用：${error.message || '未知错误'}`,
+      message: `东方财富快讯接口暂时不可用：${error.message || "未知错误"}`,
     };
   }
 };

@@ -39,25 +39,26 @@ interface BiliResponse {
 
 const getList = async (options: Options, noCache: boolean): Promise<RouterResType> => {
   const url = "https://api.bilibili.com/x/web-interface/popular";
-  
+
   try {
     const response = await axios.get<BiliResponse>(url, {
       timeout: 10000,
       httpsAgent: false,
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-        'Referer': 'https://www.bilibili.com/',
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+        Referer: "https://www.bilibili.com/",
       },
     });
 
     const data = response.data;
     if (data.code !== 0) {
-      logger.error(`B 站 API 错误：${data.message || '未知错误'}`);
+      logger.error(`B 站 API 错误：${data.message || "未知错误"}`);
       return {
         fromCache: false,
         updateTime: new Date().toISOString(),
         data: [],
-        message: `API error: ${data.message || '未知错误'}`,
+        message: `API error: ${data.message || "未知错误"}`,
       };
     }
 
@@ -94,7 +95,7 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
       fromCache: false,
       updateTime: new Date().toISOString(),
       data: [],
-      message: `请求失败：${error.message || '未知错误'}`,
+      message: `请求失败：${error.message || "未知错误"}`,
     };
   }
 };

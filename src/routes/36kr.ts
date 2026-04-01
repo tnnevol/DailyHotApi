@@ -37,29 +37,34 @@ interface KrResponse {
 
 const getList = async (options: Options, noCache: boolean): Promise<RouterResType> => {
   const url = "https://gateway.36kr.com/api/mis/nav/home/nav/rank/hot";
-  
+
   try {
     const timestamp = Date.now();
-    const response = await axios.post<KrResponse>(url, {
-      partner_id: "wap",
-      param: {
-        siteId: 1,
-        platformId: 2,
+    const response = await axios.post<KrResponse>(
+      url,
+      {
+        partner_id: "wap",
+        param: {
+          siteId: 1,
+          platformId: 2,
+        },
+        timestamp: timestamp,
       },
-      timestamp: timestamp,
-    }, {
-      timeout: 10000,
-      httpsAgent: false,
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      {
+        timeout: 10000,
+        httpsAgent: false,
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+        },
       },
-    });
+    );
 
     const hotRankList = response.data?.data?.hotRankList || [];
-    
+
     if (!hotRankList || hotRankList.length === 0) {
-      logger.warn('36 氪热榜接口返回空数据');
+      logger.warn("36 氪热榜接口返回空数据");
       return {
         fromCache: false,
         updateTime: new Date().toISOString(),
@@ -78,7 +83,7 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
           const itemId = item.itemId || "";
           const title = item.templateMaterial?.widgetTitle || "";
           const articleUrl = `https://www.36kr.com/p/${itemId}`;
-          
+
           const listItem: ListItem = {
             id: itemId,
             title: title,
@@ -94,12 +99,12 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
     };
   } catch (error: any) {
     logger.error(`36 氪热榜获取失败：${error.message || error}`);
-    
+
     return {
       fromCache: false,
       updateTime: new Date().toISOString(),
       data: [],
-      message: `36 氪热榜接口暂时不可用：${error.message || '未知错误'}`,
+      message: `36 氪热榜接口暂时不可用：${error.message || "未知错误"}`,
     };
   }
 };
