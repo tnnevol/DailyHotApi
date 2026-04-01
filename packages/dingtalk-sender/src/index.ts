@@ -80,16 +80,10 @@ class DingTalkSender {
         picURL: item.cover || 'https://cdn.jsdelivr.net/gh/tnnevol/DailyHotApi@main/public/favicon.png', // 使用默认图片
       }));
 
-      // 构建feedCard消息
-      const message = {
-        msgtype: 'feedCard' as const,
-        feedCard: {
-          links: feedItems
-        }
-      };
-
-      // 发送消息
-      const result = await robot.send(message);
+      // 发送消息 - 使用正确的feedCard格式
+      const result = await robot.sendDing({
+        links: feedItems
+      }, 'feedCard');
       
       console.log('✅ 钉钉消息发送成功');
       console.log('Platform:', platform);
