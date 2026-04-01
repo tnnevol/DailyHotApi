@@ -1,5 +1,5 @@
 import { DingTalkRobot } from '@tnnevol/robot-ding';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
 interface NewsItem {
   id: string;
@@ -26,14 +26,14 @@ interface FeedCardItem {
 }
 
 class DingTalkPusher {
-  private robot: DingTalkRobot;
+  private robot: any; // 使用 any 类型避免类型冲突
 
   constructor(webhookUrl: string, secret?: string) {
     if (!webhookUrl) {
       throw new Error('DINGTALK_WEBHOOK_URL 环境变量未设置');
     }
 
-    this.robot = new DingTalkRobot({
+    this.robot = new (require('@tnnevol/robot-ding').DingTalkRobot)({
       webhook: webhookUrl,
       secret: secret,
     });
@@ -43,10 +43,10 @@ class DingTalkPusher {
     const apiUrl = `https://newsapi.tnnevol.cn/${platform}?token=${token}&limit=${limit}`;
     
     try {
-      const response = await axios.get<ApiResponse>(apiUrl);
+      const response: AxiosResponse<ApiResponse> = await axios.get(apiUrl);
       return response.data;
-    } catch (error) {
-      console.error(`获取 ${platform} 数据失败:`, error);
+    } catch (error: any) {
+      console.error(`获取 ${platform} 数据失败:`, error.message);
       throw error;
     }
   }
@@ -86,13 +86,12 @@ class DingTalkPusher {
       console.log('Response:', result);
 
       return true;
-    } catch (error) {
-      console.error('❌ 发送钉钉消息失败:', error);
-      if (error && typeof error === 'object' && 'response' in error) {
-        const errWithResp = error as any;
-        console.error('Response data:', errWithResp.response?.data);
-        console.error('Response status:', errWithResp.response?.status);
-        console.error('Response headers:', errWithResp.response?.headers);
+    } catch (error: any) {
+      console.error('❌ 发送钉钉消息失败:', error.message);
+      if (error.response) {
+        console.error('Response data:', error.response.data);
+        console.error('Response status:', error.response.status);
+        console.error('Response headers:', error.response.headers);
       }
       return false;
     }
@@ -130,8 +129,8 @@ async function main(): Promise<void> {
       console.error(`❌ ${platform} 平台钉钉推送失败`);
       process.exit(1);
     }
-  } catch (error) {
-    console.error('❌ 推送过程发生错误:', error);
+  } catch (error: any) {
+    console.error('❌ 推送过程发生错误:', error.message);
     process.exit(1);
   }
 }

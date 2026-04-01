@@ -39,8 +39,8 @@ jobs:
           # 统计成功推送数量
           SUCCESS_COUNT=0
 
-          # 安装依赖
-          pnpm add @tnnevol/robot-ding
+          # 确保依赖已安装
+          pnpm add @tnnevol/robot-ding axios
 
           # 遍历平台并推送钉钉feedCard消息
           for platform in $PLATFORMS; do
@@ -63,8 +63,17 @@ jobs:
               if [ "$COUNT" -gt 0 ]; then
                 echo "  ✅ 成功，推送 $TITLE 到钉钉"
                 
-                # 编译并运行 TypeScript 脚本发送钉钉feedCard消息
-                npx tsx scripts/dingtalk-push.ts $platform
+                # 运行 TypeScript 脚本发送钉钉feedCard消息
+                node -e "
+                const { execSync } = require('child_process');
+                try {
+                  const result = execSync('npx tsx scripts/dingtalk-push.ts $platform', { encoding: 'utf-8', stdio: 'pipe' });
+                  console.log(result);
+                  console.log('  ✅ 钉钉推送成功');
+                } catch (error) {
+                  console.error('  ❌ 钉钉推送失败:', error.message);
+                  process.exit(1);
+                }"
                 
                 if [ $? -eq 0 ]; then
                   SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
