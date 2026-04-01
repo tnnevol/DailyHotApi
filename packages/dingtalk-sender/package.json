@@ -26,7 +26,8 @@
   "scripts": {
     "build": "unbuild",
     "dev": "unbuild --stub",
-    "prepack": "pnpm build"
+    "prepack": "pnpm build",
+    "start": "node dist/cli.mjs"
   },
   "dependencies": {
     "@tnnevol/robot-ding": "^5.2.9",
