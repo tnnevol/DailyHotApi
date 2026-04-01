@@ -63,8 +63,8 @@ jobs:
               if [ "$COUNT" -gt 0 ]; then
                 echo "  ✅ 成功，推送 $TITLE 到钉钉"
                 
-                # 使用 Node.js 脚本发送钉钉feedCard消息（使用原生模块版本）
-                node scripts/dingtalk-push-native.js $platform
+                # 编译并运行 TypeScript 脚本发送钉钉feedCard消息
+                npx tsx scripts/dingtalk-push.ts $platform
                 
                 if [ $? -eq 0 ]; then
                   SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
