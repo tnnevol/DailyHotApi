@@ -119,11 +119,15 @@ jobs:
           
           # 推送到 OpenClaw Webhook
           echo "📡 Sending to DingTalk via: $WEBHOOK_URL"
+          
+          # 使用 jq 正确转义 JSON 字符串
+          MESSAGE_JSON=$(echo -e "$MESSAGE" | jq -Rs '.')
+          
           WEBHOOK_RESPONSE=$(curl -s -w "|||HTTP_CODE:%{http_code}" -X POST "$WEBHOOK_URL" \
             -H 'Authorization: Bearer $WEBHOOK_TOKEN' \
             -H 'Content-Type: application/json' \
             -d "{
-              \"message\": \"$(echo -e "$MESSAGE" | sed 's/"/\\"/g' | tr '\n' ' ')\",
+              \"message\": ${MESSAGE_JSON},
               \"name\": \"DailyHot\",
               \"agentId\": \"main\",
               \"wakeMode\": \"now\",
