@@ -13,14 +13,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
+      - name: Install pnpm
+        run: npm install -g pnpm
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'pnpm'
-
-      - name: Install pnpm
-        run: npm install -g pnpm
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -30,8 +30,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          # 确保 pnpm 已安装
-          npm install -g pnpm
           # 验证 pnpm
           pnpm --version
           # 安装项目依赖
