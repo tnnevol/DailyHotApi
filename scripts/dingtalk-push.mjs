@@ -7,30 +7,29 @@ async function getRobotDing() {
 }
 
 class DingTalkPusher {
-  private robot: any; // 使用 any 类型避免类型冲突
-
+  // 构造函数
   constructor(webhookUrl, secret) {
     if (!webhookUrl) {
       throw new Error('DINGTALK_WEBHOOK_URL 环境变量未设置');
     }
 
-    // 在构造函数中使用动态导入创建机器人实例
-    // 在类外部定义一个静态方法来创建实例
+    // 保存配置，稍后在需要时创建机器人实例
     this.webhookUrl = webhookUrl;
     this.secret = secret;
+    this.robotInstance = null;
   }
-}
 
-// 静态方法用于创建带机器人的实例
-DingTalkPusher.create = async function(webhookUrl, secret) {
-  const { default: RobotDing } = await import('@tnnevol/robot-ding');
-  const instance = new DingTalkPusher(webhookUrl, secret);
-  instance.robot = new RobotDing({
-    webhook: webhookUrl,
-    secret: secret,
-  });
-  return instance;
-}
+  // 获取机器人实例（延迟初始化）
+  async getRobot() {
+    if (!this.robotInstance) {
+      const RobotDing = await getRobotDing();
+      this.robotInstance = new RobotDing({
+        webhook: this.webhookUrl,
+        secret: this.secret,
+      });
+    }
+    return this.robotInstance;
+  }
 
   async getHotNews(platform, token, limit = 5) {
     const apiUrl = `https://newsapi.tnnevol.cn/${platform}?token=${token}&limit=${limit}`;
@@ -55,8 +54,8 @@ DingTalkPusher.create = async function(webhookUrl, secret) {
         return false;
       }
 
-      // 机器人实例已在构造函数中创建
-      const robot = this.robot;
+      // 获取机器人实例
+      const robot = await this.getRobot();
 
       // 准备feedCard消息数据
       const feedItems = data.data.slice(0, 4).map((item) => ({
@@ -115,7 +114,7 @@ async function main() {
     const platform = process.argv[2] || 'baidu';
 
     // 创建推送实例并发送消息
-    const pusher = await DingTalkPusher.create(webhookUrl, secret);
+    const pusher = new DingTalkPusher(webhookUrl, secret);
     const success = await pusher.pushFeedCard(platform, apiToken);
 
     if (success) {
@@ -132,7 +131,7 @@ async function main() {
 }
 
 // 检查是否直接运行此脚本
-const path = await import('path');
+import path from 'path';
 const currentFile = path.basename(new URL(import.meta.url).pathname);
 const scriptFile = path.basename(process.argv[1]);
 
