@@ -49,9 +49,6 @@ jobs:
           # 统计成功推送数量
           SUCCESS_COUNT=0
 
-          # 确保依赖已安装
-          pnpm add @tnnevol/robot-ding axios
-
           # 构建钉钉推送包
           cd packages/dingtalk-sender
           pnpm build
