@@ -3,12 +3,22 @@
 <h2>今日热榜</h2>
 <p>一个聚合热门数据的 API 接口</p>
 <br />
-<img src="https://img.shields.io/github/last-commit/imsyy/DailyHotApi" alt="last commit"/>
- <img src="https://img.shields.io/github/languages/code-size/imsyy/DailyHotApi" alt="code size"/>
- <img src="https://img.shields.io/docker/image-size/imsyy/dailyhot-api" alt="docker-image-size"/>
-<img src="https://github.com/imsyy/DailyHotApi/actions/workflows/docker.yml/badge.svg" alt="Publish Docker image"/>
-<img src="https://github.com/imsyy/DailyHotApi/actions/workflows/npm.yml/badge.svg" alt="Publish npm package"/>
+<img src="https://img.shields.io/github/last-commit/tnnevol/DailyHotApi" alt="last commit"/>
+ <img src="https://img.shields.io/github/languages/code-size/tnnevol/DailyHotApi" alt="code size"/>
+<img src="https://github.com/tnnevol/DailyHotApi/actions/workflows/docker.yml/badge.svg" alt="Publish Docker image"/>
+<img src="https://github.com/tnnevol/DailyHotApi/actions/workflows/npm.yml/badge.svg" alt="Publish npm package"/>
 </div>
+
+## 🙏 致谢
+
+本项目基于以下开源项目二次开发：
+
+- **DailyHotApi** by [imsyy](https://github.com/tnnevol/DailyHotApi) - 提供基础框架和 API 设计
+- **hot_news** by [orz-ai](https://github.com/orz-ai/hot_news) - 提供爬虫接口和数据处理逻辑
+
+感谢原项目作者的开源贡献和灵感！
+
+---
 
 ## 🚩 特性
 
@@ -23,7 +33,7 @@
 > 示例站点可能由于访问量或者长久未维护而访问异常  
 > 若您也使用了本 API 搭建了网站，欢迎提交您的站点链接
 
-- [今日热榜 - https://hot.imsyy.top/](https://hot.imsyy.top/)
+- [今日热榜 - https://newsapi.tnnevol.cn](https://newsapi.tnnevol.cn)
 
 ## 📊 接口总览
 
@@ -34,51 +44,51 @@
 
 | **站点**         | **类别**     | **调用名称**   | **状态**                                                                                                                                                            |
 | ---------------- | ------------ | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 哔哩哔哩         | 热门榜       | bilibili       | ![https://api-hot.imsyy.top/bilibili](https://img.shields.io/website.svg?label=bilibili&url=https://api-hot.imsyy.top/bilibili&cacheSeconds=7200)                   |
-| AcFun            | 排行榜       | acfun          | ![https://api-hot.imsyy.top/acfun](https://img.shields.io/website.svg?label=acfun&url=https://api-hot.imsyy.top/acfun&cacheSeconds=7200)                            |
-| 微博             | 热搜榜       | weibo          | ![https://api-hot.imsyy.top/weibo](https://img.shields.io/website.svg?label=weibo&url=https://api-hot.imsyy.top/weibo&cacheSeconds=7200)                            |
-| 知乎             | 热榜         | zhihu          | ![https://api-hot.imsyy.top/zhihu](https://img.shields.io/website.svg?label=zhihu&url=https://api-hot.imsyy.top/zhihu&cacheSeconds=7200)                            |
-| 知乎日报         | 推荐榜       | zhihu-daily    | ![https://api-hot.imsyy.top/zhihu-daily](https://img.shields.io/website.svg?label=zhihu-daily&url=https://api-hot.imsyy.top/zhihu-daily&cacheSeconds=7200)          |
-| 百度             | 热搜榜       | baidu          | ![https://api-hot.imsyy.top/baidu](https://img.shields.io/website.svg?label=baidu&url=https://api-hot.imsyy.top/baidu&cacheSeconds=7200)                            |
-| 抖音             | 热点榜       | douyin         | ![https://api-hot.imsyy.top/douyin](https://img.shields.io/website.svg?label=douyin&url=https://api-hot.imsyy.top/douyin&cacheSeconds=7200)                         |
-| 快手             | 热点榜       | kuaishou       | ![https://api-hot.imsyy.top/kuaishou](https://img.shields.io/website.svg?label=kuaishou&url=https://api-hot.imsyy.top/kuaishou&cacheSeconds=7200)                   |
-| 豆瓣电影         | 新片榜       | douban-movie   | ![https://api-hot.imsyy.top/douban-movie](https://img.shields.io/website.svg?label=douban-movie&url=https://api-hot.imsyy.top/douban-movie&cacheSeconds=7200)       |
-| 豆瓣讨论小组     | 讨论精选     | douban-group   | ![https://api-hot.imsyy.top/douban-group](https://img.shields.io/website.svg?label=douban-group&url=https://api-hot.imsyy.top/douban-group&cacheSeconds=7200)       |
-| 百度贴吧         | 热议榜       | tieba          | ![https://api-hot.imsyy.top/tieba](https://img.shields.io/website.svg?label=tieba&url=https://api-hot.imsyy.top/tieba&cacheSeconds=7200)                            |
-| 少数派           | 热榜         | sspai          | ![https://api-hot.imsyy.top/sspai](https://img.shields.io/website.svg?label=sspai&url=https://api-hot.imsyy.top/sspai&cacheSeconds=7200)                            |
-| IT之家           | 热榜         | ithome         | ![https://api-hot.imsyy.top/ithome](https://img.shields.io/website.svg?label=ithome&url=https://api-hot.imsyy.top/ithome&cacheSeconds=7200)                         |
-| IT之家「喜加一」 | 最新动态     | ithome-xijiayi | ![https://api-hot.imsyy.top/ithome-xijiayi](https://img.shields.io/website.svg?label=ithome-xijiayi&url=https://api-hot.imsyy.top/ithome-xijiayi&cacheSeconds=7200) |
-| 简书             | 热门推荐     | jianshu        | ![https://api-hot.imsyy.top/jianshu](https://img.shields.io/website.svg?label=jianshu&url=https://api-hot.imsyy.top/jianshu&cacheSeconds=7200)                      |
-| 果壳             | 热门文章     | guokr          | ![https://api-hot.imsyy.top/guokr](https://img.shields.io/website.svg?label=guokr&url=https://api-hot.imsyy.top/guokr&cacheSeconds=7200)                            |
-| 澎湃新闻         | 热榜         | thepaper       | ![https://api-hot.imsyy.top/thepaper](https://img.shields.io/website.svg?label=thepaper&url=https://api-hot.imsyy.top/thepaper&cacheSeconds=7200)                   |
-| 今日头条         | 热榜         | toutiao        | ![https://api-hot.imsyy.top/toutiao](https://img.shields.io/website.svg?label=toutiao&url=https://api-hot.imsyy.top/toutiao&cacheSeconds=7200)                      |
-| 36 氪            | 热榜         | 36kr           | ![https://api-hot.imsyy.top/36kr](https://img.shields.io/website.svg?label=36kr&url=https://api-hot.imsyy.top/36kr&cacheSeconds=7200)                               |
-| 51CTO            | 推荐榜       | 51cto          | ![https://api-hot.imsyy.top/51cto](https://img.shields.io/website.svg?label=51cto&url=https://api-hot.imsyy.top/51cto&cacheSeconds=7200)                            |
-| CSDN             | 排行榜       | csdn           | ![https://api-hot.imsyy.top/csdn](https://img.shields.io/website.svg?label=csdn&url=https://api-hot.imsyy.top/csdn&cacheSeconds=7200)                               |
-| NodeSeek         | 最新动态     | nodeseek       | ![https://api-hot.imsyy.top/nodeseek](https://img.shields.io/website.svg?label=nodeseek&url=https://api-hot.imsyy.top/nodeseek&cacheSeconds=7200)                   |
-| 稀土掘金         | 热榜         | juejin         | ![https://api-hot.imsyy.top/juejin](https://img.shields.io/website.svg?label=juejin&url=https://api-hot.imsyy.top/juejin&cacheSeconds=7200)                         |
-| 腾讯新闻         | 热点榜       | qq-news        | ![https://api-hot.imsyy.top/qq-news](https://img.shields.io/website.svg?label=qq-news&url=https://api-hot.imsyy.top/qq-news&cacheSeconds=7200)                      |
-| 新浪网           | 热榜         | sina           | ![https://api-hot.imsyy.top/sina](https://img.shields.io/website.svg?label=sina&url=https://api-hot.imsyy.top/sina&cacheSeconds=7200)                               |
-| 新浪新闻         | 热点榜       | sina-news      | ![https://api-hot.imsyy.top/sina-news](https://img.shields.io/website.svg?label=sina-news&url=https://api-hot.imsyy.top/sina-news&cacheSeconds=7200)                |
-| 网易新闻         | 热点榜       | netease-news   | ![https://api-hot.imsyy.top/netease-news](https://img.shields.io/website.svg?label=netease-news&url=https://api-hot.imsyy.top/netease-news&cacheSeconds=7200)       |
-| 吾爱破解         | 榜单         | 52pojie        | ![https://api-hot.imsyy.top/52pojie](https://img.shields.io/website.svg?label=52pojie&url=https://api-hot.imsyy.top/52pojie&cacheSeconds=7200)                      |
-| 全球主机交流     | 榜单         | hostloc        | ![https://api-hot.imsyy.top/hostloc](https://img.shields.io/website.svg?label=hostloc&url=https://api-hot.imsyy.top/hostloc&cacheSeconds=7200)                      |
-| 虎嗅             | 24小时       | huxiu          | ![https://api-hot.imsyy.top/huxiu](https://img.shields.io/website.svg?label=huxiu&url=https://api-hot.imsyy.top/huxiu&cacheSeconds=7200)                            |
-| 酷安             | 热榜         | coolapk        | ![https://api-hot.imsyy.top/coolapk](https://img.shields.io/website.svg?label=coolapk&url=https://api-hot.imsyy.top/coolapk&cacheSeconds=7200)                      |
-| 虎扑             | 步行街热帖   | hupu           | ![https://api-hot.imsyy.top/hupu](https://img.shields.io/website.svg?label=hupu&url=https://api-hot.imsyy.top/hupu&cacheSeconds=7200)                               |
-| 爱范儿           | 快讯         | ifanr          | ![https://api-hot.imsyy.top/ifanr](https://img.shields.io/website.svg?label=ifanr&url=https://api-hot.imsyy.top/ifanr&cacheSeconds=7200)                            |
-| 英雄联盟         | 更新公告     | lol            | ![https://api-hot.imsyy.top/lol](https://img.shields.io/website.svg?label=lol&url=https://api-hot.imsyy.top/lol&cacheSeconds=7200)                                  |
-| 米游社           | 最新消息     | miyoushe       | ![https://api-hot.imsyy.top/miyoushe](https://img.shields.io/website.svg?label=miyoushe&url=https://api-hot.imsyy.top/miyoushe&cacheSeconds=7200)                   |
-| 原神             | 最新消息     | genshin        | ![https://api-hot.imsyy.top/genshin](https://img.shields.io/website.svg?label=genshin&url=https://api-hot.imsyy.top/genshin&cacheSeconds=7200)                      |
-| 崩坏3            | 最新动态     | honkai         | ![https://api-hot.imsyy.top/honkai](https://img.shields.io/website.svg?label=honkai&url=https://api-hot.imsyy.top/honkai&cacheSeconds=7200)                         |
-| 崩坏：星穹铁道   | 最新动态     | starrail       | ![https://api-hot.imsyy.top/starrail](https://img.shields.io/website.svg?label=starrail&url=https://api-hot.imsyy.top/starrail&cacheSeconds=7200)                   |
-| 微信读书         | 飙升榜       | weread         | ![https://api-hot.imsyy.top/weread](https://img.shields.io/website.svg?label=weread&url=https://api-hot.imsyy.top/weread&cacheSeconds=7200)                         |
-| NGA              | 热帖         | ngabbs         | ![https://api-hot.imsyy.top/ngabbs](https://img.shields.io/website.svg?label=ngabbs&url=https://api-hot.imsyy.top/ngabbs&cacheSeconds=7200)                         |
-| V2EX             | 主题榜       | v2ex           | ![https://api-hot.imsyy.top/v2ex](https://img.shields.io/website.svg?label=v2ex&url=https://api-hot.imsyy.top/v2ex&cacheSeconds=7200)                               |
-| HelloGitHub      | Trending     | hellogithub    | ![https://api-hot.imsyy.top/hellogithub](https://img.shields.io/website.svg?label=hellogithub&url=https://api-hot.imsyy.top/hellogithub&cacheSeconds=7200)          |
-| 中央气象台       | 全国气象预警 | weatheralarm   | ![https://api-hot.imsyy.top/weatheralarm](https://img.shields.io/website.svg?label=weatheralarm&url=https://api-hot.imsyy.top/weatheralarm&cacheSeconds=7200)       |
-| 中国地震台       | 地震速报     | earthquake     | ![https://api-hot.imsyy.top/earthquake](https://img.shields.io/website.svg?label=earthquake&url=https://api-hot.imsyy.top/earthquake&cacheSeconds=7200)             |
-| 历史上的今天     | 月-日        | history        | ![https://api-hot.imsyy.top/history](https://img.shields.io/website.svg?label=history&url=https://api-hot.imsyy.top/history&cacheSeconds=7200)                      |
+| 哔哩哔哩         | 热门榜       | bilibili       | ![https://newsapi.tnnevol.cn/bilibili](https://img.shields.io/website.svg?label=bilibili&url=https://newsapi.tnnevol.cn/bilibili&cacheSeconds=7200)                   |
+| AcFun            | 排行榜       | acfun          | ![https://newsapi.tnnevol.cn/acfun](https://img.shields.io/website.svg?label=acfun&url=https://newsapi.tnnevol.cn/acfun&cacheSeconds=7200)                            |
+| 微博             | 热搜榜       | weibo          | ![https://newsapi.tnnevol.cn/weibo](https://img.shields.io/website.svg?label=weibo&url=https://newsapi.tnnevol.cn/weibo&cacheSeconds=7200)                            |
+| 知乎             | 热榜         | zhihu          | ![https://newsapi.tnnevol.cn/zhihu](https://img.shields.io/website.svg?label=zhihu&url=https://newsapi.tnnevol.cn/zhihu&cacheSeconds=7200)                            |
+| 知乎日报         | 推荐榜       | zhihu-daily    | ![https://newsapi.tnnevol.cn/zhihu-daily](https://img.shields.io/website.svg?label=zhihu-daily&url=https://newsapi.tnnevol.cn/zhihu-daily&cacheSeconds=7200)          |
+| 百度             | 热搜榜       | baidu          | ![https://newsapi.tnnevol.cn/baidu](https://img.shields.io/website.svg?label=baidu&url=https://newsapi.tnnevol.cn/baidu&cacheSeconds=7200)                            |
+| 抖音             | 热点榜       | douyin         | ![https://newsapi.tnnevol.cn/douyin](https://img.shields.io/website.svg?label=douyin&url=https://newsapi.tnnevol.cn/douyin&cacheSeconds=7200)                         |
+| 快手             | 热点榜       | kuaishou       | ![https://newsapi.tnnevol.cn/kuaishou](https://img.shields.io/website.svg?label=kuaishou&url=https://newsapi.tnnevol.cn/kuaishou&cacheSeconds=7200)                   |
+| 豆瓣电影         | 新片榜       | douban-movie   | ![https://newsapi.tnnevol.cn/douban-movie](https://img.shields.io/website.svg?label=douban-movie&url=https://newsapi.tnnevol.cn/douban-movie&cacheSeconds=7200)       |
+| 豆瓣讨论小组     | 讨论精选     | douban-group   | ![https://newsapi.tnnevol.cn/douban-group](https://img.shields.io/website.svg?label=douban-group&url=https://newsapi.tnnevol.cn/douban-group&cacheSeconds=7200)       |
+| 百度贴吧         | 热议榜       | tieba          | ![https://newsapi.tnnevol.cn/tieba](https://img.shields.io/website.svg?label=tieba&url=https://newsapi.tnnevol.cn/tieba&cacheSeconds=7200)                            |
+| 少数派           | 热榜         | sspai          | ![https://newsapi.tnnevol.cn/sspai](https://img.shields.io/website.svg?label=sspai&url=https://newsapi.tnnevol.cn/sspai&cacheSeconds=7200)                            |
+| IT之家           | 热榜         | ithome         | ![https://newsapi.tnnevol.cn/ithome](https://img.shields.io/website.svg?label=ithome&url=https://newsapi.tnnevol.cn/ithome&cacheSeconds=7200)                         |
+| IT之家「喜加一」 | 最新动态     | ithome-xijiayi | ![https://newsapi.tnnevol.cn/ithome-xijiayi](https://img.shields.io/website.svg?label=ithome-xijiayi&url=https://newsapi.tnnevol.cn/ithome-xijiayi&cacheSeconds=7200) |
+| 简书             | 热门推荐     | jianshu        | ![https://newsapi.tnnevol.cn/jianshu](https://img.shields.io/website.svg?label=jianshu&url=https://newsapi.tnnevol.cn/jianshu&cacheSeconds=7200)                      |
+| 果壳             | 热门文章     | guokr          | ![https://newsapi.tnnevol.cn/guokr](https://img.shields.io/website.svg?label=guokr&url=https://newsapi.tnnevol.cn/guokr&cacheSeconds=7200)                            |
+| 澎湃新闻         | 热榜         | thepaper       | ![https://newsapi.tnnevol.cn/thepaper](https://img.shields.io/website.svg?label=thepaper&url=https://newsapi.tnnevol.cn/thepaper&cacheSeconds=7200)                   |
+| 今日头条         | 热榜         | toutiao        | ![https://newsapi.tnnevol.cn/toutiao](https://img.shields.io/website.svg?label=toutiao&url=https://newsapi.tnnevol.cn/toutiao&cacheSeconds=7200)                      |
+| 36 氪            | 热榜         | 36kr           | ![https://newsapi.tnnevol.cn/36kr](https://img.shields.io/website.svg?label=36kr&url=https://newsapi.tnnevol.cn/36kr&cacheSeconds=7200)                               |
+| 51CTO            | 推荐榜       | 51cto          | ![https://newsapi.tnnevol.cn/51cto](https://img.shields.io/website.svg?label=51cto&url=https://newsapi.tnnevol.cn/51cto&cacheSeconds=7200)                            |
+| CSDN             | 排行榜       | csdn           | ![https://newsapi.tnnevol.cn/csdn](https://img.shields.io/website.svg?label=csdn&url=https://newsapi.tnnevol.cn/csdn&cacheSeconds=7200)                               |
+| NodeSeek         | 最新动态     | nodeseek       | ![https://newsapi.tnnevol.cn/nodeseek](https://img.shields.io/website.svg?label=nodeseek&url=https://newsapi.tnnevol.cn/nodeseek&cacheSeconds=7200)                   |
+| 稀土掘金         | 热榜         | juejin         | ![https://newsapi.tnnevol.cn/juejin](https://img.shields.io/website.svg?label=juejin&url=https://newsapi.tnnevol.cn/juejin&cacheSeconds=7200)                         |
+| 腾讯新闻         | 热点榜       | qq-news        | ![https://newsapi.tnnevol.cn/qq-news](https://img.shields.io/website.svg?label=qq-news&url=https://newsapi.tnnevol.cn/qq-news&cacheSeconds=7200)                      |
+| 新浪网           | 热榜         | sina           | ![https://newsapi.tnnevol.cn/sina](https://img.shields.io/website.svg?label=sina&url=https://newsapi.tnnevol.cn/sina&cacheSeconds=7200)                               |
+| 新浪新闻         | 热点榜       | sina-news      | ![https://newsapi.tnnevol.cn/sina-news](https://img.shields.io/website.svg?label=sina-news&url=https://newsapi.tnnevol.cn/sina-news&cacheSeconds=7200)                |
+| 网易新闻         | 热点榜       | netease-news   | ![https://newsapi.tnnevol.cn/netease-news](https://img.shields.io/website.svg?label=netease-news&url=https://newsapi.tnnevol.cn/netease-news&cacheSeconds=7200)       |
+| 吾爱破解         | 榜单         | 52pojie        | ![https://newsapi.tnnevol.cn/52pojie](https://img.shields.io/website.svg?label=52pojie&url=https://newsapi.tnnevol.cn/52pojie&cacheSeconds=7200)                      |
+| 全球主机交流     | 榜单         | hostloc        | ![https://newsapi.tnnevol.cn/hostloc](https://img.shields.io/website.svg?label=hostloc&url=https://newsapi.tnnevol.cn/hostloc&cacheSeconds=7200)                      |
+| 虎嗅             | 24小时       | huxiu          | ![https://newsapi.tnnevol.cn/huxiu](https://img.shields.io/website.svg?label=huxiu&url=https://newsapi.tnnevol.cn/huxiu&cacheSeconds=7200)                            |
+| 酷安             | 热榜         | coolapk        | ![https://newsapi.tnnevol.cn/coolapk](https://img.shields.io/website.svg?label=coolapk&url=https://newsapi.tnnevol.cn/coolapk&cacheSeconds=7200)                      |
+| 虎扑             | 步行街热帖   | hupu           | ![https://newsapi.tnnevol.cn/hupu](https://img.shields.io/website.svg?label=hupu&url=https://newsapi.tnnevol.cn/hupu&cacheSeconds=7200)                               |
+| 爱范儿           | 快讯         | ifanr          | ![https://newsapi.tnnevol.cn/ifanr](https://img.shields.io/website.svg?label=ifanr&url=https://newsapi.tnnevol.cn/ifanr&cacheSeconds=7200)                            |
+| 英雄联盟         | 更新公告     | lol            | ![https://newsapi.tnnevol.cn/lol](https://img.shields.io/website.svg?label=lol&url=https://newsapi.tnnevol.cn/lol&cacheSeconds=7200)                                  |
+| 米游社           | 最新消息     | miyoushe       | ![https://newsapi.tnnevol.cn/miyoushe](https://img.shields.io/website.svg?label=miyoushe&url=https://newsapi.tnnevol.cn/miyoushe&cacheSeconds=7200)                   |
+| 原神             | 最新消息     | genshin        | ![https://newsapi.tnnevol.cn/genshin](https://img.shields.io/website.svg?label=genshin&url=https://newsapi.tnnevol.cn/genshin&cacheSeconds=7200)                      |
+| 崩坏3            | 最新动态     | honkai         | ![https://newsapi.tnnevol.cn/honkai](https://img.shields.io/website.svg?label=honkai&url=https://newsapi.tnnevol.cn/honkai&cacheSeconds=7200)                         |
+| 崩坏：星穹铁道   | 最新动态     | starrail       | ![https://newsapi.tnnevol.cn/starrail](https://img.shields.io/website.svg?label=starrail&url=https://newsapi.tnnevol.cn/starrail&cacheSeconds=7200)                   |
+| 微信读书         | 飙升榜       | weread         | ![https://newsapi.tnnevol.cn/weread](https://img.shields.io/website.svg?label=weread&url=https://newsapi.tnnevol.cn/weread&cacheSeconds=7200)                         |
+| NGA              | 热帖         | ngabbs         | ![https://newsapi.tnnevol.cn/ngabbs](https://img.shields.io/website.svg?label=ngabbs&url=https://newsapi.tnnevol.cn/ngabbs&cacheSeconds=7200)                         |
+| V2EX             | 主题榜       | v2ex           | ![https://newsapi.tnnevol.cn/v2ex](https://img.shields.io/website.svg?label=v2ex&url=https://newsapi.tnnevol.cn/v2ex&cacheSeconds=7200)                               |
+| HelloGitHub      | Trending     | hellogithub    | ![https://newsapi.tnnevol.cn/hellogithub](https://img.shields.io/website.svg?label=hellogithub&url=https://newsapi.tnnevol.cn/hellogithub&cacheSeconds=7200)          |
+| 中央气象台       | 全国气象预警 | weatheralarm   | ![https://newsapi.tnnevol.cn/weatheralarm](https://img.shields.io/website.svg?label=weatheralarm&url=https://newsapi.tnnevol.cn/weatheralarm&cacheSeconds=7200)       |
+| 中国地震台       | 地震速报     | earthquake     | ![https://newsapi.tnnevol.cn/earthquake](https://img.shields.io/website.svg?label=earthquake&url=https://newsapi.tnnevol.cn/earthquake&cacheSeconds=7200)             |
+| 历史上的今天     | 月-日        | history        | ![https://newsapi.tnnevol.cn/history](https://img.shields.io/website.svg?label=history&url=https://newsapi.tnnevol.cn/history&cacheSeconds=7200)                      |
 
 </details>
 
@@ -105,7 +115,7 @@ serveHotApi(3000);
 
 ## ⚙️ 部署
 
-具体使用说明可参考 [我的博客](https://blog.imsyy.top/posts/2024/0408)，下方仅讲解基础操作：
+具体使用说明可参考 [我的博客](https://halo.tnnevol.cn/posts/2024/0408)，下方仅讲解基础操作：
 
 ### Docker 部署
 
@@ -127,10 +137,10 @@ docker-compose up -d
 
 ```bash
 # 拉取
-docker pull imsyy/dailyhot-api:latest
+docker pull tnnevol/DailyHotApi:latest
 
 # 运行
-docker run --restart always -p 6688:6688 -d imsyy/dailyhot-api:latest
+docker run tnnevol/DailyHotApi:latest
 ```
 
 ### 手动部署
@@ -140,7 +150,7 @@ docker run --restart always -p 6688:6688 -d imsyy/dailyhot-api:latest
 #### 安装
 
 ```bash
-git clone https://github.com/imsyy/DailyHotApi.git
+git clone https://github.com/tnnevol/DailyHotApi.git
 cd DailyHotApi
 ```
 
@@ -178,7 +188,7 @@ sh ./deploy.sh
 
 ### Vercel 部署
 
-本项目支持通过 `Vercel` 进行一键部署，点击下方按钮或前往 [项目仓库](https://github.com/imsyy/DailyHotApi-Vercel) 进行手动部署
+本项目支持通过 `Vercel` 进行一键部署，点击下方按钮或前往 [项目仓库](https://github.com/tnnevol/DailyHotApi-Vercel) 进行手动部署
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/imsyys-projects/clone?repository-url=https%3A%2F%2Fgithub.com%2Fimsyy%2FDailyHotApi-Vercel)
 
@@ -210,4 +220,4 @@ sh ./deploy.sh
 
 ## ⭐ Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=imsyy/DailyHotApi&type=Date)](https://star-history.com/#imsyy/DailyHotApi&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=tnnevol/DailyHotApi&type=Date)](https://star-history.com/#tnnevol/DailyHotApi&Date)

@@ -33,7 +33,7 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
 
     // 设置 GBK 编码（吾爱破解使用 GBK）
     const html = response.data;
-    const $ = load(html, { decodeEntities: false });
+    const $ = load(html);
     
     const hotThreads = $('tbody[id^="normalthread_"]');
     const items: ListItem[] = [];

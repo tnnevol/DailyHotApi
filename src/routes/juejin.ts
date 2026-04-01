@@ -65,10 +65,10 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
       fromCache: false,
       updateTime: new Date().toISOString(),
       data: dataList
-        .filter((item) => item.content?.title)
-        .map((item, index) => {
-          const articleId = item.content?.content_id || "";
-          const title = item.content?.title || "";
+        .filter((item: any) => item.content?.title)
+        .map((item: any, index: number) => {
+          const articleId = (item.content as any)?.content_id || "";
+          const title = (item.content as any)?.title || "";
           const articleUrl = `https://juejin.cn/post/${articleId}`;
           
           const listItem: ListItem = {

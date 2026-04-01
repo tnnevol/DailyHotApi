@@ -15,7 +15,7 @@
     "url": "git+https://github.com/imsyy/DailyHotApi.git"
   },
   "license": "MIT",
-  "author": "imsyy",
+  "author": "tnnevol",
   "main": "dist/index.js",
   "declaration": true,
   "declarationMap": true,

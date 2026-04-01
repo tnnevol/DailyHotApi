@@ -1,6 +1,6 @@
 import type { RouterData, ListContext, Options, RouterResType, ListItem } from "../types.js";
 import axios from "axios";
-import cheerio from "cheerio";
+import { load } from "cheerio";
 import logger from "../utils/logger.js";
 
 export const handleRoute = async (c: ListContext, noCache: boolean) => {
@@ -32,7 +32,7 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
     });
 
     const html = response.data;
-    const $ = cheerio.load(html);
+    const $ = load(html);
     
     const items: ListItem[] = [];
     

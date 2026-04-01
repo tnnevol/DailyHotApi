@@ -48,7 +48,7 @@ export const config: Config = {
   CACHE_TTL: getNumericEnvVariable("CACHE_TTL", 3600),
   REQUEST_TIMEOUT: getNumericEnvVariable("REQUEST_TIMEOUT", 6000),
   ALLOWED_DOMAIN: getEnvVariable("ALLOWED_DOMAIN") || "*",
-  ALLOWED_HOST: getEnvVariable("ALLOWED_HOST") || "imsyy.top",
+  ALLOWED_HOST: getEnvVariable("ALLOWED_HOST") || "tnnevol.cn",
   USE_LOG_FILE: getBooleanEnvVariable("USE_LOG_FILE", true),
   RSS_MODE: getBooleanEnvVariable("RSS_MODE", false),
   REDIS_HOST: getEnvVariable("REDIS_HOST") || "127.0.0.1",

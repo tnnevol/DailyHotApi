@@ -193,7 +193,7 @@ const Layout: FC = (props) => {
                 />
               </svg>
             </a>
-            <a href="https://www.imsyy.top" className="link" target="_blank">
+            <a href="https://halo.tnnevol.cn" className="link" target="_blank">
               <svg
                 className="btn-icon"
                 xmlns="http://www.w3.org/2000/svg"
@@ -207,7 +207,7 @@ const Layout: FC = (props) => {
                 />
               </svg>
             </a>
-            <a href="mailto:one@imsyy.top" className="link">
+            <a href="mailto:greecenew@foxmail.com" className="link">
               <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
                 <path
                   fill="currentColor"

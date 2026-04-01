@@ -55,7 +55,7 @@ const Home: FC = () => {
             window.location.href = "/all";
           });
           document.getElementById("docs-button").addEventListener("click", () => {
-            window.open("https://blog.imsyy.top/posts/2024/0408");
+            window.open("https://halo.tnnevol.cn");
           });
         </script>
       `}
