@@ -13,36 +13,32 @@ jobs:
     steps:
       - name: Fetch and push hot news
         run: |
-          # ========== 调试日志：环境变量 ==========
-          echo "===== 环境变量检查 ====="
-          echo "WEBHOOK_BASE: ${WEBHOOK_BASE}"
-          echo "WEBHOOK_TOKEN: ${WEBHOOK_TOKEN:0:10}...（已脱敏）"
-          echo "DINGTALK_GROUP_ID: ${DINGTALK_GROUP_ID}"
-          echo "========================"
-          
-          # 定义要推送的平台
-          PLATFORMS="weibo zhihu douyin baidu bilibili"
+          # 定义要推送的平台（6 个稳定平台）
+          PLATFORMS="baidu weibo zhihu douyin bilibili sspai"
           
           # 构建 Webhook URL
           WEBHOOK_URL="${WEBHOOK_BASE}/hooks/agent"
-          echo "WEBHOOK_URL: ${WEBHOOK_URL}"
           
           # 构建消息内容
-          MESSAGE="📰 **每日新闻热榜 TOP5** - $(date +'%Y-%m-%d %H:%M:%S')\n\n"
-          
-          # 获取各平台热榜（只获取成功的，失败的不显示）
+          MESSAGE="📰 每日新闻热榜 - $(date +'%Y-%m-%d %H:%M')\n\n"
           SUCCESS_COUNT=0
+          
+          # 统一调用 newsapi.tnnevol.cn
           for platform in $PLATFORMS; do
-            echo "🔍 Fetching $platform..."
+            echo "🔍 Fetching $platform from newsapi.tnnevol.cn..."
             
-            # 百度使用 hot_news 的接口（更稳定）
-            if [ "$platform" = "baidu" ]; then
-              RESPONSE=$(curl -s "https://orz.ai/api/v1/dailynews/?platform=baidu" || echo '{"status":"500"}')
-              STATUS=$(echo "$RESPONSE" | jq -r '.status // "500"')
-              if [ "$STATUS" = "200" ]; then
-                DATA=$(echo "$RESPONSE" | jq -r '.data')
-                MESSAGE+="【百度热搜】\n"
-                for i in $(seq 0 4); do
+            RESPONSE=$(curl -s "https://newsapi.tnnevol.cn/$platform" || echo '{"code":500}')
+            CODE=$(echo "$RESPONSE" | jq -r '.code // 500')
+            TITLE=$(echo "$RESPONSE" | jq -r '.title // "Unknown"')
+            
+            if [ "$CODE" = "200" ]; then
+              DATA=$(echo "$RESPONSE" | jq -r '.data // []')
+              COUNT=$(echo "$DATA" | jq -r 'length')
+              
+              if [ "$COUNT" -gt 0 ]; then
+                MESSAGE+="【$TITLE】\n"
+                # 取前 5 条
+                for i in $(seq 0 $(($COUNT < 5 ? $COUNT - 1 : 4))); do
                   ITEM_TITLE=$(echo "$DATA" | jq -r ".[$i].title" | sed 's/["\]//g')
                   MESSAGE+="$((i + 1)). $ITEM_TITLE\n"
                 done
@@ -52,49 +48,22 @@ jobs:
             fi
           done
           
-          # 如果没有成功获取任何数据，使用默认消息
+          # 如果没有数据，使用默认消息
           if [ "$SUCCESS_COUNT" -eq 0 ]; then
-            MESSAGE="【每日热榜】\n暂无数据，请稍后再试。\n"
+            MESSAGE="暂无数据，请稍后再试。\n"
           fi
           
-          # 添加尾部信息（简化）
-          MESSAGE+="\n-- 自动推送"
+          MESSAGE+="-- 自动推送 by DailyHotApi"
           
-          # ========== 调试日志：完整消息内容 ==========
-          echo "===== 完整消息内容 ====="
-          echo -e "$MESSAGE"
-          echo "========================"
-          echo ""
-          
-          # 推送到 OpenClaw Webhook
-          echo "📡 Sending to DingTalk via: $WEBHOOK_URL"
-          echo "Message length: $(echo -e "$MESSAGE" | wc -c) bytes"
-          
-          # 使用 jq 正确转义 JSON 字符串
+          # 使用 jq 正确转义 JSON
           MESSAGE_JSON=$(echo -e "$MESSAGE" | jq -Rs '.')
-          echo "Message JSON: $MESSAGE_JSON"
           
-          # 构建完整 payload
-          PAYLOAD="{\"message\":${MESSAGE_JSON},\"name\":\"DailyHot\",\"agentId\":\"main\",\"wakeMode\":\"now\",\"deliver\":true,\"channel\":\"dingtalk-connector\",\"to\":\"$DINGTALK_GROUP_ID\"}"
-          echo "Payload length: $(echo "$PAYLOAD" | wc -c) bytes"
-          
-          # 发送请求（详细模式）
-          WEBHOOK_RESPONSE=$(curl -v -s -w "\n|||HTTP_CODE:%{http_code}" -X POST "$WEBHOOK_URL" \
+          # 发送 Webhook
+          echo "📡 Sending to DingTalk..."
+          curl -s -X POST "$WEBHOOK_URL" \
             -H "Authorization: Bearer $WEBHOOK_TOKEN" \
             -H 'Content-Type: application/json' \
-            -d "$PAYLOAD" 2>&1)
-          
-          HTTP_CODE=$(echo "$WEBHOOK_RESPONSE" | grep -o '|||HTTP_CODE:[0-9]*' | cut -d':' -f2)
-          RESPONSE_BODY=$(echo "$WEBHOOK_RESPONSE" | grep -v '|||HTTP_CODE:' | grep -v '^<' | grep -v '^>' | grep -v '^\*')
-          
-          echo "HTTP Status: $HTTP_CODE"
-          echo "Response: $RESPONSE_BODY"
-          
-          if [ "$HTTP_CODE" = "200" ]; then
-            echo "✅ Webhook push successful!"
-          else
-            echo "❌ Webhook request failed with status: $HTTP_CODE"
-          fi
+            -d "{\"message\":${MESSAGE_JSON},\"name\":\"DailyHot\",\"agentId\":\"main\",\"wakeMode\":\"now\",\"deliver\":true,\"channel\":\"dingtalk-connector\",\"to\":\"$DINGTALK_GROUP_ID\"}"
           
           echo "✅ Push completed!"
 
