@@ -1,4 +1,3 @@
-import RobotDing from '@tnnevol/robot-ding';
 import axios from 'axios';
 
 interface NewsItem {
@@ -33,6 +32,8 @@ class DingTalkPusher {
       throw new Error('DINGTALK_WEBHOOK_URL 环境变量未设置');
     }
 
+    // 动态导入模块以兼容 ES 模块环境
+    const { default: RobotDing } = require('@tnnevol/robot-ding');
     this.robot = new RobotDing({
       webhook: webhookUrl,
       secret: secret,
