@@ -94,6 +94,38 @@
 
 ## ⚙️ 使用
 
+### 🔐 API 鉴权
+
+**默认所有 API 接口需要 Token 验证**（`/health` 和 `/all` 除外）
+
+**传递 Token**:
+```bash
+# 方式 1: URL 参数（推荐）
+curl "http://localhost:6688/baidu?token=YOUR_API_TOKEN"
+
+# 方式 2: HTTP Header
+curl -H "Authorization: Bearer YOUR_API_TOKEN" "http://localhost:6688/baidu"
+```
+
+**配置 Token**:
+```bash
+# .env.local（本地配置，禁止提交）
+API_TOKEN=your-secret-token-here
+
+# .env.development（开发配置，可提交占位符）
+API_TOKEN=<YOUR_API_TOKEN>
+```
+
+**错误响应**:
+```json
+{
+  "code": 401,
+  "message": "Unauthorized: Invalid or missing token"
+}
+```
+
+---
+
 ### 开发环境
 
 **本地开发（推荐）**:
