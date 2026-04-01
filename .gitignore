@@ -3,6 +3,7 @@
 
 # Skills 目录（不提交）
 skills/
+skills-lock.json
 
 # Docker 覆盖配置（不提交）
 docker-compose.override.yml
