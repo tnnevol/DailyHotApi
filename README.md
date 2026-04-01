@@ -211,6 +211,25 @@ serveHotApi(3000);
 
 具体使用说明可参考 [我的博客](https://halo.tnnevol.cn/posts/2024/0408)，下方仅讲解基础操作：
 
+## 🤖 自动推送
+
+本项目支持自动推送热门新闻到钉钉群：
+
+- **推送方式**: GitHub Actions 定时任务
+- **推送内容**: 每日热门新闻排行榜
+- **推送格式**: 钉钉 feedCard 类型消息
+- **推送时间**: 每天早上 8:00 (北京时间)
+- **依赖包**: [@tnnevol/robot-ding](https://www.npmjs.com/package/@tnnevol/robot-ding)
+
+### 配置钉钉推送
+
+1. 创建钉钉自定义机器人
+2. 获取 Webhook URL 和 Secret
+3. 在 GitHub 仓库的 Secrets 中配置：
+   - `DINGTALK_WEBHOOK_URL`: 钉钉机器人 Webhook 地址
+   - `DINGTALK_SECRET`: 钉钉机器人密钥（可选）
+   - `API_TOKEN`: API 访问令牌
+
 ### Docker 部署
 
 > 安装及配置 Docker 将不在此处说明，请自行解决
