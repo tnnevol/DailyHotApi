@@ -11,7 +11,21 @@ jobs:
   push-hot-news:
     runs-on: ubuntu-latest
     steps:
-      - name: Fetch and push hot news
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Fetch and push hot news via DingTalk bot
         run: |
           # ========== 环境变量 ==========
           echo "===== 开始执行 ====="
@@ -22,20 +36,19 @@ jobs:
           # 定义要推送的平台（6 个稳定平台）
           PLATFORMS="baidu weibo zhihu douyin bilibili sspai"
 
-          # 构建 Webhook URL
-          WEBHOOK_URL="${WEBHOOK_BASE}/hooks/agent"
-
-          # 构建消息内容
-          MESSAGE="📰 每日新闻热榜 - $(date +'%Y-%m-%d %H:%M')\n\n"
+          # 统计成功推送数量
           SUCCESS_COUNT=0
 
-          # 统一调用 newsapi.tnnevol.cn
+          # 安装依赖
+          pnpm add @tnnevol/robot-ding
+
+          # 遍历平台并推送钉钉feedCard消息
           for platform in $PLATFORMS; do
             echo ""
-            echo "🔍 获取：$platform"
+            echo "🔍 获取：$platform 并推送至钉钉"
             
-            # 添加 token 参数
-            RESPONSE=$(curl -s "https://newsapi.tnnevol.cn/$platform?token=${API_TOKEN}" || echo '{"code":500}')
+            # 检查数据并推送
+            RESPONSE=$(curl -s "https://newsapi.tnnevol.cn/$platform?token=${{ secrets.API_TOKEN }}" || echo '{"code":500}')
             CODE=$(echo "$RESPONSE" | jq -r '.code // 500')
             TITLE=$(echo "$RESPONSE" | jq -r '.title // "Unknown"')
             
@@ -48,65 +61,33 @@ jobs:
               echo "  数据条数：$COUNT"
               
               if [ "$COUNT" -gt 0 ]; then
-                MESSAGE+="【$TITLE】\n"
-                echo "  ✅ 成功，添加 $TITLE"
+                echo "  ✅ 成功，推送 $TITLE 到钉钉"
                 
-                # 取前 5 条
-                for i in $(seq 0 $(($COUNT < 5 ? $COUNT - 1 : 4))); do
-                  ITEM_TITLE=$(echo "$DATA" | jq -r ".[$i].title" | sed 's/["\]//g')
-                  MESSAGE+="$((i + 1)). $ITEM_TITLE\n"
-                done
-                MESSAGE+="\n"
-                SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
+                # 使用 Node.js 脚本发送钉钉feedCard消息
+                node scripts/dingtalk-push.js $platform
+                
+                if [ $? -eq 0 ]; then
+                  SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
+                  echo "  ✅ 钉钉推送成功"
+                else
+                  echo "  ❌ 钉钉推送失败"
+                fi
               else
-                echo "  ⚠️ 数据为空"
+                echo "  ⚠️ 数据为空，跳过推送"
               fi
             else
-              echo "  ❌ 失败：$CODE"
+              echo "  ❌ 获取数据失败：$CODE"
             fi
           done
 
           echo ""
           echo "===== 汇总 ====="
-          echo "成功平台数：$SUCCESS_COUNT / 6"
-
-          # 如果没有数据，使用默认消息
-          if [ "$SUCCESS_COUNT" -eq 0 ]; then
-            MESSAGE="暂无数据，请稍后再试。\n"
-            echo "⚠️ 无可用数据，使用默认消息"
-          fi
-
-          MESSAGE+="-- 自动推送 by DailyHotApi"
-
-          # 使用 jq 正确转义 JSON
-          MESSAGE_JSON=$(echo -e "$MESSAGE" | jq -Rs '.')
-          echo ""
-          echo "===== 消息预览 ====="
-          echo -e "$MESSAGE"
-          echo "===================="
-          echo ""
-
-          # 发送 Webhook
-          echo "📡 发送到钉钉..."
-          WEBHOOK_RESULT=$(curl -s -w "\nHTTP_CODE:%{http_code}" -X POST "$WEBHOOK_URL" \
-            -H "Authorization: Bearer $WEBHOOK_TOKEN" \
-            -H 'Content-Type: application/json' \
-            -d "{\"message\":${MESSAGE_JSON},\"name\":\"DailyHot\",\"agentId\":\"main\",\"wakeMode\":\"now\",\"deliver\":true,\"channel\":\"dingtalk-connector\",\"to\":\"$DINGTALK_GROUP_ID\"}")
-
-          HTTP_CODE=$(echo "$WEBHOOK_RESULT" | grep "HTTP_CODE:" | cut -d':' -f2)
-          echo "响应状态码：$HTTP_CODE"
-
-          if [ "$HTTP_CODE" = "200" ]; then
-            echo "✅ 推送成功！"
-          else
-            echo "❌ 推送失败：HTTP $HTTP_CODE"
-          fi
+          echo "成功推送平台数：$SUCCESS_COUNT / 6"
 
           echo ""
           echo "===== 执行完成 ====="
 
 env:
-  WEBHOOK_BASE: ${{ secrets.WEBHOOK_BASE }}
-  WEBHOOK_TOKEN: ${{ secrets.WEBHOOK_TOKEN }}
-  DINGTALK_GROUP_ID: ${{ secrets.DINGTALK_GROUP_ID }}
+  DINGTALK_WEBHOOK_URL: ${{ secrets.DINGTALK_WEBHOOK_URL }}
+  DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
   API_TOKEN: ${{ secrets.API_TOKEN }}

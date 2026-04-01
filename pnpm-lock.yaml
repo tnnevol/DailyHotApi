@@ -11,6 +11,9 @@ importers:
       '@hono/node-server':
         specifier: ^1.17.1
         version: 1.19.12(hono@4.12.9)
+      '@tnnevol/robot-ding':
+        specifier: ^5.2.9
+        version: 5.2.9(axios@1.14.0)(crypto-js@4.2.0)(typescript@5.9.3)
       axios:
         specifier: ^1.11.0
         version: 1.14.0
@@ -340,6 +343,17 @@ packages:
   '@so-ric/colorspace@1.1.6':
     resolution: {integrity: sha512-/KiKkpHNOBgkFJwu9sh48LkHSMYGyuTcSFK/qMBdnOAlrRJzRSXAOFB5qwzaVQuDl8wAvHVMkaASQDReTahxuw==}
 
+  '@tnnevol/robot-ding@5.2.9':
+    resolution: {integrity: sha512-kxumlr2XGvfzlBtBTUx3Ghj86OjCeH7Bzz0JMUouakWZKsai2tleMrdcE2twF2dIrFy419ZFsIxeVMQ+Ft8Hzg==}
+    engines: {node: '>=6.0.0'}
+    peerDependencies:
+      axios: ^0.24.0
+      crypto-js: ^4.0.2
+      typescript: ^4.8.4
+
+  '@types/crypto-js@4.2.2':
+    resolution: {integrity: sha512-sDOLlVbHhXpAUAL0YHDUUwDZf3iN4Bwi4W6a0W0b+QcAezUbRtH4FVb+9J4h+XFPW7l/gQ9F8qC7P+Ec4k8QVQ==}
+
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
 
@@ -545,6 +559,9 @@ packages:
 
   crypt@0.0.2:
     resolution: {integrity: sha512-mCxBlsHFYh9C+HVpiEacem8FEBnMXgU9gy4zmNC+SXAZNB/1idgp/aulFJ4FgCi7GPEVbfyng092GqL2k2rmow==}
+
+  crypto-js@4.2.0:
+    resolution: {integrity: sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==}
 
   css-select@5.2.2:
     resolution: {integrity: sha512-TizTzUddG/xYLA3NXodFM0fSbNizXjOKhqiQQwvhlspadZokn1KDy0NZFS0wuEubIYAV5/c1/lAr0TaaFXEXzw==}
@@ -1343,6 +1360,15 @@ snapshots:
       color: 5.0.3
       text-hex: 1.0.0
 
+  '@tnnevol/robot-ding@5.2.9(axios@1.14.0)(crypto-js@4.2.0)(typescript@5.9.3)':
+    dependencies:
+      '@types/crypto-js': 4.2.2
+      axios: 1.14.0
+      crypto-js: 4.2.0
+      typescript: 5.9.3
+
+  '@types/crypto-js@4.2.2': {}
+
   '@types/estree@1.0.8': {}
 
   '@types/json-schema@7.0.15': {}
@@ -1581,6 +1607,8 @@ snapshots:
       which: 2.0.2
 
   crypt@0.0.2: {}
+
+  crypto-js@4.2.0: {}
 
   css-select@5.2.2:
     dependencies:
