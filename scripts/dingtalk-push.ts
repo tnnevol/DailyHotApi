@@ -33,7 +33,9 @@ class DingTalkPusher {
       throw new Error('DINGTALK_WEBHOOK_URL 环境变量未设置');
     }
 
-    this.robot = new (require('@tnnevol/robot-ding').DingTalkRobot)({
+    // 动态导入模块以兼容 ES 模块环境
+    const { DingTalkRobot } = require('@tnnevol/robot-ding');
+    this.robot = new DingTalkRobot({
       webhook: webhookUrl,
       secret: secret,
     });
