@@ -280,7 +280,7 @@ description: <技能描述>
 ### Git 忽略
 
 - ✅ `skills/` 目录已添加到 `.gitignore`（不提交）
-- ❌ `skills-lock.json` 已从 `.gitignore` 中移除（需要提交）
+- ✅ `skills-lock.json` 已添加到 `.gitignore`（不提交）
 
 ---
 
