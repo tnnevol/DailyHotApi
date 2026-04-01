@@ -1,4 +1,4 @@
-import { DingTalkRobot } from '@tnnevol/robot-ding';
+import RobotDing from '@tnnevol/robot-ding';
 import axios from 'axios';
 
 interface NewsItem {
@@ -33,7 +33,7 @@ class DingTalkPusher {
       throw new Error('DINGTALK_WEBHOOK_URL 环境变量未设置');
     }
 
-    this.robot = new DingTalkRobot({
+    this.robot = new RobotDing({
       webhook: webhookUrl,
       secret: secret,
     });
