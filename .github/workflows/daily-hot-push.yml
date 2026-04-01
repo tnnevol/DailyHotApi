@@ -13,11 +13,19 @@ jobs:
     steps:
       - name: Fetch and push hot news
         run: |
+          # ========== 调试日志：环境变量 ==========
+          echo "===== 环境变量检查 ====="
+          echo "WEBHOOK_BASE: ${WEBHOOK_BASE}"
+          echo "WEBHOOK_TOKEN: ${WEBHOOK_TOKEN:0:10}...（已脱敏）"
+          echo "DINGTALK_GROUP_ID: ${DINGTALK_GROUP_ID}"
+          echo "========================"
+          
           # 定义要推送的平台
           PLATFORMS="weibo zhihu douyin baidu bilibili"
           
           # 构建 Webhook URL
           WEBHOOK_URL="${WEBHOOK_BASE}/hooks/agent"
+          echo "WEBHOOK_URL: ${WEBHOOK_URL}"
           
           # 构建消息内容
           MESSAGE="📰 **每日新闻热榜 TOP5** - $(date +'%Y-%m-%d %H:%M:%S')\n\n"
@@ -103,9 +111,11 @@ jobs:
           # 添加尾部信息
           MESSAGE+="\n---\n🤖 自动推送 | 数据来源：DailyHotApi"
           
-          # 输出最终消息（用于调试）
-          echo "📤 Final message:"
+          # ========== 调试日志：完整消息内容 ==========
+          echo "===== 完整消息内容 ====="
           echo -e "$MESSAGE"
+          echo "========================"
+          echo ""
           
           # 推送到 OpenClaw Webhook
           echo "📡 Sending to DingTalk via: $WEBHOOK_URL"
