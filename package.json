@@ -29,12 +29,12 @@
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint .",
-    "dev": "dotenv -e .env.local -- cross-env NODE_ENV=development tsx watch --no-cache src/index.ts",
-    "dev:cache": "dotenv -e .env.local -- cross-env NODE_ENV=development tsx watch src/index.ts",
-    "dev:prod": "dotenv -e .env.production -- cross-env NODE_ENV=production tsx watch --no-cache src/index.ts",
+    "dev:local": "dotenv -e .env.local -- tsx watch --no-cache src/index.ts",
+    "dev": "dotenv -e .env.development -- tsx watch --no-cache src/index.ts",
+    "dev:cache": "dotenv -e .env.development -- tsx watch src/index.ts",
     "build": "tsc --project tsconfig.json",
-    "start": "dotenv -e .env.local -- cross-env NODE_ENV=development node dist/index.js",
-    "start:prod": "dotenv -e .env.production -- cross-env NODE_ENV=production node dist/index.js"
+    "start:local": "dotenv -e .env.local -- node dist/index.js",
+    "start": "dotenv -e .env.development -- node dist/index.js"
   },
   "type": "module",
   "dependencies": {
