@@ -11,6 +11,7 @@ import robotstxt from "./robots.txt.js";
 import NotFound from "./views/NotFound.js";
 import Home from "./views/Home.js";
 import Error from "./views/Error.js";
+import { authMiddleware } from "./middleware/auth.js";
 
 const app = new Hono();
 
@@ -22,6 +23,9 @@ app.use(prettyJSON());
 
 // 尾部斜杠重定向
 app.use(trimTrailingSlash());
+
+// Token 验证中间件（仅对 /api 路由生效）
+app.use("/api/*", authMiddleware);
 
 // CORS
 app.use(

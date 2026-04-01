@@ -38,8 +38,8 @@ RUN ln -s /app/logs /logs
 COPY --from=builder --chown=hono:nodejs /app/node_modules /app/node_modules
 COPY --from=builder --chown=hono:nodejs /app/dist /app/dist
 COPY --from=builder /app/public /app/public
-COPY --from=builder /app/.env /app/.env
 COPY --from=builder /app/package.json /app/package.json
+# 注意：.env 文件不再复制，使用运行时环境变量
 
 # 切换用户
 USER hono
@@ -47,5 +47,5 @@ USER hono
 # 暴露端口
 EXPOSE 6688
 
-# 运行
+# 运行（环境变量从 docker-compose 或 docker run 注入）
 CMD ["node", "/app/dist/index.js"]

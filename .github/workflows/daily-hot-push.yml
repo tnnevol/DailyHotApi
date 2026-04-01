@@ -34,7 +34,8 @@ jobs:
             echo ""
             echo "🔍 获取：$platform"
             
-            RESPONSE=$(curl -s "https://newsapi.tnnevol.cn/$platform" || echo '{"code":500}')
+            # 添加 token 参数
+            RESPONSE=$(curl -s "https://newsapi.tnnevol.cn/$platform?token=${API_TOKEN}" || echo '{"code":500}')
             CODE=$(echo "$RESPONSE" | jq -r '.code // 500')
             TITLE=$(echo "$RESPONSE" | jq -r '.title // "Unknown"')
             
@@ -108,3 +109,4 @@ env:
   WEBHOOK_BASE: ${{ secrets.WEBHOOK_BASE }}
   WEBHOOK_TOKEN: ${{ secrets.WEBHOOK_TOKEN }}
   DINGTALK_GROUP_ID: ${{ secrets.DINGTALK_GROUP_ID }}
+  API_TOKEN: ${{ secrets.API_TOKEN }}

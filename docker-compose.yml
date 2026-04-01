@@ -11,5 +11,6 @@ services:
       - "./logs:/app/logs"
     environment:
       - PORT=6688
+      - API_TOKEN=${API_TOKEN:-your-default-token-change-in-production}
     user: "114514"
     restart: always
