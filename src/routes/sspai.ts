@@ -1,20 +1,15 @@
-import type { RouterData, ListContext, Options } from "../types.js";
-import { get } from "../utils/getData.js";
-import { getTime } from "../utils/getTime.js";
+import type { RouterData, ListContext, Options, RouterResType, ListItem } from "../types.js";
+import axios from "axios";
+import logger from "../utils/logger.js";
 
 export const handleRoute = async (c: ListContext, noCache: boolean) => {
-  const type = c.req.query("type") || "热门文章";
-  const listData = await getList({ type }, noCache);
+  const listData = await getList({}, noCache);
   const routeData: RouterData = {
     name: "sspai",
     title: "少数派",
-    type: "热榜",
-    params: {
-      type: {
-        name: "分类",
-        type: ["热门文章", "应用推荐", "生活方式", "效率技巧", "少数派播客"],
-      },
-    },
+    type: "热门文章",
+    description: "高效工作，品质生活",
+    params: {},
     link: "https://sspai.com/",
     total: listData.data?.length || 0,
     ...listData,
@@ -22,41 +17,77 @@ export const handleRoute = async (c: ListContext, noCache: boolean) => {
   return routeData;
 };
 
-interface SspaiAuthor {
-  nickname: string;
-}
-
+// 少数派响应类型
 interface SspaiItem {
-  id: string;
-  title: string;
-  summary: string;
-  banner: string;
-  author: SspaiAuthor;
-  released_time: number;
-  like_count: number;
+  id?: number;
+  title?: string;
+  summary?: string;
+  author?: {
+    nickname?: string;
+  };
+  released_time?: number;
 }
 
 interface SspaiResponse {
-  data: SspaiItem[];
+  data?: SspaiItem[];
 }
 
-const getList = async (options: Options, noCache: boolean) => {
-  const { type } = options;
-  const url = `https://sspai.com/api/v1/article/tag/page/get?limit=40&tag=${type}`;
-  const result = await get<SspaiResponse>({ url, noCache });
-  const list = result.data.data;
-  return {
-    ...result,
-    data: list.map((v) => ({
-      id: v.id,
-      title: v.title,
-      desc: v.summary,
-      cover: v.banner,
-      author: v.author.nickname,
-      timestamp: getTime(v.released_time),
-      hot: v.like_count,
-      url: `https://sspai.com/post/${v.id}`,
-      mobileUrl: `https://sspai.com/post/${v.id}`,
-    })),
-  };
+const getList = async (options: Options, noCache: boolean): Promise<RouterResType> => {
+  const url = "https://sspai.com/api/v1/article/index/page/get?limit=20&offset=0&created_at=0";
+  
+  try {
+    const response = await axios.get<SspaiResponse>(url, {
+      timeout: 10000,
+      httpsAgent: false,
+      headers: {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Referer": "https://sspai.com/",
+      },
+    });
+
+    const items = response.data?.data || [];
+    
+    if (!items || items.length === 0) {
+      logger.warn('少数派接口返回空数据');
+      return {
+        fromCache: false,
+        updateTime: new Date().toISOString(),
+        data: [],
+      };
+    }
+
+    logger.info(`少数派获取成功，共 ${items.length} 条`);
+
+    return {
+      fromCache: false,
+      updateTime: new Date().toISOString(),
+      data: items
+        .filter((item) => item.id && item.title)
+        .map((item, index) => {
+          const articleId = item.id || 0;
+          const articleUrl = `https://sspai.com/post/${articleId}`;
+          
+          const listItem: ListItem = {
+            id: articleId,
+            title: item.title || "",
+            desc: item.summary || "",
+            cover: undefined,
+            hot: undefined,
+            timestamp: item.released_time || undefined,
+            url: articleUrl,
+            mobileUrl: articleUrl,
+          };
+          return listItem;
+        }),
+    };
+  } catch (error: any) {
+    logger.error(`少数派获取失败：${error.message || error}`);
+    
+    return {
+      fromCache: false,
+      updateTime: new Date().toISOString(),
+      data: [],
+      message: `少数派接口暂时不可用：${error.message || '未知错误'}`,
+    };
+  }
 };

@@ -1,14 +1,15 @@
-import type { RouterData } from "../types.js";
-import { get } from "../utils/getData.js";
-import { getTime } from "../utils/getTime.js";
-import { config } from "../config.js"
+import type { RouterData, ListContext, Options, RouterResType, ListItem } from "../types.js";
+import axios from "axios";
+import logger from "../utils/logger.js";
 
-export const handleRoute = async (_: undefined, noCache: boolean) => {
-  const listData = await getList(noCache);
+export const handleRoute = async (c: ListContext, noCache: boolean) => {
+  const listData = await getList({}, noCache);
   const routeData: RouterData = {
     name: "zhihu",
     title: "知乎",
     type: "热榜",
+    description: "有问题，就会有答案",
+    params: {},
     link: "https://www.zhihu.com/hot",
     total: listData.data?.length || 0,
     ...listData,
@@ -16,55 +17,83 @@ export const handleRoute = async (_: undefined, noCache: boolean) => {
   return routeData;
 };
 
-interface ZhihuTarget {
-  id: string;
-  title: string;
-  excerpt: string;
-  created: number;
-  url: string;
+// 知乎热榜响应类型
+interface ZhihuQuestion {
+  id?: number;
+  title?: string;
+  url?: string;
 }
 
-interface ZhihuChild {
-  thumbnail: string;
+interface ZhihuTarget {
+  question?: ZhihuQuestion;
+  excerpt?: string;
 }
 
 interface ZhihuItem {
-  target: ZhihuTarget;
-  children: ZhihuChild[];
-  detail_text: string;
+  target?: ZhihuTarget;
 }
 
 interface ZhihuResponse {
-  data: ZhihuItem[];
+  data?: ZhihuItem[];
 }
 
-const getList = async (noCache: boolean) => {
-  const url = `https://api.zhihu.com/topstory/hot-lists/total?limit=50`;
-  const result = await get<ZhihuResponse>({
-      url,
-      noCache,
-      ...(config.ZHIHU_COOKIE && {
-        headers: {
-          Cookie: config.ZHIHU_COOKIE
-        }
-      })
+const getList = async (options: Options, noCache: boolean): Promise<RouterResType> => {
+  const url = "https://www.zhihu.com/api/v3/explore/guest/feeds?limit=30&ws_qiangzhisafe=0";
+  
+  try {
+    const response = await axios.get<ZhihuResponse>(url, {
+      timeout: 10000,
+      httpsAgent: false,
+      headers: {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Referer": "https://www.zhihu.com",
+      },
     });
-  const list = result.data.data;
-  return {
-    ...result,
-    data: list.map((v) => {
-      const data = v.target;
-      const questionId = data.url.split("/").pop();
+
+    const items = response.data?.data || [];
+    
+    if (!items || items.length === 0) {
+      logger.warn('知乎热榜接口返回空数据');
       return {
-        id: data.id,
-        title: data.title,
-        desc: data.excerpt,
-        cover: v.children[0].thumbnail,
-        timestamp: getTime(data.created),
-        hot: parseFloat(v.detail_text.split(" ")[0]) * 10000,
-        url: `https://www.zhihu.com/question/${questionId}`,
-        mobileUrl: `https://www.zhihu.com/question/${questionId}`,
+        fromCache: false,
+        updateTime: new Date().toISOString(),
+        data: [],
       };
-    }),
-  };
+    }
+
+    logger.info(`知乎热榜获取成功，共 ${items.length} 条`);
+
+    return {
+      fromCache: false,
+      updateTime: new Date().toISOString(),
+      data: items
+        .filter((item) => item.target?.question?.title)
+        .map((item, index) => {
+          const question = item.target!.question!;
+          const title = question.title || "";
+          const questionId = question.id || index;
+          
+          const listItem: ListItem = {
+            id: questionId,
+            title: title,
+            desc: item.target?.excerpt || "",
+            cover: undefined,
+            hot: undefined,
+            timestamp: undefined,
+            url: `https://www.zhihu.com/question/${questionId}`,
+            mobileUrl: `https://www.zhihu.com/question/${questionId}`,
+          };
+          return listItem;
+        }),
+    };
+  } catch (error: any) {
+    logger.error(`知乎热榜获取失败：${error.message || error}`);
+    
+    return {
+      fromCache: false,
+      updateTime: new Date().toISOString(),
+      data: [],
+      message: `知乎热榜接口暂时不可用：${error.message || '未知错误'}`,
+    };
+  }
 };
