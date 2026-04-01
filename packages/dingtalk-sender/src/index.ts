@@ -1,5 +1,5 @@
 import axios from 'axios';
-import RobotDing from '@tnnevol/robot-ding';
+import { default as RobotDing } from '@tnnevol/robot-ding';
 
 interface NewsItem {
   id: string;
