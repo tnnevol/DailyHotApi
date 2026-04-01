@@ -1,4 +1,6 @@
-import DingTalkSender from './cli.ts';
+#!/usr/bin/env node
+
+import DingTalkSender from './index.js';
 
 async function main(): Promise<void> {
   try {
