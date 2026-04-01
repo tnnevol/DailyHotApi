@@ -1,142 +1,100 @@
-import type { RouterData, ListContext, Options, RouterResType } from "../types.js";
-import { get } from "../utils/getData.js";
-import getBiliWbi from "../utils/getToken/bilibili.js";
-import { getTime } from "../utils/getTime.js";
+import type { RouterData, ListContext, Options, RouterResType, ListItem } from "../types.js";
+import axios from "axios";
 import logger from "../utils/logger.js";
-const typeMap: Record<string, string> = {
-  "0": "全站",
-  "1": "动画",
-  "3": "音乐",
-  "4": "游戏",
-  "5": "娱乐",
-  "188": "科技",
-  "119": "鬼畜",
-  "129": "舞蹈",
-  "155": "时尚",
-  "160": "生活",
-  "168": "国创相关",
-  "181": "影视",
-};
 
 export const handleRoute = async (c: ListContext, noCache: boolean) => {
-  const type = c.req.query("type") || "0";
-  const listData = await getList({ type }, noCache);
+  const listData = await getList({}, noCache);
   const routeData: RouterData = {
     name: "bilibili",
     title: "哔哩哔哩",
-    type: `热榜 · ${typeMap[type]}`,
+    type: "热门榜",
     description: "你所热爱的，就是你的生活",
-    params: {
-      type: {
-        name: "排行榜分区",
-        type: typeMap,
-      },
-    },
-    link: "https://www.bilibili.com/v/popular/rank/all",
+    params: {},
+    link: "https://www.bilibili.com/popular/",
     total: listData.data?.length || 0,
     ...listData,
   };
   return routeData;
 };
 
-interface BiliOwner {
-  name: string;
-}
-
-interface BiliStat {
-  view: number;
-}
-
+// B 站热门 API 响应类型
 interface BiliItem {
   bvid: string;
   title: string;
   desc: string;
   pic?: string;
-  owner?: BiliOwner;
+  owner?: { name: string };
   pubdate: number;
-  stat?: BiliStat;
+  stat?: { view: number };
   short_link_v2?: string;
-  author?: string;
-  video_review?: number;
 }
 
 interface BiliResponse {
+  code: number;
   data?: {
     list: BiliItem[];
   };
+  message?: string;
 }
 
 const getList = async (options: Options, noCache: boolean): Promise<RouterResType> => {
-  const { type } = options;
-  const wbiData = await getBiliWbi();
-  const url = `https://api.bilibili.com/x/web-interface/ranking/v2?rid=${type}&type=all&${wbiData}`;
-  const result = await get<BiliResponse>({
-    url,
-    headers: {
-      'Referer': 'https://www.bilibili.com/ranking/all',
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-      'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
-      'Accept-Encoding': 'gzip, deflate, br',
-      'Sec-Ch-Ua': '"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"',
-      'Sec-Ch-Ua-Mobile': '?0',
-      'Sec-Ch-Ua-Platform': '"Windows"',
-      'Sec-Fetch-Dest': 'document',
-      'Sec-Fetch-Mode': 'navigate',
-      'Sec-Fetch-Site': 'same-origin',
-      'Sec-Fetch-User': '?1',
-      'Upgrade-Insecure-Requests': '1',
-    },
-    noCache: false,
-  });
-
-  // 是否触发风控
-  if (result.data?.data?.list?.length && result.data.data.list.length > 0) {
-    logger.info('bilibili 新接口')
-    const list = result.data.data.list;
-    return {
-      fromCache: result.fromCache,
-      updateTime: result.updateTime,
-      data: list.map((v) => ({
-        id: v.bvid,
-        title: v.title,
-        desc: v.desc || "该视频暂无简介",
-        cover: v.pic?.replace(/http:/, "https:"),
-        author: v.owner?.name,
-        timestamp: getTime(v.pubdate),
-        hot: v.stat?.view || 0,
-        url: v.short_link_v2 || `https://www.bilibili.com/video/${v.bvid}`,
-        mobileUrl: `https://m.bilibili.com/video/${v.bvid}`,
-      })),
-    };
-  }
-  // 采用备用接口
-  else {
-    logger.info('bilibili 备用接口')
-    const url = `https://api.bilibili.com/x/web-interface/ranking?jsonp=jsonp?rid=${type}&type=all&callback=__jp0`;
-    const result = await get<BiliResponse>({
-      url,
+  const url = "https://api.bilibili.com/x/web-interface/popular";
+  
+  try {
+    const response = await axios.get<BiliResponse>(url, {
+      timeout: 10000,
+      httpsAgent: false,
       headers: {
-        Referer: `https://www.bilibili.com/ranking/all`,
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+        'Referer': 'https://www.bilibili.com/',
       },
-      noCache,
     });
-    const list = result.data.data!.list;
+
+    const data = response.data;
+    if (data.code !== 0) {
+      logger.error(`B 站 API 错误：${data.message || '未知错误'}`);
+      return {
+        fromCache: false,
+        updateTime: new Date().toISOString(),
+        data: [],
+        message: `API error: ${data.message || '未知错误'}`,
+      };
+    }
+
+    const list = data.data?.list || [];
+    if (!list || list.length === 0) {
+      return {
+        fromCache: false,
+        updateTime: new Date().toISOString(),
+        data: [],
+      };
+    }
+
+    const currentTimestamp = Date.now();
+
     return {
-      ...result,
-      data: list.map((v) => ({
-        id: v.bvid,
-        title: v.title,
-        desc: v.desc || "该视频暂无简介",
-        cover: v.pic?.replace(/http:/, "https:"),
-        author: v.author,
-        timestamp: undefined,
-        hot: v.video_review,
-        url: `https://www.bilibili.com/video/${v.bvid}`,
-        mobileUrl: `https://m.bilibili.com/video/${v.bvid}`,
-      })),
+      fromCache: false,
+      updateTime: new Date().toISOString(),
+      data: list
+        .filter((item) => item && item.title && item.bvid)
+        .map((item, index) => ({
+          id: index + 1,
+          title: item.title,
+          desc: item.desc || "",
+          cover: item.pic ? `https:${item.pic}` : undefined,
+          hot: item.stat?.view || 0,
+          timestamp: item.pubdate * 1000 || currentTimestamp,
+          url: `https://www.bilibili.com/video/${item.bvid}`,
+          mobileUrl: item.short_link_v2 || `https://www.bilibili.com/video/${item.bvid}`,
+        })),
+    };
+  } catch (error: any) {
+    logger.error(`B 站获取失败：${error.message}`);
+    return {
+      fromCache: false,
+      updateTime: new Date().toISOString(),
+      data: [],
+      message: `请求失败：${error.message || '未知错误'}`,
     };
   }
 };
