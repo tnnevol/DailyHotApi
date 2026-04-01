@@ -4,8 +4,18 @@ import { Hono } from "hono";
 import getRSS from "./utils/getRSS.js";
 import path from "path";
 import fs from "fs";
+import { authMiddleware } from "./middleware/auth.js";
 
 const app = new Hono();
+
+// 公开接口（无需鉴权）- 在鉴权中间件之前注册
+app.get("/health", (c) => c.json({ status: "healthy", version: "2.0.8" }));
+app.get("/all", (c) => c.json({ code: 200, count: 0, routes: [] }));
+
+// 全局应用 Token 鉴权中间件（仅保护 API 路由）
+app.use("/health", async (c, next) => await next());
+app.use("/all", async (c, next) => await next());
+app.use("/*", authMiddleware);
 
 // 模拟 __dirname
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -91,26 +101,6 @@ for (let index = 0; index < allRoutePath.length; index++) {
   listApp.all("*", (c) => c.json({ code: 405, message: "Method Not Allowed" }, 405));
 }
 
-// 获取全部路由
-app.get("/all", (c) =>
-  c.json(
-    {
-      code: 200,
-      count: allRoutePath.length,
-      routes: allRoutePath.map((path) => {
-        // 是否处于排除名单
-        if (excludeRoutes.includes(path)) {
-          return {
-            name: path,
-            path: undefined,
-            message: "This interface is temporarily offline",
-          };
-        }
-        return { name: path, path: `/${path}` };
-      }),
-    },
-    200,
-  ),
-);
+
 
 export default app;

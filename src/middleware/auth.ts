@@ -1,5 +1,4 @@
 import type { Context, Next } from "hono";
-import { env } from "hono/adapter";
 import logger from "../utils/logger.js";
 
 /**
@@ -7,7 +6,8 @@ import logger from "../utils/logger.js";
  * 验证 URL 参数中的 token 是否匹配环境变量 API_TOKEN
  */
 export const authMiddleware = async (c: Context, next: Next) => {
-  const { API_TOKEN } = env<{ API_TOKEN: string }>(c);
+  // 从 process.env 读取 API_TOKEN（dotenv 已加载）
+  const API_TOKEN = process.env.API_TOKEN;
 
   // 如果没有配置 API_TOKEN，跳过验证
   if (!API_TOKEN) {
