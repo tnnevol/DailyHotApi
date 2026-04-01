@@ -30,86 +30,35 @@ jobs:
           # 构建消息内容
           MESSAGE="📰 **每日新闻热榜 TOP5** - $(date +'%Y-%m-%d %H:%M:%S')\n\n"
           
-          # 获取各平台热榜
+          # 获取各平台热榜（只获取成功的，失败的不显示）
+          SUCCESS_COUNT=0
           for platform in $PLATFORMS; do
             echo "🔍 Fetching $platform..."
             
             # 百度使用 hot_news 的接口（更稳定）
             if [ "$platform" = "baidu" ]; then
-              RESPONSE=$(curl -s "https://orz.ai/api/v1/dailynews/?platform=baidu" || echo '{"status":"500","msg":"Request failed"}')
-              # 解析 hot_news 格式
+              RESPONSE=$(curl -s "https://orz.ai/api/v1/dailynews/?platform=baidu" || echo '{"status":"500"}')
               STATUS=$(echo "$RESPONSE" | jq -r '.status // "500"')
               if [ "$STATUS" = "200" ]; then
-                TITLE="百度热搜"
                 DATA=$(echo "$RESPONSE" | jq -r '.data')
-                COUNT=$(echo "$DATA" | jq -r 'length')
-                MESSAGE+="🔥 **百度热搜**\n"
-                for i in $(seq 0 $(($COUNT < 5 ? $COUNT - 1 : 4))); do
-                  ITEM_TITLE=$(echo "$DATA" | jq -r ".[$i].title")
-                  SCORE=$(echo "$DATA" | jq -r ".[$i].score // 0")
-                  URL=$(echo "$DATA" | jq -r ".[$i].url // \"\"")
-                  if [ "$SCORE" != "null" ] && [ "$SCORE" != "0" ]; then
-                    if [ "$SCORE" -ge 100000000 ]; then
-                      SCORE_FORMATTED="$(echo "scale=2; $SCORE / 100000000" | bc)亿"
-                    elif [ "$SCORE" -ge 10000 ]; then
-                      SCORE_FORMATTED="$(echo "scale=2; $SCORE / 10000" | bc)万"
-                    else
-                      SCORE_FORMATTED="$SCORE"
-                    fi
-                    MESSAGE+="  $((i + 1)). $ITEM_TITLE 🔥 $SCORE_FORMATTED\n"
-                  else
-                    MESSAGE+="  $((i + 1)). $ITEM_TITLE\n"
-                  fi
+                MESSAGE+="【百度热搜】\n"
+                for i in $(seq 0 4); do
+                  ITEM_TITLE=$(echo "$DATA" | jq -r ".[$i].title" | sed 's/["\]//g')
+                  MESSAGE+="$((i + 1)). $ITEM_TITLE\n"
                 done
                 MESSAGE+="\n"
-              else
-                MSG=$(echo "$RESPONSE" | jq -r '.msg // "Unknown error"')
-                MESSAGE+="❌ 百度热搜 获取失败：$MSG\n\n"
-                echo "⚠️ Error fetching baidu: $MSG"
-              fi
-            else
-              # 其他平台使用 DailyHotApi 公共接口
-              RESPONSE=$(curl -s "https://api-hot.imsyy.top/$platform?limit=5" || echo '{"code":500,"message":"Request failed"}')
-              
-              # 解析数据
-              CODE=$(echo "$RESPONSE" | jq -r '.code // 500')
-              TITLE=$(echo "$RESPONSE" | jq -r '.title // "Unknown"')
-              
-              if [ "$CODE" = "200" ]; then
-                MESSAGE+="🔥 **$TITLE**\n"
-                
-                # 解析每条热榜
-                COUNT=$(echo "$RESPONSE" | jq -r '.data | length')
-                for i in $(seq 0 $((COUNT - 1))); do
-                  ITEM_TITLE=$(echo "$RESPONSE" | jq -r ".data[$i].title")
-                  HOT=$(echo "$RESPONSE" | jq -r ".data[$i].hot // 0")
-                  URL=$(echo "$RESPONSE" | jq -r ".data[$i].url // \"\"")
-                  
-                  # 格式化热度数字
-                  if [ "$HOT" != "null" ] && [ "$HOT" != "0" ]; then
-                    if [ "$HOT" -ge 100000000 ]; then
-                      HOT_FORMATTED="$(echo "scale=2; $HOT / 100000000" | bc)亿"
-                    elif [ "$HOT" -ge 10000 ]; then
-                      HOT_FORMATTED="$(echo "scale=2; $HOT / 10000" | bc)万"
-                    else
-                      HOT_FORMATTED="$HOT"
-                    fi
-                    MESSAGE+="  $((i + 1)). $ITEM_TITLE 🔥 $HOT_FORMATTED\n"
-                  else
-                    MESSAGE+="  $((i + 1)). $ITEM_TITLE\n"
-                  fi
-                done
-                MESSAGE+="\n"
-              else
-                ERROR_MSG=$(echo "$RESPONSE" | jq -r '.message // "Unknown error"')
-                MESSAGE+="❌ $TITLE 获取失败：$ERROR_MSG\n\n"
-                echo "⚠️ Error fetching $platform: $ERROR_MSG"
+                SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
               fi
             fi
           done
           
-          # 添加尾部信息
-          MESSAGE+="\n---\n🤖 自动推送 | 数据来源：DailyHotApi"
+          # 如果没有成功获取任何数据，使用默认消息
+          if [ "$SUCCESS_COUNT" -eq 0 ]; then
+            MESSAGE="【每日热榜】\n暂无数据，请稍后再试。\n"
+          fi
+          
+          # 添加尾部信息（简化）
+          MESSAGE+="\n-- 自动推送"
           
           # ========== 调试日志：完整消息内容 ==========
           echo "===== 完整消息内容 ====="
@@ -119,26 +68,28 @@ jobs:
           
           # 推送到 OpenClaw Webhook
           echo "📡 Sending to DingTalk via: $WEBHOOK_URL"
+          echo "Message length: $(echo -e "$MESSAGE" | wc -c) bytes"
           
           # 使用 jq 正确转义 JSON 字符串
           MESSAGE_JSON=$(echo -e "$MESSAGE" | jq -Rs '.')
+          echo "Message JSON: $MESSAGE_JSON"
           
-          WEBHOOK_RESPONSE=$(curl -s -w "|||HTTP_CODE:%{http_code}" -X POST "$WEBHOOK_URL" \
-            -H 'Authorization: Bearer $WEBHOOK_TOKEN' \
+          # 构建完整 payload
+          PAYLOAD="{\"message\":${MESSAGE_JSON},\"name\":\"DailyHot\",\"agentId\":\"main\",\"wakeMode\":\"now\",\"deliver\":true,\"channel\":\"dingtalk-connector\",\"to\":\"$DINGTALK_GROUP_ID\"}"
+          echo "Payload length: $(echo "$PAYLOAD" | wc -c) bytes"
+          
+          # 发送请求（详细模式）
+          WEBHOOK_RESPONSE=$(curl -v -s -w "\n|||HTTP_CODE:%{http_code}" -X POST "$WEBHOOK_URL" \
+            -H "Authorization: Bearer $WEBHOOK_TOKEN" \
             -H 'Content-Type: application/json' \
-            -d "{
-              \"message\": ${MESSAGE_JSON},
-              \"name\": \"DailyHot\",
-              \"agentId\": \"main\",
-              \"wakeMode\": \"now\",
-              \"deliver\": true,
-              \"channel\": \"dingtalk-connector\",
-              \"to\": \"$DINGTALK_GROUP_ID\"
-            }")
+            -d "$PAYLOAD" 2>&1)
+          
           HTTP_CODE=$(echo "$WEBHOOK_RESPONSE" | grep -o '|||HTTP_CODE:[0-9]*' | cut -d':' -f2)
-          RESPONSE_BODY=$(echo "$WEBHOOK_RESPONSE" | sed 's/|||HTTP_CODE:[0-9]*//')
-          echo "Response: $RESPONSE_BODY"
+          RESPONSE_BODY=$(echo "$WEBHOOK_RESPONSE" | grep -v '|||HTTP_CODE:' | grep -v '^<' | grep -v '^>' | grep -v '^\*')
+          
           echo "HTTP Status: $HTTP_CODE"
+          echo "Response: $RESPONSE_BODY"
+          
           if [ "$HTTP_CODE" = "200" ]; then
             echo "✅ Webhook push successful!"
           else
