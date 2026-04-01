@@ -1,6 +1,9 @@
-import RobotDing from '@tnnevol/robot-ding';
-import axios from 'axios';
+#!/usr/bin/env node
 
+const axios = require('axios');
+
+// 定义类型接口（仅作为注释参考）
+/*
 interface NewsItem {
   id: string;
   title: string;
@@ -24,34 +27,35 @@ interface FeedCardItem {
   messageURL: string;
   picURL: string;
 }
+*/
 
 class DingTalkPusher {
-  private robot: any; // 使用 any 类型避免类型冲突
-
-  constructor(webhookUrl: string, secret?: string) {
+  constructor(webhookUrl, secret) {
     if (!webhookUrl) {
       throw new Error('DINGTALK_WEBHOOK_URL 环境变量未设置');
     }
 
+    // 使用 require 动态加载模块以避免 ESM 导入问题
+    const RobotDing = require('@tnnevol/robot-ding').default;
     this.robot = new RobotDing({
       webhook: webhookUrl,
       secret: secret,
     });
   }
 
-  async getHotNews(platform: string, token: string, limit: number = 5): Promise<ApiResponse> {
+  async getHotNews(platform, token, limit = 5) {
     const apiUrl = `https://newsapi.tnnevol.cn/${platform}?token=${token}&limit=${limit}`;
     
     try {
-      const response = await axios.get<ApiResponse>(apiUrl);
+      const response = await axios.get(apiUrl);
       return response.data;
-    } catch (error: any) {
+    } catch (error) {
       console.error(`获取 ${platform} 数据失败:`, error.message);
       throw error;
     }
   }
 
-  async pushFeedCard(platform: string, token: string): Promise<boolean> {
+  async pushFeedCard(platform, token) {
     try {
       // 获取新闻数据
       const data = await this.getHotNews(platform, token);
@@ -63,7 +67,7 @@ class DingTalkPusher {
       }
 
       // 准备feedCard消息数据
-      const feedItems: FeedCardItem[] = data.data.slice(0, 4).map((item: NewsItem) => ({
+      const feedItems = data.data.slice(0, 4).map((item) => ({
         title: item.title.substring(0, 25) + (item.title.length > 25 ? '...' : ''), // 限制标题长度并添加省略号
         messageURL: item.url || '#',
         picURL: item.cover || 'https://cdn.jsdelivr.net/gh/tnnevol/DailyHotApi@main/public/favicon.png', // 使用默认图片
@@ -71,7 +75,7 @@ class DingTalkPusher {
 
       // 构建feedCard消息
       const message = {
-        msgtype: 'feedCard' as const,
+        msgtype: 'feedCard',
         feedCard: {
           links: feedItems
         }
@@ -86,7 +90,7 @@ class DingTalkPusher {
       console.log('Response:', result);
 
       return true;
-    } catch (error: any) {
+    } catch (error) {
       console.error('❌ 发送钉钉消息失败:', error.message);
       if (error.response) {
         console.error('Response data:', error.response.data);
@@ -98,7 +102,7 @@ class DingTalkPusher {
   }
 }
 
-async function main(): Promise<void> {
+async function main() {
   try {
     // 从环境变量获取配置
     const webhookUrl = process.env.DINGTALK_WEBHOOK_URL;
@@ -129,21 +133,21 @@ async function main(): Promise<void> {
       console.error(`❌ ${platform} 平台钉钉推送失败`);
       process.exit(1);
     }
-  } catch (error: any) {
+  } catch (error) {
     console.error('❌ 推送过程发生错误:', error.message);
     process.exit(1);
   }
 }
 
 // 检查是否直接运行此脚本
-const currentFile = import.meta.url.split('/').pop();
-const scriptFile = process.argv[1].split('/').pop();
+const currentFile = require('path').basename(__filename);
+const scriptFile = require('path').basename(process.argv[1]);
 
-if (currentFile && scriptFile && currentFile.includes('dingtalk-push.ts') && scriptFile.includes('dingtalk-push.ts')) {
+if (currentFile && scriptFile && currentFile.includes('dingtalk-push.js') && scriptFile.includes('dingtalk-push.js')) {
   main().catch(error => {
     console.error('❌ 推送过程发生错误:', error);
     process.exit(1);
   });
 }
 
-export default DingTalkPusher;
+module.exports = DingTalkPusher;
