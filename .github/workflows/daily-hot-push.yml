@@ -61,4 +61,4 @@ env:
   DINGTALK_WEBHOOK_URL: ${{ secrets.DINGTALK_WEBHOOK_URL }}
   DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
   API_TOKEN: ${{ secrets.API_TOKEN }}
-  PLATFORMS: ${{ vars.PLATFORMS || secrets.PLATFORMS || 'baidu,weibo,zhihu,douyin,bilibili,sspai,kuaishou,douban-movie,douban-group,tieba' }}
+  PLATFORMS: ${{ secrets.PLATFORMS || 'baidu,weibo,zhihu,douyin,bilibili,sspai,kuaishou,douban-movie,douban-group,tieba' }}
