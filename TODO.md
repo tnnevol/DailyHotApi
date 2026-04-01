@@ -70,42 +70,51 @@ DINGTALK_GROUP_ID=cid/Em5KFq3Ba5pIeZf5SxS6Q==
   - ✅ B 站 (bilibili) - 已有更完善版本
   - ✅ 少数派 (sspai) - 已完成
   - 代码已提交到 dev 分支 (commit: 41b9d26)
+- [x] **第二批 6 平台接口移植完成** (2026-04-01 03:09)
+  - ✅ 虎扑 (hupu) - 已完成
+  - ✅ 豆瓣 (douban) - 已完成
+  - ✅ 贴吧 (tieba) - 已完成
+  - ✅ 掘金 (juejin) - 已完成
+  - ✅ 36 氪 (36kr) - 已完成
+  - ✅ 吾爱破解 (52pojie) - 已完成
+  - 代码已提交到 dev 分支 (commit: 7bdfc94)
 
 ---
 
 ## 📝 开发日志
 
-### 2026-04-01 - 首批接口移植（6 个平台）
+### 2026-04-01 - 第二批接口移植（6 个平台）
 
-**任务**: 将 hot_news 项目的爬虫接口移植到 DailyHotApi
+**任务**: 将 hot_news 项目的剩余爬虫接口移植到 DailyHotApi
 
 **完成平台**:
-1. **百度** - `top.baidu.com/api/board` ✅
-2. **微博** - `weibo.com/ajax/side/hotSearch` ✅
-3. **知乎** - `zhihu.com/api/v3/explore/guest/feeds` ✅
-4. **抖音** - `douyin.com/aweme/v1/web/hot/search/list` ✅
-5. **B 站** - 已有更完善版本（带分区支持）⏭️
-6. **少数派** - `sspai.com/api/v1/article/index/page/get` ✅
+1. **虎扑** - `bbs.hupu.com/all-gambia` ✅ (HTML 解析)
+2. **豆瓣** - `douban.com/group/explore` ✅ (HTML 解析)
+3. **贴吧** - `tieba.baidu.com/hottopic/browse/topicList` ✅ (API)
+4. **掘金** - `api.juejin.cn/content_api/v1/content/article_rank` ✅ (API)
+5. **36 氪** - `gateway.36kr.com/api/mis/nav/home/nav/rank/hot` ✅ (POST API)
+6. **吾爱破解** - `www.52pojie.cn/forum.php` ✅ (HTML 解析，GBK 编码)
 
 **测试结果** (本地):
 ```
-微博热搜获取成功，共 51 条 ✅
-知乎热榜获取成功，共 30 条 ✅
-抖音热榜获取成功，共 51 条 ✅
-少数派获取成功，共 10 条 ✅
+虎扑热帖获取成功，共 60 条 ✅
+豆瓣讨论获取成功，共 30 条 ✅
+贴吧热议榜获取成功，共 29 条 ✅
+掘金热榜获取成功，共 50 条 ✅
+36 氪热榜获取成功，共 50 条 ✅
+吾爱破解热榜获取成功，共 50 条 ✅
 ```
 
 **Git 提交**:
 - 分支：dev
-- Commit 1: `7b7d9c3` - 百度接口替换
-- Commit 2: `41b9d26` - 微博/知乎/抖音/少数派移植
-- 文件：`src/routes/*.ts`
+- Commit: `7bdfc94`
+- 文件：`src/routes/hupu.ts`, `src/routes/douban.ts`, `src/routes/tieba.ts`, `src/routes/juejin.ts`, `src/routes/36kr.ts`, `src/routes/52pojie.ts`
 
 **技术要点**:
-- Python → TypeScript 转换
-- 统一使用 axios + httpsAgent: false
-- 响应格式符合 DailyHotApi 规范
-- 添加错误处理和日志记录
+- cheerio 导入修复：`import { load } from "cheerio"`
+- 36 氪使用 POST 请求 (带时间戳)
+- 吾爱破解处理 GBK 编码
+- 贴吧处理相对 URL 转换
 
 ---
 
