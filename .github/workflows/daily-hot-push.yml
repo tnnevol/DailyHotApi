@@ -40,37 +40,14 @@ jobs:
           echo "===== 开始执行 ====="
           echo "时间：$(date +'%Y-%m-%d %H:%M:%S')"
           echo "API 地址：https://newsapi.tnnevol.cn"
+          echo "平台列表：${PLATFORMS}"
           echo "========================"
-
-          # 定义要推送的平台（6 个稳定平台）
-          PLATFORMS="baidu weibo zhihu douyin bilibili sspai"
-
-          # 统计成功推送数量
-          SUCCESS_COUNT=0
 
           # 构建钉钉推送包
           pnpm run build:sender
-          
-          # 遍历平台并直接调用钉钉推送脚本（由脚本负责获取数据和推送）
-          for platform in $PLATFORMS; do
-            echo ""
-            echo "🔍 推送：$platform 至钉钉"
-            
-            # 运行构建后的钉钉推送包脚本（由脚本内部完成数据获取和推送）
-            if pnpm run start:sender $platform; then
-              SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
-              echo "  ✅ 钉钉推送成功"
-            else
-              echo "  ❌ 钉钉推送失败"
-            fi
-          done
 
-          echo ""
-          echo "===== 汇总 ====="
-          echo "成功推送平台数：$SUCCESS_COUNT / 6"
-
-          echo ""
-          echo "===== 执行完成 ====="
+          # 运行构建后的钉钉推送包脚本（由脚本内部完成数据获取和推送）
+          pnpm run start:sender
 
 env:
   DINGTALK_WEBHOOK_URL: ${{ secrets.DINGTALK_WEBHOOK_URL }}

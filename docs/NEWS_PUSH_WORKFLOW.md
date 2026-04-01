@@ -25,22 +25,20 @@ GitHub Actions (定时触发)
 输出汇总统计
 ```
 
-### 优化后架构（建议）
+### 优化后架构（已实现）
 
 ```
 GitHub Actions (定时触发) 
     ↓
-获取环境变量 (DINGTALK_WEBHOOK_URL, DINGTALK_SECRET, API_TOKEN)
+获取环境变量 (DINGTALK_WEBHOOK_URL, DINGTALK_SECRET, API_TOKEN, PLATFORMS)
     ↓
-遍历平台列表 (baidu weibo zhihu douyin bilibili sspai)
+调用 dingtalk-sender 脚本一次
     ↓
-对每个平台执行以下操作：
-    └── 调用钉钉推送脚本 (pnpm run start:sender $platform)
-        ├── 获取 API 数据 (单一请求)
-        ├── 检查响应状态
-        ├── 构建钉钉 feedCard 消息
-        ├── 发送钉钉消息
-        └── 返回推送结果
+脚本内部执行：
+    ├── 从环境变量读取平台列表
+    ├── 批量获取各平台数据（单次请求）
+    ├── 合并所有数据
+    └── 一次发送到钉钉
     ↓
 输出汇总统计
 ```
@@ -72,6 +70,61 @@ GitHub Actions (定时触发)
 | `DINGTALK_WEBHOOK_URL` | 钉钉机器人 Webhook 地址 | `https://oapi.dingtalk.com/robot/send?access_token=xxx` |
 | `DINGTALK_SECRET` | 钉钉机器人签名密钥 | `SECxxx` |
 | `API_TOKEN` | DailyHotApi 访问令牌 | `your-api-token` |
+
+### workflow 环境变量（PLATFORMS）
+
+`PLATFORMS` 环境变量在 workflow 中自动配置，定义需要推送的平台列表（逗号分隔）：
+
+```yaml
+env:
+  PLATFORMS: "baidu,weibo,zhihu,douyin,bilibili,sspai"
+```
+
+支持的平台列表：
+
+| 平台名称 | 说明 |
+|----------|------|
+| `baidu` | 百度热搜榜 |
+| `weibo` | 微博热搜榜 |
+| `zhihu` | 知乎热榜 |
+| `douyin` | 抖音热点榜 |
+| `bilibili` | 哔哩哔哩热门榜 |
+| `sspai` | 少数派热榜 |
+| `kuaishou` | 快手热点榜 |
+| `douban-movie` | 豆瓣电影新片榜 |
+| `douban-group` | 豆瓣讨论小组 |
+| `tieba` | 百度贴吧热议榜 |
+| `ithome` | IT之家热榜 |
+| `jianshu` | 简书热门推荐 |
+| `guokr` | 果壳热门文章 |
+| `thepaper` | 澎湃新闻热榜 |
+| `toutiao` | 今日头条热榜 |
+| `36kr` | 36氪热榜 |
+| `51cto` | 51CTO 推荐榜 |
+| `csdn` | CSDN 排行榜 |
+| `nodeseek` | NodeSeek 最新动态 |
+| `juejin` | 掘金热榜 |
+| `qq-news` | 腾讯新闻热点榜 |
+| `sina` | 新浪网热榜 |
+| `netease-news` | 网易新闻热点榜 |
+| `52pojie` | 吾爱破解榜单 |
+| `hostloc` | 全球主机交流榜单 |
+| `huxiu` | 虎嗅 24小时 |
+| `coolapk` | 酷安热榜 |
+| `hupu` | 虎扑步行街热帖 |
+| `ifanr` | 爱范儿快讯 |
+| `miyoushe` | 米游社最新消息 |
+| `genshin` | 原神最新消息 |
+| `starrail` | 星穹铁道最新动态 |
+| `weread` | 微信读书飙升榜 |
+| `ngabbs` | NGA 热帖 |
+| `v2ex` | V2EX 主题榜 |
+| `hellogithub` | HelloGitHub Trending |
+| `weatheralarm` | 中央气象台预警 |
+| `earthquake` | 中国地震台速报 |
+| `history` | 历史上的今天 |
+
+**注意**：钉钉机器人有频率限制，建议单次推送不要超过 15 条消息。当前配置每次推送 6 个平台，每个平台 4 条，共 24 条。
 
 ### 推送平台列表
 

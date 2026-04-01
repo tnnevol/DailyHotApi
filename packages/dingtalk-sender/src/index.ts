@@ -6,6 +6,9 @@ async function main(): Promise<void> {
     const webhookUrl = process.env.DINGTALK_WEBHOOK_URL;
     const secret = process.env.DINGTALK_SECRET || '';
     const apiToken = process.env.API_TOKEN;
+    // 从环境变量获取平台列表（逗号分隔）
+    const platformsStr = process.env.PLATFORMS || 'baidu,weibo,zhihu,douyin,bilibili,sspai';
+    const platforms = platformsStr.split(',').map(p => p.trim()).filter(p => p);
 
     if (!webhookUrl) {
       console.error('❌ DINGTALK_WEBHOOK_URL 环境变量未设置');
@@ -17,18 +20,35 @@ async function main(): Promise<void> {
       process.exit(1);
     }
 
-    // 从命令行参数获取平台名称
-    const platform = process.argv[2] || 'baidu';
+    if (platforms.length === 0) {
+      console.error('❌ PLATFORMS 环境变量未设置或为空');
+      process.exit(1);
+    }
 
-    // 创建推送实例并发送消息
+    // 创建推送实例
     const sender = new DingTalkSender({ webhookUrl, secret });
-    const success = await sender.sendFeedCard(platform, apiToken);
 
-    if (success) {
-      console.log(`✅ ${platform} 平台钉钉推送成功`);
+    // 批量获取所有平台数据并合并
+    console.log(`🔍 准备推送 ${platforms.length} 个平台`);
+    const allFeedItems: Array<{ platform: string; items: any[] }> = [];
+    const successCount = await sender.batchSendFeedCard(platforms, apiToken, allFeedItems);
+
+    // 统计推送结果
+    let totalItems = 0;
+    allFeedItems.forEach(({ items }) => {
+      totalItems += items.length;
+    });
+
+    console.log('');
+    console.log('===== 汇总 =====');
+    console.log(`成功推送平台数：${successCount} / ${platforms.length}`);
+    console.log(`总计推送条数：${totalItems}`);
+
+    if (successCount > 0) {
+      console.log('✅ 钉钉批量推送成功');
       process.exit(0);
     } else {
-      console.error(`❌ ${platform} 平台钉钉推送失败`);
+      console.error('❌ 钉钉批量推送失败');
       process.exit(1);
     }
   } catch (error: any) {
