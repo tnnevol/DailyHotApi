@@ -34,7 +34,7 @@ jobs:
           # 安装项目依赖
           pnpm install
 
-      - name: Fetch and push hot news via DingTalk bot
+      - name: Push hot news via DingTalk bot
         run: |
           # ========== 环境变量 ==========
           echo "===== 开始执行 ====="
@@ -51,41 +51,17 @@ jobs:
           # 构建钉钉推送包
           pnpm run build:sender
           
-          # 遍历平台并推送钉钉feedCard消息
+          # 遍历平台并直接调用钉钉推送脚本（由脚本负责获取数据和推送）
           for platform in $PLATFORMS; do
             echo ""
-            echo "🔍 获取：$platform 并推送至钉钉"
+            echo "🔍 推送：$platform 至钉钉"
             
-            # 检查数据并推送
-            RESPONSE=$(curl -s "https://newsapi.tnnevol.cn/$platform?token=${{ secrets.API_TOKEN }}" || echo '{"code":500}')
-            CODE=$(echo "$RESPONSE" | jq -r '.code // 500')
-            TITLE=$(echo "$RESPONSE" | jq -r '.title // "Unknown"')
-            
-            echo "  状态码：$CODE"
-            
-            if [ "$CODE" = "200" ]; then
-              DATA=$(echo "$RESPONSE" | jq -r '.data // []')
-              COUNT=$(echo "$DATA" | jq -r 'length')
-              
-              echo "  数据条数：$COUNT"
-              
-              if [ "$COUNT" -gt 0 ]; then
-                echo "  ✅ 成功，推送 $TITLE 到钉钉"
-                
-                # 运行构建后的钉钉推送包脚本
-                pnpm run start:sender $platform
-                
-                if [ $? -eq 0 ]; then
-                  SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
-                  echo "  ✅ 钉钉推送成功"
-                else
-                  echo "  ❌ 钉钉推送失败"
-                fi
-              else
-                echo "  ⚠️ 数据为空，跳过推送"
-              fi
+            # 运行构建后的钉钉推送包脚本（由脚本内部完成数据获取和推送）
+            if pnpm run start:sender $platform; then
+              SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
+              echo "  ✅ 钉钉推送成功"
             else
-              echo "  ❌ 获取数据失败：$CODE"
+              echo "  ❌ 钉钉推送失败"
             fi
           done
 

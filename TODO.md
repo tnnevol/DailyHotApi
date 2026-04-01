@@ -2,6 +2,27 @@
 
 ## ⏳ 待办
 
+### Issue #2: 优化新闻推送架构，消除重复请求 🔴 critical
+
+**背景**: 当前架构中 workflow 和 dingtalk-sender 都分别请求了新闻数据，造成重复请求
+
+**任务清单**:
+
+- [ ] 修改 GitHub Actions workflow 文件，移除数据获取逻辑
+- [ ] 优化 dingtalk-sender 脚本，承担完整业务流程（数据获取+推送）
+- [ ] 测试优化后的推送流程
+- [ ] 验证 API 调用次数减少
+
+**验收标准**:
+
+- [ ] 每个平台只发起一次 API 请求
+- [ ] 推送功能正常工作
+- [ ] 错误处理机制完善
+- [ ] 日志输出清晰
+
+**负责人**: 小钱  
+**截止时间**: 2026-04-03
+
 ### Issue #1: 每日 8:00 新闻热榜自动推送 🔴 critical
 
 **背景**: 需要实现每天 8:00 自动推送新闻热榜到钉钉群
@@ -34,12 +55,14 @@
 
 ### Issue #1: 每日 8:00 新闻热榜自动推送 🔴 critical
 
-**当前状态**: ✅ 已完成开发，等待配置和测试
+**当前状态**: ✅ 已完成开发和修复，等待配置和测试
 
 **进度**:
 
 - [x] 创建 GitHub Actions workflow 文件 (2026-04-01 00:47)
 - [x] 优化为统一 Secrets 管理 (2026-04-01 01:20)
+- [x] 修复钉钉推送脚本异常 (2026-04-01 20:00)
+- [x] 优化 workflow，消除重复请求 (2026-04-01 20:05)
 - [x] Git commit 完成 (commit: 58cf5d1)
 - [ ] ⏳ 配置 GitHub Secrets (需要海操作)
 - [ ] ⏳ 手动触发测试
@@ -50,9 +73,9 @@
 ```
 Settings → Secrets and variables → Actions → New repository secret
 
-WEBHOOK_BASE=https://openclaw.tnnevol.cn
-WEBHOOK_TOKEN=dailyhot-webhook-2026
-DINGTALK_GROUP_ID=cid/Em5KFq3Ba5pIeZf5SxS6Q==
+DINGTALK_WEBHOOK_URL=钉钉机器人 Webhook 地址
+DINGTALK_SECRET=钉钉机器人密钥（可选）
+API_TOKEN=DailyHotApi 访问令牌
 ```
 
 **下一步**: 海配置 Secrets → 手动测试 workflow → 验证推送效果
