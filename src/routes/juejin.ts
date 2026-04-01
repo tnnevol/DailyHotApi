@@ -1,63 +1,15 @@
-import type { ListContext, RouterData } from "../types.js";
-import { get } from "../utils/getData.js";
-
-
-const headers =  {
-  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-  'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
-  'Accept-Encoding': 'gzip, deflate, br',
-  'Cache-Control': 'no-cache',
-  'Connection': 'keep-alive',
-  'Sec-Ch-Ua': '"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"',
-  'Sec-Ch-Ua-Mobile': '?0',
-  'Sec-Ch-Ua-Platform': '"Windows"',
-  'Sec-Fetch-Dest': 'document',
-  'Sec-Fetch-Mode': 'navigate',
-  'Sec-Fetch-Site': 'same-origin',
-  'Sec-Fetch-User': '?1',
-  'Upgrade-Insecure-Requests': '1',
-}
-
-interface CategoryItem {
-  category_id: string;
-  category_name: string;
-}
-
-interface CategoryResponse {
-  data: CategoryItem[];
-}
-
-const category_url = 'https://api.juejin.cn/tag_api/v1/query_category_briefs'
-const getCategory = async()=>{
-  const res = await get<CategoryResponse>({
-    url: category_url,
-    headers
-  })
-  const data = res?.data?.data || []
-  const typeObj: Record<string, string> = {}
-  typeObj['1'] = '综合'
-  data.forEach((c) => {
-    typeObj[c.category_id] = c.category_name
-  })
-
-  return typeObj
-}
+import type { RouterData, ListContext, Options, RouterResType, ListItem } from "../types.js";
+import axios from "axios";
+import logger from "../utils/logger.js";
 
 export const handleRoute = async (c: ListContext, noCache: boolean) => {
-  const type = c.req.query("type") || 1;
-  const listData = await getList(noCache, type);
-  const typeMaps =  await getCategory()
+  const listData = await getList({}, noCache);
   const routeData: RouterData = {
     name: "juejin",
     title: "稀土掘金",
-    type: "文章榜",
-    params: {
-      type: {
-        name: "排行榜分区",
-        type: typeMaps,
-      },
-    },
+    type: "热榜",
+    description: "帮助开发者成长的技术社区",
+    params: {},
     link: "https://juejin.cn/hot/articles",
     total: listData.data?.length || 0,
     ...listData,
@@ -65,43 +17,81 @@ export const handleRoute = async (c: ListContext, noCache: boolean) => {
   return routeData;
 };
 
-interface JuejinContent {
-  content_id: string;
-  title: string;
-}
-
-interface JuejinAuthor {
-  name: string;
-}
-
-interface JuejinContentCounter {
-  hot_rank: number;
-}
-
-interface JuejinItem {
-  content: JuejinContent;
-  author: JuejinAuthor;
-  content_counter: JuejinContentCounter;
-}
-
-interface JuejinResponse {
-  data: JuejinItem[];
-}
-
-const getList = async (noCache: boolean, type: number | string = 1) => {
-  const url = `https://api.juejin.cn/content_api/v1/content/article_rank?category_id=${type}&type=hot`;
-  const result = await get<JuejinResponse>({ url, noCache, headers });
-  const list = result.data.data;
-  return {
-    ...result,
-    data: list.map((v) => ({
-      id: v.content.content_id,
-      title: v.content.title,
-      author: v.author.name,
-      hot: v.content_counter.hot_rank,
-      timestamp: undefined,
-      url: `https://juejin.cn/post/${v.content.content_id}`,
-      mobileUrl: `https://juejin.cn/post/${v.content.content_id}`,
-    })),
+// 掘金响应类型
+interface JueJinArticle {
+  content?: {
+    content_id?: string;
+    title?: string;
   };
+}
+
+interface JueJinData {
+  [key: string]: JueJinArticle;
+}
+
+interface JueJinResponse {
+  data?: JueJinData[];
+}
+
+const getList = async (options: Options, noCache: boolean): Promise<RouterResType> => {
+  const url = "https://api.juejin.cn/content_api/v1/content/article_rank?category_id=1&type=hot";
+  
+  try {
+    const response = await axios.get<JueJinResponse>(url, {
+      timeout: 10000,
+      httpsAgent: false,
+      headers: {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "application/json, text/javascript, */*; q=0.01",
+        "Origin": "https://juejin.cn",
+        "Referer": "https://juejin.cn/",
+      },
+    });
+
+    const dataList = response.data?.data || [];
+    
+    if (!dataList || dataList.length === 0) {
+      logger.warn('掘金热榜接口返回空数据');
+      return {
+        fromCache: false,
+        updateTime: new Date().toISOString(),
+        data: [],
+      };
+    }
+
+    logger.info(`掘金热榜获取成功，共 ${dataList.length} 条`);
+
+    return {
+      fromCache: false,
+      updateTime: new Date().toISOString(),
+      data: dataList
+        .filter((item) => item.content?.title)
+        .map((item, index) => {
+          const articleId = item.content?.content_id || "";
+          const title = item.content?.title || "";
+          const articleUrl = `https://juejin.cn/post/${articleId}`;
+          
+          const listItem: ListItem = {
+            id: articleId,
+            title: title,
+            desc: "",
+            cover: undefined,
+            hot: undefined,
+            timestamp: undefined,
+            url: articleUrl,
+            mobileUrl: articleUrl,
+          };
+          return listItem;
+        }),
+    };
+  } catch (error: any) {
+    logger.error(`掘金热榜获取失败：${error.message || error}`);
+    
+    return {
+      fromCache: false,
+      updateTime: new Date().toISOString(),
+      data: [],
+      message: `掘金热榜接口暂时不可用：${error.message || '未知错误'}`,
+    };
+  }
 };

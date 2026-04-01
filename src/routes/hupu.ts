@@ -1,25 +1,16 @@
-import type { RouterData, ListContext, Options } from "../types.js";
-import { get } from "../utils/getData.js";
+import type { RouterData, ListContext, Options, RouterResType, ListItem } from "../types.js";
+import axios from "axios";
+import { load } from "cheerio";
+import logger from "../utils/logger.js";
 
 export const handleRoute = async (c: ListContext, noCache: boolean) => {
-  const type = c.req.query("type") || "1";
-  const listData = await getList({ type }, noCache);
+  const listData = await getList({}, noCache);
   const routeData: RouterData = {
     name: "hupu",
     title: "虎扑",
     type: "步行街热帖",
-    params: {
-      type: {
-        name: "榜单分类",
-        type: {
-          1: "主干道",
-          6: "恋爱区",
-          11: "校园区",
-          12: "历史区",
-          612: "摄影区",
-        },
-      },
-    },
+    description: "直男聚集地，热门话题讨论",
+    params: {},
     link: "https://bbs.hupu.com/all-gambia",
     total: listData.data?.length || 0,
     ...listData,
@@ -27,35 +18,74 @@ export const handleRoute = async (c: ListContext, noCache: boolean) => {
   return routeData;
 };
 
-interface HupuItem {
-  tid: string;
-  title: string;
-  username: string;
-  replies: number;
-  url: string;
-}
+const getList = async (options: Options, noCache: boolean): Promise<RouterResType> => {
+  const url = "https://bbs.hupu.com/all-gambia";
+  
+  try {
+    const response = await axios.get(url, {
+      timeout: 10000,
+      httpsAgent: false,
+      headers: {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+      },
+    });
 
-interface HupuResponse {
-  data: {
-    topicThreads: HupuItem[];
-  };
-}
+    const html = response.data;
+    const $ = load(html);
+    
+    const postList = $('div.t-info');
+    const items: ListItem[] = [];
+    
+    postList.each((_, element) => {
+      const titleElem = $(element).find('span.t-title');
+      const linkElem = $(element).find('a');
+      
+      if (!titleElem.length || !linkElem.length) return;
+      
+      const title = titleElem.text().trim();
+      let href = linkElem.attr('href') || '';
+      const url = href.startsWith('/') ? `https://bbs.hupu.com${href}` : href;
+      
+      const infoElem = $(element).find('span.t-replies');
+      const info = infoElem.text().trim() || "";
+      
+      items.push({
+        id: items.length + 1,
+        title: title,
+        desc: info,
+        cover: undefined,
+        hot: undefined,
+        timestamp: undefined,
+        url: url,
+        mobileUrl: url,
+      });
+    });
+    
+    if (items.length === 0) {
+      logger.warn('虎扑热帖接口返回空数据');
+      return {
+        fromCache: false,
+        updateTime: new Date().toISOString(),
+        data: [],
+      };
+    }
 
-const getList = async (options: Options, noCache: boolean) => {
-  const { type } = options;
-  const url = `https://m.hupu.com/api/v2/bbs/topicThreads?topicId=${type}&page=1`;
-  const result = await get<HupuResponse>({ url, noCache });
-  const list = result.data.data.topicThreads;
-  return {
-    ...result,
-    data: list.map((v) => ({
-      id: v.tid,
-      title: v.title,
-      author: v.username,
-      hot: v.replies,
-      timestamp: undefined,
-      url: `https://bbs.hupu.com/${v.tid}.html`,
-      mobileUrl: v.url,
-    })),
-  };
+    logger.info(`虎扑热帖获取成功，共 ${items.length} 条`);
+
+    return {
+      fromCache: false,
+      updateTime: new Date().toISOString(),
+      data: items,
+    };
+  } catch (error: any) {
+    logger.error(`虎扑热帖获取失败：${error.message || error}`);
+    
+    return {
+      fromCache: false,
+      updateTime: new Date().toISOString(),
+      data: [],
+      message: `虎扑热帖接口暂时不可用：${error.message || '未知错误'}`,
+    };
+  }
 };
