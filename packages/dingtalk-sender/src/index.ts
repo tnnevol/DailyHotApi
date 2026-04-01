@@ -1,107 +1,51 @@
-import axios from 'axios';
-import * as RobotDingModule from '@tnnevol/robot-ding';
-const RobotDing = RobotDingModule.default;
+import DingTalkSender from './index.ts';
 
-interface NewsItem {
-  id: string;
-  title: string;
-  desc?: string;
-  cover?: string;
-  hot?: number;
-  timestamp?: number;
-  url: string;
-  mobileUrl: string;
-}
-
-interface ApiResponse {
-  code: number;
-  data?: NewsItem[];
-  title?: string;
-  total?: number;
-}
-
-interface FeedCardItem {
-  title: string;
-  messageURL: string;
-  picURL: string;
-}
-
-interface DingTalkSenderConfig {
-  webhookUrl: string;
-  secret?: string;
-}
-
-class DingTalkSender {
-  private webhookUrl: string;
-  private secret?: string;
-
-  constructor(config: DingTalkSenderConfig) {
-    if (!config.webhookUrl) {
-      throw new Error('webhookUrl is required');
-    }
-
-    this.webhookUrl = config.webhookUrl;
-    this.secret = config.secret;
-  }
-
-  async getHotNews(platform: string, token: string, limit: number = 5): Promise<ApiResponse> {
-    const apiUrl = `https://newsapi.tnnevol.cn/${platform}?token=${token}&limit=${limit}`;
+async function main(): Promise<void> {
+  try {
+    // 从环境变量获取配置
+    const webhookUrl = process.env.DINGTALK_WEBHOOK_URL;
+    const secret = process.env.DINGTALK_SECRET;
+    const apiToken = process.env.API_TOKEN;
     
-    try {
-      const response = await axios.get<ApiResponse>(apiUrl);
-      return response.data;
-    } catch (error: any) {
-      console.error(`获取 ${platform} 数据失败:`, error.message);
-      throw error;
+    if (!webhookUrl) {
+      console.error('❌ DINGTALK_WEBHOOK_URL 环境变量未设置');
+      process.exit(1);
     }
-  }
-
-  async sendFeedCard(platform: string, token: string): Promise<boolean> {
-    try {
-      // 获取新闻数据
-      const data = await this.getHotNews(platform, token);
-
-      if (data.code !== 200 || !data.data || data.data.length === 0) {
-        console.error(`❌ 获取 ${platform} 数据失败`);
-        console.error('Response data:', JSON.stringify(data));
-        return false;
-      }
-
-      // 创建机器人实例
-      const robot = new RobotDing({
-        webhook: this.webhookUrl,
-        secret: this.secret,
-      });
-
-      // 准备feedCard消息数据
-      const feedItems = data.data.slice(0, 4).map((item) => ({
-        title: item.title.substring(0, 25) + (item.title.length > 25 ? '...' : ''), // 限制标题长度并添加省略号
-        messageURL: item.url || '#',
-        picURL: item.cover || 'https://cdn.jsdelivr.net/gh/tnnevol/DailyHotApi@main/public/favicon.png', // 使用默认图片
-      }));
-
-      // 发送消息 - 使用正确的feedCard格式
-      const result = await robot.sendDing({
-        links: feedItems
-      }, 'feedCard');
-      
-      console.log('✅ 钉钉消息发送成功');
-      console.log('Platform:', platform);
-      console.log('Items sent:', feedItems.length);
-      console.log('Response:', result);
-
-      return true;
-    } catch (error: any) {
-      console.error('❌ 发送钉钉消息失败:', error.message);
-      if (error.response) {
-        console.error('Response data:', error.response.data);
-        console.error('Response status:', error.response.status);
-        console.error('Response headers:', error.response.headers);
-      }
-      return false;
+    
+    if (!apiToken) {
+      console.error('❌ API_TOKEN 环境变量未设置');
+      process.exit(1);
     }
+
+    // 从命令行参数获取平台名称
+    const platform = process.argv[2] || 'baidu';
+
+    // 创建推送实例并发送消息
+    const sender = new DingTalkSender({ webhookUrl, secret });
+    const success = await sender.sendFeedCard(platform, apiToken);
+
+    if (success) {
+      console.log(`✅ ${platform} 平台钉钉推送成功`);
+      process.exit(0);
+    } else {
+      console.error(`❌ ${platform} 平台钉钉推送失败`);
+      process.exit(1);
+    }
+  } catch (error: any) {
+    console.error('❌ 推送过程发生错误:', error.message);
+    process.exit(1);
   }
 }
 
-export default DingTalkSender;
-export { DingTalkSender, type NewsItem, type ApiResponse, type FeedCardItem };
+// 如果直接运行此脚本
+const currentFile = new URL(import.meta.url).pathname.split('/').pop();
+const scriptFile = process.argv[1].split('/').pop();
+
+if (currentFile && scriptFile && currentFile.includes('cli.ts') && scriptFile.includes('cli.ts')) {
+  main().catch(error => {
+    console.error('❌ 推送过程发生错误:', error);
+    process.exit(1);
+  });
+}
+
+export default main;

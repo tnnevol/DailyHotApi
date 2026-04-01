@@ -2,10 +2,8 @@ import { defineBuildConfig } from 'unbuild'
 
 export default defineBuildConfig({
   entries: [
-    'src/index',
-    'src/cli'
+    'src/index'
   ],
   clean: true,
-  declaration: true,
-  failOnWarn: false
+  declaration: true
 })

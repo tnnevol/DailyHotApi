@@ -118,10 +118,10 @@ importers:
   packages/dingtalk-sender:
     dependencies:
       '@tnnevol/robot-ding':
-        specifier: ^5.2.9
+        specifier: 5.2.9
         version: 5.2.9(axios@1.14.0)(crypto-js@4.2.0)(typescript@5.9.3)
       axios:
-        specifier: ^1.14.0
+        specifier: 1.14.0
         version: 1.14.0
     devDependencies:
       '@types/node':
