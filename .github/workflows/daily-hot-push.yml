@@ -27,12 +27,20 @@ jobs:
           version: 9
           run_install: false
 
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
       - name: Install dependencies
         run: |
           # 验证 pnpm
           pnpm --version
-          # 安装项目依赖
-          pnpm install
+          # 安装项目依赖（使用缓存加速，减少内存占用）
+          pnpm install --frozen-lockfile
 
       - name: Push hot news via DingTalk bot
         run: |
@@ -53,4 +61,4 @@ env:
   DINGTALK_WEBHOOK_URL: ${{ secrets.DINGTALK_WEBHOOK_URL }}
   DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
   API_TOKEN: ${{ secrets.API_TOKEN }}
-  PLATFORMS: "baidu,weibo,zhihu,douyin,bilibili,sspai,kuaishou,douban-movie,douban-group,tieba"
+  PLATFORMS: ${{ vars.PLATFORMS || secrets.PLATFORMS || 'baidu,weibo,zhihu,douyin,bilibili,sspai,kuaishou,douban-movie,douban-group,tieba' }}
