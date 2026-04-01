@@ -1,5 +1,5 @@
 import { DingTalkRobot } from '@tnnevol/robot-ding';
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 
 interface NewsItem {
   id: string;
@@ -33,8 +33,6 @@ class DingTalkPusher {
       throw new Error('DINGTALK_WEBHOOK_URL 环境变量未设置');
     }
 
-    // 动态导入模块以兼容 ES 模块环境
-    const { DingTalkRobot } = require('@tnnevol/robot-ding');
     this.robot = new DingTalkRobot({
       webhook: webhookUrl,
       secret: secret,
@@ -45,7 +43,7 @@ class DingTalkPusher {
     const apiUrl = `https://newsapi.tnnevol.cn/${platform}?token=${token}&limit=${limit}`;
     
     try {
-      const response: AxiosResponse<ApiResponse> = await axios.get(apiUrl);
+      const response = await axios.get<ApiResponse>(apiUrl);
       return response.data;
     } catch (error: any) {
       console.error(`获取 ${platform} 数据失败:`, error.message);
@@ -137,8 +135,11 @@ async function main(): Promise<void> {
   }
 }
 
-// 使用 process.argv 来判断是否直接运行此脚本（兼容 ES 模块）
-if (process.argv[1] && process.argv[1].endsWith('dingtalk-push.ts')) {
+// 检查是否直接运行此脚本
+const currentFile = import.meta.url.split('/').pop();
+const scriptFile = process.argv[1].split('/').pop();
+
+if (currentFile && scriptFile && currentFile.includes('dingtalk-push.ts') && scriptFile.includes('dingtalk-push.ts')) {
   main().catch(error => {
     console.error('❌ 推送过程发生错误:', error);
     process.exit(1);
