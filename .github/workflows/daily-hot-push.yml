@@ -74,7 +74,7 @@ jobs:
                 echo "  ✅ 成功，推送 $TITLE 到钉钉"
                 
                 # 运行 JavaScript 脚本发送钉钉feedCard消息
-                node scripts/dingtalk-push.js $platform
+                node scripts/dingtalk-push.mjs $platform
                 
                 if [ $? -eq 0 ]; then
                   SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
