@@ -1,15 +1,15 @@
-version: "3.8"
-
 services:
-  DailyhotApi:
+  dailyhotApi:
     build:
       context: .
-      target: runner
+      dockerfile: Dockerfile
+    container_name: dailyhotApi
     ports:
       - "6688:6688"
     volumes:
       - "./logs:/app/logs"
     environment:
+      - TZ=Asia/Shanghai
       - PORT=6688
       - API_TOKEN=${API_TOKEN:-your-secret-token-here}
     
