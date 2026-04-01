@@ -9,6 +9,22 @@
 <img src="https://github.com/tnnevol/DailyHotApi/actions/workflows/npm.yml/badge.svg" alt="Publish npm package"/>
 </div>
 
+## 🏗️ 项目架构
+
+- **框架**: Hono (高性能Web框架)
+- **语言**: TypeScript (提供类型安全保障)
+- **运行时**: Node.js 20+
+- **包管理**: pnpm
+- **API设计**: RESTful API + RSS输出模式
+- **中间件**: CORS、压缩、认证、日志等
+
+## 🔐 安全特性
+
+- **API鉴权**: Token验证机制保护API端点
+- **输入验证**: 所有API参数经过验证和清理
+- **速率限制**: 防止滥用和过载
+- **安全头**: 实施安全HTTP头
+
 ## 🙏 致谢
 
 本项目基于以下开源项目二次开发：
