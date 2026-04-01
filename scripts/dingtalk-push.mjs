@@ -131,9 +131,9 @@ async function main() {
 }
 
 // 检查是否直接运行此脚本
-import path from 'path';
-const currentFile = path.basename(new URL(import.meta.url).pathname);
-const scriptFile = path.basename(process.argv[1]);
+const path = await import('path');
+const currentFile = path.default.basename(new URL(import.meta.url).pathname);
+const scriptFile = path.default.basename(process.argv[1]);
 
 if (currentFile && scriptFile && currentFile.includes('dingtalk-push.mjs') && scriptFile.includes('dingtalk-push.mjs')) {
   main().catch(error => {

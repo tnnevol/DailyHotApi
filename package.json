@@ -34,7 +34,8 @@
     "dev:cache": "dotenv -e .env.development -- tsx watch src/index.ts",
     "build": "tsc --project tsconfig.json",
     "start:local": "dotenv -e .env.local -- node dist/index.js",
-    "start": "dotenv -e .env.development -- node dist/index.js"
+    "start": "dotenv -e .env.development -- node dist/index.js",
+    "build:dts": "pnpm --filter \"@tnnevol/dingtalk-sender\" build"
   },
   "type": "module",
   "dependencies": {
@@ -73,7 +74,8 @@
     "prettier": "^3.6.2",
     "tsx": "^4.21.0",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.38.0"
+    "typescript-eslint": "^8.38.0",
+    "unbuild": "^2.0.0"
   },
   "engines": {
     "node": ">=20"

@@ -1,0 +1,47 @@
+{
+  "name": "@tnnevol/dingtalk-sender",
+  "version": "1.0.0",
+  "description": "钉钉机器人推送工具，支持feedCard等消息类型",
+  "keywords": [
+    "dingtalk",
+    "robot",
+    "feedcard",
+    "api",
+    "news"
+  ],
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "unbuild",
+    "dev": "unbuild --stub",
+    "prepack": "pnpm build"
+  },
+  "dependencies": {
+    "@tnnevol/robot-ding": "^5.2.9",
+    "axios": "^1.14.0"
+  },
+  "devDependencies": {
+    "unbuild": "^2.0.0",
+    "@types/node": "^22.19.15",
+    "typescript": "^5.9.3"
+  },
+  "author": "tnnevol",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tnnevol/DailyHotApi.git",
+    "directory": "packages/dingtalk-sender"
+  }
+}
