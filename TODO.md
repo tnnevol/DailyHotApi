@@ -62,30 +62,50 @@ DINGTALK_GROUP_ID=cid/Em5KFq3Ba5pIeZf5SxS6Q==
   - 从 hot_news 项目移植爬虫逻辑
   - 使用百度官方 API 替代第三方接口
   - 代码已提交到 dev 分支 (commit: 7b7d9c3)
+- [x] **首批 6 平台接口移植完成** (2026-04-01 02:19)
+  - ✅ 百度 (baidu) - 已完成
+  - ✅ 微博 (weibo) - 已完成
+  - ✅ 知乎 (zhihu) - 已完成
+  - ✅ 抖音 (douyin) - 已完成
+  - ✅ B 站 (bilibili) - 已有更完善版本
+  - ✅ 少数派 (sspai) - 已完成
+  - 代码已提交到 dev 分支 (commit: 41b9d26)
 
 ---
 
 ## 📝 开发日志
 
-### 2026-04-01 - 百度接口替换
+### 2026-04-01 - 首批接口移植（6 个平台）
 
-**任务**: 将百度热搜接口从第三方 API 替换为直接爬虫
+**任务**: 将 hot_news 项目的爬虫接口移植到 DailyHotApi
 
-**实现**:
-- 源文件：`hot_news/app/services/sites/baidu.py`
-- 目标：`DailyHotApi/src/routes/baidu.ts`
-- 技术栈：Python → TypeScript
-- API: `https://top.baidu.com/api/board?platform=wise&tab=realtime`
+**完成平台**:
+1. **百度** - `top.baidu.com/api/board` ✅
+2. **微博** - `weibo.com/ajax/side/hotSearch` ✅
+3. **知乎** - `zhihu.com/api/v3/explore/guest/feeds` ✅
+4. **抖音** - `douyin.com/aweme/v1/web/hot/search/list` ✅
+5. **B 站** - 已有更完善版本（带分区支持）⏭️
+6. **少数派** - `sspai.com/api/v1/article/index/page/get` ✅
 
-**测试**:
-- ✅ 本地启动成功
-- ✅ 返回 20 条热搜数据
-- ✅ 响应格式符合 DailyHotApi 规范
+**测试结果** (本地):
+```
+微博热搜获取成功，共 51 条 ✅
+知乎热榜获取成功，共 30 条 ✅
+抖音热榜获取成功，共 51 条 ✅
+少数派获取成功，共 10 条 ✅
+```
 
-**提交**:
+**Git 提交**:
 - 分支：dev
-- Commit: `7b7d9c3`
-- 文件：`src/routes/baidu.ts`, `package.json`, `tsconfig.json`
+- Commit 1: `7b7d9c3` - 百度接口替换
+- Commit 2: `41b9d26` - 微博/知乎/抖音/少数派移植
+- 文件：`src/routes/*.ts`
+
+**技术要点**:
+- Python → TypeScript 转换
+- 统一使用 axios + httpsAgent: false
+- 响应格式符合 DailyHotApi 规范
+- 添加错误处理和日志记录
 
 ---
 
