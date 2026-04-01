@@ -135,9 +135,12 @@ async function main(): Promise<void> {
   }
 }
 
-// 如果直接运行此脚本
-if (require.main === module) {
-  main();
+// 使用 process.argv 来判断是否直接运行此脚本（兼容 ES 模块）
+if (process.argv[1] && process.argv[1].endsWith('dingtalk-push.ts')) {
+  main().catch(error => {
+    console.error('❌ 推送过程发生错误:', error);
+    process.exit(1);
+  });
 }
 
 export default DingTalkPusher;
