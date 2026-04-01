@@ -29,7 +29,13 @@ jobs:
           run_install: false
 
       - name: Install dependencies
-        run: pnpm install
+        run: |
+          # 确保 pnpm 已安装
+          npm install -g pnpm
+          # 验证 pnpm
+          pnpm --version
+          # 安装项目依赖
+          pnpm install
 
       - name: Fetch and push hot news via DingTalk bot
         run: |
