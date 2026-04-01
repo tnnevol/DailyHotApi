@@ -109,11 +109,6 @@ class DingTalkSender {
     token: string,
     allFeedItems: Array<{ platform: string; items: any[] }> = []
   ): Promise<number> {
-    const robot = new RobotDing({
-      webhook: this.webhookUrl,
-      secret: this.secret,
-    });
-
     let successCount = 0;
 
     for (const platform of platforms) {
@@ -130,18 +125,25 @@ class DingTalkSender {
           continue;
         }
 
-        // 准备feedCard消息数据
-        const feedItems = data.data.slice(0, 4).map((item) => ({
-          title: item.title.substring(0, 25) + (item.title.length > 25 ? "..." : ""),
-          messageURL: item.url || "#",
-          picURL: item.cover || item.mobileUrl || "",
-        }));
+        // 准备feedCard消息数据，标题添加平台前缀
+        const feedItems = data.data.slice(0, 4).map((item) => {
+          // 获取封面图片，优先使用 item.cover 或 item.mobileUrl，其次使用默认 favicon
+          const defaultFavicon = "https://newsapi.tnnevol.cn/public/favicon.png";
+          const picUrl = item.cover || item.mobileUrl || defaultFavicon;
+          
+          return {
+            title: `【${data.title || platform}：${item.title.substring(0, 20)}${item.title.length > 20 ? "..." : ""}】`,
+            messageURL: item.url || "#",
+            picURL: picUrl,
+          };
+        });
 
         // 保存到汇总数组
         allFeedItems.push({ platform, items: feedItems });
         successCount++;
 
         console.log(`  ✅ 成功，推送 ${data.title || platform} 到钉钉`);
+        console.log(`  平台：${platform}，条数：${feedItems.length}`);
       } catch (error: any) {
         console.error(`  ❌ 获取数据失败: ${error.message}`);
       }
@@ -157,12 +159,11 @@ class DingTalkSender {
       console.log('');
       console.log('===== 合并推送 =====');
       console.log(`合并 ${allItems.length} 条消息到钉钉`);
+      console.log(`平台数量：${allFeedItems.length}`);
 
       try {
         // 发送合并后的消息
-        const result = await robot.sendDing({
-          links: allItems
-        }, 'feedCard');
+        const result = await this.sendDingToRobot(allItems);
 
         console.log('✅ 钉钉批量推送成功');
         console.log('Total items:', allItems.length);
@@ -173,6 +174,33 @@ class DingTalkSender {
     }
 
     return successCount;
+  }
+
+  private async sendDingToRobot(items: { title: string; messageURL: string; picURL: string }[]) {
+    const robot = new RobotDing({
+      webhook: this.webhookUrl,
+      secret: this.secret,
+    });
+
+    try {
+      const result = await robot.sendDing({
+        links: items
+      }, 'feedCard');
+
+      console.log('✅ 钉钉消息发送成功');
+      console.log('Items sent:', items.length);
+      console.log('Response:', result);
+
+      return result;
+    } catch (error: any) {
+      console.error('❌ 发送钉钉消息失败:', error.message);
+      if (error.response) {
+        console.error('Response data:', error.response.data);
+        console.error('Response status:', error.response.status);
+        console.error('Response headers:', error.response.headers);
+      }
+      throw error;
+    }
   }
 }
 
