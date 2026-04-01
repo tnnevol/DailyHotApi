@@ -1,4 +1,5 @@
 import axios from 'axios';
+import RobotDing from '@tnnevol/robot-ding';
 
 interface NewsItem {
   id: string;
@@ -65,8 +66,7 @@ class DingTalkSender {
         return false;
       }
 
-      // 动态导入机器人模块
-      const { default: RobotDing } = await import('@tnnevol/robot-ding');
+      // 创建机器人实例
       const robot = new RobotDing({
         webhook: this.webhookUrl,
         secret: this.secret,
