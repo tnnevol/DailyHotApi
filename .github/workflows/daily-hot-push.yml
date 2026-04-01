@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Install pnpm
         run: npm install -g pnpm
 
@@ -49,9 +49,7 @@ jobs:
           SUCCESS_COUNT=0
 
           # 构建钉钉推送包
-          cd packages/dingtalk-sender
-          pnpm build
-          cd ../..
+          pnpm run build:sender
           
           # 遍历平台并推送钉钉feedCard消息
           for platform in $PLATFORMS; do
@@ -75,7 +73,7 @@ jobs:
                 echo "  ✅ 成功，推送 $TITLE 到钉钉"
                 
                 # 运行构建后的钉钉推送包脚本
-                node packages/dingtalk-sender/dist/cli.mjs $platform
+                pnpm run start:sender $platform
                 
                 if [ $? -eq 0 ]; then
                   SUCCESS_COUNT=$((SUCCESS_COUNT + 1))

@@ -33,7 +33,9 @@
     "dev": "dotenv -e .env.development -- tsx watch --no-cache src/index.ts",
     "dev:cache": "dotenv -e .env.development -- tsx watch src/index.ts",
     "build": "tsc --project tsconfig.json",
+    "build:sender": "pnpm -F @tnnevol/dingtalk-sender run build",
     "start:local": "dotenv -e .env.local -- node dist/index.js",
+    "start:sender": "pnpm -F @tnnevol/dingtalk-sender run start",
     "start": "dotenv -e .env.development -- node dist/index.js",
     "build:dts": "pnpm --filter \"@tnnevol/dingtalk-sender\" build"
   },
