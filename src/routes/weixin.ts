@@ -6,12 +6,12 @@ import logger from "../utils/logger.js";
 export const handleRoute = async (c: ListContext, noCache: boolean) => {
   const listData = await getList({}, noCache);
   const routeData: RouterData = {
-    name: "hackernews",
-    title: "Hacker News",
+    name: "weixin",
+    title: "微信",
     type: "热门",
-    description: "News about hacking and startups",
+    description: "再小的个体，也有自己的品牌",
     params: {},
-    link: "https://news.ycombinator.com/",
+    link: "https://k.weixin.qq.com/",
     total: listData.data?.length || 0,
     ...listData,
   };
@@ -19,7 +19,8 @@ export const handleRoute = async (c: ListContext, noCache: boolean) => {
 };
 
 const getList = async (options: Options, noCache: boolean): Promise<RouterResType> => {
-  const url = "https://news.ycombinator.com/";
+  // 微信看一看热门页面
+  const url = "https://k.weixin.qq.com/";
   
   try {
     const response = await axios.get(url, {
@@ -28,35 +29,52 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
       headers: {
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+        "Referer": "https://k.weixin.qq.com/",
       },
     });
 
     const html = response.data;
     const $ = cheerio.load(html);
     
+    // 查找文章列表（根据实际 HTML 结构调整）
+    const articles = $('.article-item, .doc-item, .item');
     const items: ListItem[] = [];
     
-    $('tr.athing').each((_, element) => {
-      const titleElem = $(element).find('.titleline a');
+    articles.each((_, element) => {
+      const titleElem = $(element).find('h3, .title');
       if (!titleElem.length) return;
       
       const title = titleElem.text().trim();
-      const url = titleElem.attr('href') || "";
+      
+      // 获取链接
+      let link = $(element).find('a').attr('href') || "";
+      if (!link) {
+        const articleId = $(element).attr('data-id') || $(element).attr('id');
+        link = articleId ? `https://k.weixin.qq.com/article?id=${articleId}` : url;
+      }
+      
+      // 获取来源
+      const sourceElem = $(element).find('.account, .source');
+      const source = sourceElem.text().trim() || "";
+      
+      // 获取摘要
+      const descElem = $(element).find('.desc, .summary, p');
+      const desc = descElem.text().trim() || "";
       
       items.push({
         id: items.length + 1,
         title: title,
-        desc: "",
+        desc: source ? `来源：${source}` : desc.substring(0, 50),
         cover: undefined,
         hot: undefined,
         timestamp: undefined,
-        url: url,
-        mobileUrl: url,
+        url: link,
+        mobileUrl: link,
       });
     });
     
     if (items.length === 0) {
-      logger.warn('Hacker News 接口返回空数据');
+      logger.warn('微信热门接口返回空数据');
       return {
         fromCache: false,
         updateTime: new Date().toISOString(),
@@ -64,20 +82,21 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
       };
     }
 
-    logger.info(`Hacker News 获取成功，共 ${items.length} 条`);
+    logger.info(`微信热门获取成功，共 ${items.length} 条`);
 
     return {
       fromCache: false,
       updateTime: new Date().toISOString(),
-      data: items.slice(0, 30),
+      data: items.slice(0, 20), // 限制返回前 20 条
     };
   } catch (error: any) {
-    logger.error(`Hacker News 获取失败：${error.message || error}`);
+    logger.error(`微信热门获取失败：${error.message || error}`);
+    
     return {
       fromCache: false,
       updateTime: new Date().toISOString(),
       data: [],
-      message: `Hacker News 接口暂时不可用：${error.message || '未知错误'}`,
+      message: `微信热门接口暂时不可用：${error.message || '未知错误'}（微信需要 Selenium 浏览器环境，建议使用替代方案）`,
     };
   }
 };

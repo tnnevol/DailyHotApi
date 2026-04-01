@@ -5,12 +5,12 @@ import logger from "../utils/logger.js";
 export const handleRoute = async (c: ListContext, noCache: boolean) => {
   const listData = await getList({}, noCache);
   const routeData: RouterData = {
-    name: "v2ex",
-    title: "V2EX",
-    type: "主题榜",
-    description: "创意工作者的社区",
+    name: "stackoverflow",
+    title: "Stack Overflow",
+    type: "热门问题",
+    description: "Where Developers Learn & Share",
     params: {},
-    link: "https://www.v2ex.com/?tab=hot",
+    link: "https://stackoverflow.com/questions?tab=Hot",
     total: listData.data?.length || 0,
     ...listData,
   };
@@ -18,7 +18,7 @@ export const handleRoute = async (c: ListContext, noCache: boolean) => {
 };
 
 const getList = async (options: Options, noCache: boolean): Promise<RouterResType> => {
-  const url = "https://www.v2ex.com/api/topics/hot.json";
+  const url = "https://api.stackexchange.com/2.3/questions/hot?order=desc&sort=hot&site=stackoverflow";
   
   try {
     const response = await axios.get(url, {
@@ -27,11 +27,10 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
       headers: {
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Accept": "application/json",
-        "Referer": "https://www.v2ex.com/",
       },
     });
 
-    const items = response.data || [];
+    const items = response.data?.items || [];
     
     if (items.length === 0) {
       return {
@@ -41,29 +40,29 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
       };
     }
 
-    logger.info(`V2EX 主题榜获取成功，共 ${items.length} 条`);
+    logger.info(`Stack Overflow 热门问题获取成功，共 ${items.length} 条`);
 
     return {
       fromCache: false,
       updateTime: new Date().toISOString(),
       data: items.map((item: any, index: number) => ({
-        id: item.id || index + 1,
+        id: item.question_id || index + 1,
         title: item.title || "",
-        desc: item.content?.substring(0, 200) || "",
-        cover: item.member?.avatar_normal || undefined,
-        hot: item.replies || 0,
-        timestamp: undefined,
-        url: item.url || "",
-        mobileUrl: item.url || "",
+        desc: "",
+        cover: undefined,
+        hot: item.score || 0,
+        timestamp: item.creation_date ? item.creation_date * 1000 : undefined,
+        url: item.link || "",
+        mobileUrl: item.link || "",
       })),
     };
   } catch (error: any) {
-    logger.error(`V2EX 主题榜获取失败：${error.message || error}`);
+    logger.error(`Stack Overflow 热门问题获取失败：${error.message || error}`);
     return {
       fromCache: false,
       updateTime: new Date().toISOString(),
       data: [],
-      message: `V2EX 接口暂时不可用：${error.message || '未知错误'}`,
+      message: `Stack Overflow 接口暂时不可用：${error.message || '未知错误'}`,
     };
   }
 };

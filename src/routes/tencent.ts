@@ -5,12 +5,12 @@ import logger from "../utils/logger.js";
 export const handleRoute = async (c: ListContext, noCache: boolean) => {
   const listData = await getList({}, noCache);
   const routeData: RouterData = {
-    name: "v2ex",
-    title: "V2EX",
-    type: "主题榜",
-    description: "创意工作者的社区",
+    name: "tencent",
+    title: "腾讯网",
+    type: "热榜",
+    description: "腾讯新闻，事实派",
     params: {},
-    link: "https://www.v2ex.com/?tab=hot",
+    link: "https://news.qq.com/",
     total: listData.data?.length || 0,
     ...listData,
   };
@@ -18,22 +18,21 @@ export const handleRoute = async (c: ListContext, noCache: boolean) => {
 };
 
 const getList = async (options: Options, noCache: boolean): Promise<RouterResType> => {
-  const url = "https://www.v2ex.com/api/topics/hot.json";
+  const url = "https://i.news.qq.com/gw/event/pc_hot_ranking_list?ids_hash=&offset=0&page_size=51&appver=15.5_qqnews_7.1.60&rank_id=hot";
   
   try {
     const response = await axios.get(url, {
       timeout: 10000,
       httpsAgent: false,
       headers: {
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Accept": "application/json",
-        "Referer": "https://www.v2ex.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/122.0.0.0 Safari/537.36 AppleWebKit/537.36 (KHTML, like Gecko)",
+        "Referer": "https://news.qq.com/",
       },
     });
 
-    const items = response.data || [];
+    const newsList = response.data?.idlist?.[0]?.newslist?.slice(1) || [];
     
-    if (items.length === 0) {
+    if (newsList.length === 0) {
       return {
         fromCache: false,
         updateTime: new Date().toISOString(),
@@ -41,29 +40,29 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
       };
     }
 
-    logger.info(`V2EX 主题榜获取成功，共 ${items.length} 条`);
+    logger.info(`腾讯网热榜获取成功，共 ${newsList.length} 条`);
 
     return {
       fromCache: false,
       updateTime: new Date().toISOString(),
-      data: items.map((item: any, index: number) => ({
-        id: item.id || index + 1,
+      data: newsList.map((item: any, index: number) => ({
+        id: index + 1,
         title: item.title || "",
-        desc: item.content?.substring(0, 200) || "",
-        cover: item.member?.avatar_normal || undefined,
-        hot: item.replies || 0,
+        desc: item.abstract || "",
+        cover: undefined,
+        hot: undefined,
         timestamp: undefined,
         url: item.url || "",
         mobileUrl: item.url || "",
       })),
     };
   } catch (error: any) {
-    logger.error(`V2EX 主题榜获取失败：${error.message || error}`);
+    logger.error(`腾讯网热榜获取失败：${error.message || error}`);
     return {
       fromCache: false,
       updateTime: new Date().toISOString(),
       data: [],
-      message: `V2EX 接口暂时不可用：${error.message || '未知错误'}`,
+      message: `腾讯网热榜接口暂时不可用：${error.message || '未知错误'}`,
     };
   }
 };
