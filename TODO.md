@@ -3,8 +3,16 @@
 ## 🎯 本地需求编排（不提交）
 
 ### 当前派发任务
-- [ ] **无** - 等待新需求派发
-  - 上一个任务：`001-workers-pilot` ✅ 已完成归档 (2026-04-02)
+- [x] `001-workers-pilot` - Workers 试点迁移 ✅ 已完成 (2026-04-02)
+- [ ] `002-push-architecture` - 推送架构验证文档
+  - 负责人：小钱
+  - 当前阶段：分析完成 / 添加架构说明文档
+  - 需求文档：`.project-spec/queue/002-push-architecture.md`
+  - 状态文件：`.project-spec/current-task.json`
+  - 验收人：海
+  - 优先级：🟡 normal（原 critical，架构已验证正确）
+  - 截止时间：2026-04-03
+  - **任务调整**: 架构已正确，只需添加说明文档
 
 ### 串行规则
 - 当前任务未通过验收前，不派发新的 Workers 需求

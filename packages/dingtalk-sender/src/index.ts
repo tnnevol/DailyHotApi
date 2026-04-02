@@ -1,3 +1,18 @@
+/**
+ * DingTalk Sender 入口文件
+ * 
+ * 架构说明：
+ * - 本脚本负责从环境变量读取配置并调用批量推送
+ * - 每个平台只请求一次 DailyHotApi API
+ * - 所有平台数据合并后一次性推送到钉钉群
+ * 
+ * 推送流程：
+ * GitHub Actions → 安装依赖 → 调用本脚本 → 获取数据 → 合并推送
+ * 
+ * API 请求次数：platforms.length（每个平台 1 次）
+ * 钉钉推送次数：1（所有平台合并后）
+ */
+
 import DingTalkSender from './send-cli';
 
 async function main(): Promise<void> {

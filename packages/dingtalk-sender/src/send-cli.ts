@@ -104,6 +104,22 @@ class DingTalkSender {
     }
   }
 
+  /**
+   * 批量获取所有平台数据并合并推送
+   * 
+   * 架构说明：
+   * - 此方法确保每个平台只请求一次 DailyHotApi API
+   * - 所有平台数据收集完成后，一次性推送到钉钉群
+   * - 避免为每个平台单独推送造成的消息轰炸
+   * 
+   * @param platforms 平台列表
+   * @param token DailyHotApi 访问令牌
+   * @param allFeedItems 用于收集所有平台数据的数组
+   * @returns 成功推送的平台数量
+   * 
+   * API 请求次数：platforms.length
+   * 钉钉推送次数：1
+   */
   async batchSendFeedCard(
     platforms: string[],
     token: string,
