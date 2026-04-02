@@ -37,7 +37,10 @@
     "start:local": "dotenv -e .env.local -- node dist/index.js",
     "start:sender": "pnpm -F @tnnevol/dingtalk-sender run start",
     "start": "dotenv -e .env.development -- node dist/index.js",
-    "build:dts": "pnpm --filter \"@tnnevol/dingtalk-sender\" build"
+    "build:dts": "pnpm --filter \"@tnnevol/dingtalk-sender\" build",
+    "workers:dev": "wrangler dev workers-adapter.ts",
+    "workers:deploy": "wrangler deploy workers-adapter.ts",
+    "workers:typecheck": "tsc --noEmit --skipLibCheck workers-adapter.ts"
   },
   "type": "module",
   "dependencies": {
@@ -62,6 +65,7 @@
     "winston": "^3.17.0"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240117.0",
     "@eslint/js": "^9.32.0",
     "@types/md5": "^2.3.5",
     "@types/node": "^22.19.15",
