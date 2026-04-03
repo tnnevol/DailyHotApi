@@ -41,9 +41,9 @@
     "workers:dev": "wrangler dev workers-adapter.ts",
     "workers:deploy": "wrangler deploy workers-adapter.ts",
     "workers:typecheck": "tsc --noEmit --skipLibCheck workers-adapter.ts",
-    "test": "vitest",
-    "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test": "dotenv -e .env.local -- vitest",
+    "test:run": "dotenv -e .env.local -- vitest run",
+    "test:coverage": "dotenv -e .env.local -- vitest run --coverage"
   },
   "type": "module",
   "dependencies": {
