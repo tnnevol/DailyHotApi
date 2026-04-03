@@ -1,5 +1,10 @@
 name: Deploy to Cloudflare Workers
 
+# 部署流程说明：
+# - 开发在 dev 分支进行
+# - 合并到 main 分支后自动触发生产部署
+# - 支持手动触发（用于测试或紧急修复）
+
 on:
   push:
     branches: [main]
@@ -7,9 +12,7 @@ on:
       - "workers-adapter.ts"
       - "src/workers-*.ts"
       - "src/adapters/*.ts"
-      - "src/routes/baidu.ts"
-      - "src/routes/weibo.ts"
-      - "src/routes/zhihu.ts"
+      - "src/routes/*.ts"
       - ".github/workflows/deploy-cloudflare.yml"
       - "wrangler.toml"
   workflow_dispatch:

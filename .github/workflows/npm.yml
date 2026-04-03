@@ -3,6 +3,8 @@ name: Publish npm package
 on:
   release:
     types: [created]
+  workflow_dispatch:
+    # 支持手动触发发布
 
 jobs:
   publish-npm:
