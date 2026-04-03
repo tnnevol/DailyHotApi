@@ -28,27 +28,27 @@ async function main(): Promise<void> {
     const platforms = platformsStr.split(',').map(p => p.trim()).filter(p => p);
 
     if (!webhookUrl) {
-      console.error('❌ DINGTALK_WEBHOOK_URL 环境变量未设置');
+      console.error('❌ 必要的环境变量未设置');
       process.exit(1);
     }
 
     if (!apiToken) {
-      console.error('❌ API_TOKEN 环境变量未设置');
+      console.error('❌ 必要的环境变量未设置');
       process.exit(1);
     }
 
     if (!apiBaseUrl) {
-      console.error('❌ API_BASE_URL 环境变量未设置');
+      console.error('❌ 必要的环境变量未设置');
       process.exit(1);
     }
 
     if (!defaultImageUrl) {
-      console.error('❌ DEFAULT_IMAGE_URL 环境变量未设置');
+      console.error('❌ 必要的环境变量未设置');
       process.exit(1);
     }
 
     if (platforms.length === 0) {
-      console.error('❌ PLATFORMS 环境变量未设置或为空');
+      console.error('❌ 平台列表为空');
       process.exit(1);
     }
 

@@ -40,10 +40,12 @@ jobs:
 
       - name: Validate required secrets
         run: |
-          [ -n "${{ secrets.CLOUDFLARE_API_TOKEN }}" ] || (echo "Missing CLOUDFLARE_API_TOKEN" && exit 1)
-          [ -n "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" ] || (echo "Missing CLOUDFLARE_ACCOUNT_ID" && exit 1)
-          [ -n "${{ secrets.KV_NAMESPACE_ID }}" ] || (echo "Missing KV_NAMESPACE_ID" && exit 1)
-          [ -n "${{ secrets.API_TOKEN }}" ] || (echo "Missing API_TOKEN" && exit 1)
+          if [ -z "${{ secrets.CLOUDFLARE_API_TOKEN }}" ] || \
+             [ -z "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" ] || \
+             [ -z "${{ secrets.KV_NAMESPACE_ID }}" ] || \
+             [ -z "${{ secrets.API_TOKEN }}" ]; then
+            echo "❌ Missing required secrets" && exit 1
+          fi
 
       - name: Generate wrangler.toml (production only)
         env:

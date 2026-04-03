@@ -66,7 +66,6 @@ class DingTalkSender {
 
       if (data.code !== 200 || !data.data || data.data.length === 0) {
         console.error(`❌ 获取 ${platform} 数据失败`);
-        console.error('Response data:', JSON.stringify(data));
         return { success: false };
       }
 
@@ -98,15 +97,12 @@ class DingTalkSender {
       console.log('✅ 钉钉消息发送成功');
       console.log('Platform:', platform);
       console.log('Items sent:', feedItems.length);
-      console.log('Response:', result);
 
       return { success: true, items: feedItems };
     } catch (error: any) {
       console.error('❌ 发送钉钉消息失败:', error.message);
       if (error.response) {
-        console.error('Response data:', error.response.data);
         console.error('Response status:', error.response.status);
-        console.error('Response headers:', error.response.headers);
       }
       return { success: false };
     }
@@ -145,14 +141,13 @@ class DingTalkSender {
 
         if (data.code !== 200 || !data.data || data.data.length === 0) {
           console.error(`❌ 获取 ${platform} 数据失败`);
-          console.error('Response data:', JSON.stringify(data));
           continue;
         }
 
         // 准备feedCard消息数据，标题添加平台前缀
         const defaultImageUrl = process.env.DEFAULT_IMAGE_URL;
         if (!defaultImageUrl) {
-          console.error('  ❌ DEFAULT_IMAGE_URL 环境变量未设置');
+          console.error('  ❌ 必要的环境变量未设置');
           continue;
         }
         const feedItems = data.data.slice(0, 4).map((item) => {
@@ -195,7 +190,6 @@ class DingTalkSender {
 
         console.log('✅ 钉钉批量推送成功');
         console.log('Total items:', allItems.length);
-        console.log('Response:', result);
       } catch (error: any) {
         console.error('❌ 批量发送失败:', error.message);
       }
@@ -217,15 +211,12 @@ class DingTalkSender {
 
       console.log('✅ 钉钉消息发送成功');
       console.log('Items sent:', items.length);
-      console.log('Response:', result);
 
       return result;
     } catch (error: any) {
       console.error('❌ 发送钉钉消息失败:', error.message);
       if (error.response) {
-        console.error('Response data:', error.response.data);
         console.error('Response status:', error.response.status);
-        console.error('Response headers:', error.response.headers);
       }
       throw error;
     }
