@@ -5,11 +5,9 @@
 ### 当前派发任务
 - [x] `001-workers-pilot` - Workers 试点迁移 ✅ 已完成 (2026-04-02)
 - [x] `002-push-architecture` - 推送架构验证文档 ✅ 已完成 (2026-04-02)
-- [x] `cloudflare-deploy-chain` - Cloudflare Workers 正式部署链路验证 ✅ 已完成部署验证，待验收收口 (2026-04-03)
-- [ ] `wrangler-toml-dynamic` - workflow 动态生成 wrangler.toml（单环境 production）🔄 执行中
-  - 负责人：小钱
-  - 当前阶段：改造中，不要 push
-  - 目标：KV namespace ID 通过环境变量注入，不再硬编码
+- [x] `cloudflare-deploy-chain` - Cloudflare Workers 正式部署链路验证 ✅ 已完成归档 (2026-04-03)
+- [x] `wrangler-toml-dynamic` - workflow 动态生成 wrangler.toml（单环境 production）✅ 已完成归档 (2026-04-03)
+- [ ] 当前无新派发任务，等待下一条需求
 
 ### 串行规则
 - 当前任务未通过验收前，不派发新的需求
@@ -28,19 +26,23 @@
 
 ## ⏳ 待推进
 
-### Cloudflare Workers 正式部署链路收尾
-- [ ] 验收 `cloudflare-deploy-chain` 任务
-- [ ] 归档 `.project-spec/done/cloudflare-deploy-chain.md`
-- [ ] 更新 `CHANGELOG.md` 记录部署验证成果
-
-### workflow 动态生成 wrangler.toml
-- [ ] 把 `wrangler.toml` 改成模板/示例用途
-- [ ] 在 GitHub Actions 中新增"生成 wrangler.toml"步骤
-- [ ] 将 `KV_NAMESPACE_ID` 通过 GitHub Secrets 注入
-- [ ] 保持 `CLOUDFLARE_API_TOKEN`、`CLOUDFLARE_ACCOUNT_ID` 继续走 Secrets
-- [ ] 验证 workflow 能正常生成配置并完成部署
+### 后续可选优化
+- [ ] Production 环境部署验证（需要设置 production secrets）
+- [ ] 长期稳定性观察
+- [ ] 如需 staging 环境，扩展 workflow 生成逻辑
 
 ## ✅ 已完成
+
+### wrangler-toml-dynamic - workflow 动态生成 wrangler.toml
+- [x] 任务派发完成
+- [x] `wrangler.toml` 改成模板用途（KV ID 改用占位符）
+- [x] GitHub Actions 新增"生成 wrangler.toml"步骤
+- [x] `KV_NAMESPACE_ID` 通过 GitHub Secrets 注入
+- [x] 保持 `CLOUDFLARE_API_TOKEN`、`CLOUDFLARE_ACCOUNT_ID` 继续走 Secrets
+- [x] 文档说明单环境 production 配置方式
+- [x] 本地 commit 收口完成（commit: 6174522）
+- [x] 归档文件：`.project-spec/done/wrangler-toml-dynamic.md`
+- 说明：workflow 动态生成配置已完成，已验收归档
 
 ### cloudflare-deploy-chain - Cloudflare Workers 正式部署链路验证
 - [x] Cloudflare 凭据验证成功
@@ -52,7 +54,9 @@
 - [x] Workers 代码更新：集成 KV 缓存到试点接口 (baidu/weibo/zhihu)
 - [x] 生产部署验证：重新部署包含缓存功能的版本到 staging 并验证功能正常
 - [x] KV namespace ID 已补进 `.env.local` 供本地测试使用
-- 说明：部署链路已验证成功，待验收收口并归档
+- [x] 本地 commit 收口完成（commit: 09c267f）
+- [x] 归档文件：`.project-spec/done/cloudflare-deploy-chain.md`
+- 说明：部署链路已验证成功，已验收归档
 
 ### Issue #1: 每日 8:00 新闻热榜自动推送 🔴 critical
 - [x] 创建 GitHub Actions workflow 文件
@@ -80,6 +84,14 @@
   - 代码分析确认当前架构不存在重复请求问题
   - 补充架构说明，防止后续误解
   - 归档文件：`.project-spec/done/002-push-architecture.md`
+- [x] **cloudflare-deploy-chain - Cloudflare Workers 正式部署链路验证** (2026-04-03)
+  - 完成 Cloudflare 正式部署验证
+  - 集成 KV 缓存功能到试点接口
+  - 归档文件：`.project-spec/done/cloudflare-deploy-chain.md`
+- [x] **wrangler-toml-dynamic - workflow 动态生成 wrangler.toml** (2026-04-03)
+  - 完成 workflow 动态生成配置改造
+  - KV namespace ID 通过 Secrets 注入
+  - 归档文件：`.project-spec/done/wrangler-toml-dynamic.md`
 - [x] 项目初始化 (2026-03-31)
 - [x] AGENTS.md 创建 (2026-03-31)
 - [x] 百度热搜接口替换 (2026-04-01)
@@ -91,4 +103,4 @@
 
 ---
 
-_最后更新：2026-04-03 10:10_
+_最后更新：2026-04-03 10:30_

@@ -2,14 +2,44 @@
 
 ---
 
-## 2026-04-03 - cloudflare-deploy-chain 部署验证完成
+## 2026-04-03 - wrangler-toml-dynamic 验收通过并归档
+
+**审查人**: 海  
+**任务**: wrangler-toml-dynamic - workflow 动态生成 wrangler.toml（单环境 production）  
+**阶段**: 验收完成 / 已归档
+
+### 验收结论
+**✅ 验收通过**
+
+### 验收依据
+1. `wrangler.toml` 已改成模板用途（KV ID 改用占位符 `REPLACE_IN_WORKFLOW`）
+2. GitHub Actions 已新增"生成 wrangler.toml"步骤（commit: 6174522）
+3. `KV_NAMESPACE_ID` 通过 GitHub Secrets 注入
+4. `CLOUDFLARE_API_TOKEN`、`CLOUDFLARE_ACCOUNT_ID` 继续走 Secrets
+5. `docs/WORKERS_PILOT.md` 已更新说明单环境 production 配置方式
+6. 本地 commit 收口完成（commit: 6174522）
+7. 归档文件已创建（`.project-spec/done/wrangler-toml-dynamic.md`）
+
+### 当前结果
+- workflow 动态生成配置已完成
+- KV namespace ID 不再硬编码在仓库里
+- 敏感信息继续走 Secrets 机制
+- 已验收并归档到 `.project-spec/done/wrangler-toml-dynamic.md`
+- `TODO.md` 和 `current-task.json` 已更新
+
+### 下一步
+- 当前无新派发任务，等待下一条需求
+
+---
+
+## 2026-04-03 - cloudflare-deploy-chain 验收通过并归档
 
 **审查人**: 海  
 **任务**: cloudflare-deploy-chain - Cloudflare Workers 正式部署链路验证  
-**阶段**: 已完成部署验证，待验收收口
+**阶段**: 验收完成 / 已归档
 
 ### 验收结论
-**✅ 部署验证通过，待正式验收归档**
+**✅ 验收通过**
 
 ### 验收依据
 1. Cloudflare 凭据验证成功（使用 `.env.local` 中的配置）
@@ -19,18 +49,18 @@
 5. KV 缓存功能验证成功（已集成到 baidu/weibo/zhihu 接口）
 6. `src/workers-registry.ts` 已集成 KV 缓存逻辑
 7. `.env.local` 已补入 `KV_NAMESPACE_ID` 供本地测试使用
+8. 本地 commit 收口完成（commit: 09c267f）
+9. 归档文件已创建（`.project-spec/done/cloudflare-deploy-chain.md`）
 
 ### 当前结果
 - 部署链路已验证成功
 - KV 缓存功能正常工作
 - 接口可访问且返回真实数据
-- 待验收收口并归档到 `.project-spec/done/`
+- 已验收并归档到 `.project-spec/done/cloudflare-deploy-chain.md`
+- `TODO.md` 和 `current-task.json` 已更新
 
 ### 下一步
-1. 验收 `cloudflare-deploy-chain` 任务
-2. 归档 `.project-spec/done/cloudflare-deploy-chain.md`
-3. 更新 `CHANGELOG.md` 记录部署验证成果
-4. 继续推进 `wrangler-toml-dynamic` 任务（workflow 动态生成 wrangler.toml）
+- 继续推进 `wrangler-toml-dynamic` 任务（workflow 动态生成 wrangler.toml）
 
 ---
 
