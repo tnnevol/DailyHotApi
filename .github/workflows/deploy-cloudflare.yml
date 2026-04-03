@@ -68,7 +68,7 @@ jobs:
           EOF
 
       - name: Build for Workers
-        run: npx tsc --noEmit --skipLibCheck workers-adapter.ts
+        run: npx tsc --noEmit --skipLibCheck --project tsconfig.json
 
       - name: Deploy to Cloudflare Workers (production)
         run: wrangler deploy
