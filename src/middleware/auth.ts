@@ -15,10 +15,16 @@ export const authMiddleware = async (c: Context<{ Bindings: WorkersEnv }>, next:
   // 2. Node.js process.env (仅本地开发)
   const API_TOKEN = c.env?.API_TOKEN || (typeof process !== 'undefined' && process.env?.API_TOKEN);
 
-  // 如果没有配置 API_TOKEN，跳过验证
+  // 如果没有配置 API_TOKEN，拒绝请求
   if (!API_TOKEN) {
-    console.warn("⚠️ API_TOKEN 未配置，跳过权限验证");
-    return await next();
+    console.error("❌ API_TOKEN 未配置，拒绝请求");
+    return c.json(
+      {
+        code: 500,
+        message: "Server configuration error: API_TOKEN not set",
+      },
+      500,
+    );
   }
 
   // 从 URL 参数获取 token

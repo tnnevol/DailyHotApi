@@ -43,10 +43,12 @@ jobs:
           [ -n "${{ secrets.CLOUDFLARE_API_TOKEN }}" ] || (echo "Missing CLOUDFLARE_API_TOKEN" && exit 1)
           [ -n "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" ] || (echo "Missing CLOUDFLARE_ACCOUNT_ID" && exit 1)
           [ -n "${{ secrets.KV_NAMESPACE_ID }}" ] || (echo "Missing KV_NAMESPACE_ID" && exit 1)
+          [ -n "${{ secrets.API_TOKEN }}" ] || (echo "Missing API_TOKEN" && exit 1)
 
       - name: Generate wrangler.toml (production only)
         env:
           KV_NAMESPACE_ID: ${{ secrets.KV_NAMESPACE_ID }}
+          API_TOKEN: ${{ secrets.API_TOKEN }}
         run: |
           cat > wrangler.toml <<EOF
           name = "dailyhot-api-workers"
@@ -56,6 +58,7 @@ jobs:
           [vars]
           ALLOWED_DOMAIN = "*"
           ALLOWED_HOST = "tnnevol.cn"
+          API_TOKEN = "$API_TOKEN"
 
           [[kv_namespaces]]
           binding = "CACHE_KV"
@@ -73,5 +76,5 @@ jobs:
 
       - name: Show generated config (sanitized)
         run: |
-          sed -e 's/id = ".*"/id = "***"/' wrangler.toml
+          sed -e 's/id = ".*"/id = "***"/' -e 's/API_TOKEN = ".*"/API_TOKEN = "***"/' wrangler.toml
         if: always()
