@@ -1,6 +1,7 @@
 name = "dailyhot-api-workers"
 compatibility_date = "2024-01-01"
 main = "workers-adapter.ts"
+compatibility_flags = ["nodejs_compat"]
 
 # This file is a local template only.
 # GitHub Actions will generate wrangler.toml at runtime (production only).
