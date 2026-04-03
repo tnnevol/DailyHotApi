@@ -40,7 +40,10 @@
     "build:dts": "pnpm --filter \"@tnnevol/dingtalk-sender\" build",
     "workers:dev": "wrangler dev workers-adapter.ts",
     "workers:deploy": "wrangler deploy workers-adapter.ts",
-    "workers:typecheck": "tsc --noEmit --skipLibCheck workers-adapter.ts"
+    "workers:typecheck": "tsc --noEmit --skipLibCheck workers-adapter.ts",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "type": "module",
   "dependencies": {
@@ -81,7 +84,8 @@
     "tsx": "^4.21.0",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.38.0",
-    "unbuild": "^2.0.0"
+    "unbuild": "^2.0.0",
+    "vitest": "^4.1.2"
   },
   "engines": {
     "node": ">=20"
