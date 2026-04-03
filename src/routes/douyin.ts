@@ -1,6 +1,5 @@
 import type { RouterData, ListContext, Options, RouterResType, ListItem } from "../types.js";
 import axios from "axios";
-import logger from "../utils/logger.js";
 
 export const handleRoute = async (c: ListContext, noCache: boolean) => {
   const listData = await getList({}, noCache);
@@ -54,15 +53,12 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
     const wordList = response.data?.data?.word_list || [];
 
     if (!wordList || wordList.length === 0) {
-      logger.warn("抖音热榜接口返回空数据");
       return {
         fromCache: false,
         updateTime: new Date().toISOString(),
         data: [],
       };
     }
-
-    logger.info(`抖音热榜获取成功，共 ${wordList.length} 条`);
 
     return {
       fromCache: false,
@@ -91,8 +87,6 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
         }),
     };
   } catch (error: any) {
-    logger.error(`抖音热榜获取失败：${error.message || error}`);
-
     return {
       fromCache: false,
       updateTime: new Date().toISOString(),

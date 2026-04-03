@@ -1,6 +1,5 @@
 import type { RouterData, ListContext, Options, RouterResType, ListItem } from "../types.js";
 import axios from "axios";
-import logger from "../utils/logger.js";
 
 export const handleRoute = async (c: ListContext, noCache: boolean) => {
   const listData = await getList({}, noCache);
@@ -53,12 +52,11 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
 
     const data = response.data;
     if (data.code !== 0) {
-      logger.error(`B 站 API 错误：${data.message || "未知错误"}`);
       return {
         fromCache: false,
         updateTime: new Date().toISOString(),
         data: [],
-        message: `API error: ${data.message || "未知错误"}`,
+        message: `B 站 API 错误：${data.message || "未知错误"}`,
       };
     }
 
@@ -90,12 +88,11 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
         })),
     };
   } catch (error: any) {
-    logger.error(`B 站获取失败：${error.message}`);
     return {
       fromCache: false,
       updateTime: new Date().toISOString(),
       data: [],
-      message: `请求失败：${error.message || "未知错误"}`,
+      message: `B 站获取失败：${error.message || "未知错误"}`,
     };
   }
 };

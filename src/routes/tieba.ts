@@ -1,6 +1,5 @@
 import type { RouterData, ListContext, Options, RouterResType, ListItem } from "../types.js";
 import axios from "axios";
-import logger from "../utils/logger.js";
 
 export const handleRoute = async (c: ListContext, noCache: boolean) => {
   const listData = await getList({}, noCache);
@@ -51,15 +50,12 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
     const topicList = response.data?.data?.bang_topic?.topic_list || [];
 
     if (!topicList || topicList.length === 0) {
-      logger.warn("贴吧热议榜接口返回空数据");
       return {
         fromCache: false,
         updateTime: new Date().toISOString(),
         data: [],
       };
     }
-
-    logger.info(`贴吧热议榜获取成功，共 ${topicList.length} 条`);
 
     return {
       fromCache: false,
@@ -86,8 +82,6 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
         }),
     };
   } catch (error: any) {
-    logger.error(`贴吧热议榜获取失败：${error.message || error}`);
-
     return {
       fromCache: false,
       updateTime: new Date().toISOString(),
