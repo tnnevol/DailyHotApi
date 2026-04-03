@@ -2,6 +2,14 @@
 
 本文件用于简短记录项目每次已经落地的功能点、修复点和重要行为变化。
 
+## 2.1.0 (2026-04-03)
+
+### Added
+- Cloudflare Workers 正式部署链路验证完成
+- workflow 动态生成 wrangler.toml 验证完成
+- dingtalk-sender 环境变量改造完成（API_BASE_URL + DEFAULT_IMAGE_URL）
+- 文档和状态同步优化
+
 ## 2026-04-03
 
 ### Added
