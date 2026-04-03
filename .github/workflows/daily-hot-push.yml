@@ -62,3 +62,5 @@ env:
   DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
   API_TOKEN: ${{ secrets.API_TOKEN }}
   PLATFORMS: ${{ secrets.PLATFORMS || 'baidu,weibo,zhihu,douyin,bilibili,sspai,kuaishou,douban-movie,douban-group,tieba' }}
+  API_BASE_URL: ${{ secrets.API_BASE_URL || 'https://newsapi.tnnevol.cn' }}
+  DEFAULT_IMAGE_URL: ${{ secrets.DEFAULT_IMAGE_URL }}

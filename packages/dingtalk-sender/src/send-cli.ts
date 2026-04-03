@@ -44,7 +44,7 @@ class DingTalkSender {
   }
 
   async getHotNews(platform: string, token: string, limit: number = 5): Promise<ApiResponse> {
-    const apiUrl = `https://newsapi.tnnevol.cn/${platform}?token=${token}&limit=${limit}`;
+    const apiUrl = `${process.env.API_BASE_URL || 'https://newsapi.tnnevol.cn'}/${platform}?token=${token}&limit=${limit}`;
 
     try {
       const response = await axios.get<ApiResponse>(apiUrl);
@@ -79,7 +79,7 @@ class DingTalkSender {
         picURL:
           item.cover ||
           item.mobileUrl ||
-          "https://files.codelife.cc/wallpaper/wallspic/20250624b3hmgl.jpeg?x-oss-process=image/resize,limit_0,m_fill,w_1920,h_1080/quality,Q_93/format,webp", // 使用默认图片
+          process.env.DEFAULT_IMAGE_URL || "https://files.codelife.cc/wallpaper/wallspic/20250624b3hmgl.jpeg?x-oss-process=image/resize,limit_0,m_fill,w_1920,h_1080/quality,Q_93/format,webp", // 使用默认图片
       }));
 
       // 发送消息 - 使用正确的feedCard格式
@@ -144,7 +144,7 @@ class DingTalkSender {
         // 准备feedCard消息数据，标题添加平台前缀
         const feedItems = data.data.slice(0, 4).map((item) => {
           // 获取封面图片，优先使用 item.cover 或 item.mobileUrl，其次使用默认 favicon
-          const defaultFavicon = "https://newsapi.tnnevol.cn/public/favicon.png";
+          const defaultFavicon = process.env.DEFAULT_IMAGE_URL || "https://newsapi.tnnevol.cn/public/favicon.png";
           const picUrl = item.cover || item.mobileUrl || defaultFavicon;
           
           return {
