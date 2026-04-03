@@ -1,29 +1,32 @@
 /**
  * Workers 路由注册工具
- * 动态注册所有平台路由，支持 KV 缓存
+ * 静态注册所有平台路由，支持 KV 缓存
  */
 
 import type { Context } from 'hono';
 import { getCache, setCache } from '../adapters/workers-kv-cache.js';
 import type { KVNamespace } from '@cloudflare/workers-types';
+import * as routes from '../workers-routes.js';
 
-// 平台配置类型
-type PlatformConfig = {
-  name: string;
-  importPath: () => Promise<{ handleRoute: (c: Context, noCache: boolean) => Promise<any> }>;
+// 平台名称到导出名称的映射
+const platformToExport: Record<string, string> = {
+  'zhihu-daily': 'zhihuDaily',
+  'github-trending': 'githubTrending',
+  '52pojie': 'poJie',
+  'ithome-xijiayi': 'ithomeXijiayi',
+  '36kr': 'kr36',
+  'qq-news': 'qqNews',
+  'sina-news': 'sinaNews',
+  'sina-finance': 'sinaFinance',
+  'netease-news': 'neteaseNews',
+  'douban-movie': 'doubanMovie',
+  'douban-group': 'doubanGroup',
+  '51cto': 'ct51',
 };
-
-// 动态导入所有路由
-const routeModules = import.meta.glob('../routes/*.ts');
 
 // 获取所有平台名称
 export function getAllPlatformNames(): string[] {
-  return Object.keys(routeModules)
-    .map(path => {
-      const match = path.match(/\/routes\/(.+)\.ts$/);
-      return match ? match[1] : null;
-    })
-    .filter((name): name is string => name !== null);
+  return [...routes.platformNames];
 }
 
 // 创建路由处理函数
@@ -45,8 +48,15 @@ export async function createRouteHandler(
   
   // 缓存未命中，获取新数据
   if (!listData) {
-    const module = await routeModules[`../routes/${platform}.ts`]() as { handleRoute: (c: Context, noCache: boolean) => Promise<any> };
-    listData = await module.handleRoute(c, noCache);
+    // 获取对应的导出名称
+    const exportName = platformToExport[platform] || platform;
+    const handleRoute = (routes as Record<string, any>)[exportName];
+    
+    if (!handleRoute) {
+      throw new Error(`Platform ${platform} not found`);
+    }
+    
+    listData = await handleRoute(c, noCache);
     
     // 存入缓存（缓存1小时）
     if (!noCache && cacheKV) {
