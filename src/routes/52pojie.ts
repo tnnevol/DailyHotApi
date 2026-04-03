@@ -1,7 +1,7 @@
 import type { RouterData, ListContext, Options, RouterResType, ListItem } from "../types.js";
 import axios from "axios";
 import { load } from "cheerio";
-import logger from "../utils/logger.js";
+
 
 export const handleRoute = async (c: ListContext, noCache: boolean) => {
   const listData = await getList({}, noCache);
@@ -64,7 +64,6 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
     });
 
     if (items.length === 0) {
-      logger.warn("吾爱破解热榜接口返回空数据");
       return {
         fromCache: false,
         updateTime: new Date().toISOString(),
@@ -72,7 +71,6 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
       };
     }
 
-    logger.info(`吾爱破解热榜获取成功，共 ${items.length} 条`);
 
     return {
       fromCache: false,
@@ -80,7 +78,6 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
       data: items,
     };
   } catch (error: any) {
-    logger.error(`吾爱破解热榜获取失败：${error.message || error}`);
 
     return {
       fromCache: false,

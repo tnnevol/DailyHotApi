@@ -2,7 +2,6 @@
 import fetch from "node-fetch";
 import * as cheerio from "cheerio";
 import { ListContext } from "../types";
-import logger from "../utils/logger.js";
 import { getCache, setCache } from "../utils/cache.js";
 
 /**
@@ -84,14 +83,12 @@ export async function getTrendingRepos(
   // 先从缓存中取
   const cachedData = await getCache(url);
   if (cachedData) {
-    logger.info("💾 [CHCHE] The request is cached");
     return {
       fromCache: true,
       updateTime: cachedData.updateTime,
       data: (cachedData?.data as RepoInfo[]) || [],
     };
   }
-  logger.info(`🌐 [GET] ${url}`);
 
   // 更新请求头
   const headers = {
@@ -184,16 +181,12 @@ export async function getTrendingRepos(
 
       await setCache(url, { data, updateTime }, ttl);
       // 返回数据
-      logger.info(`✅ [${response?.status}] 请求成功！`);
       return { fromCache: false, updateTime, data };
     } catch (error: Error | unknown) {
       lastError = error;
-      const errorMessage = error instanceof Error ? error.message : "Unknown error";
-      logger.error(`❌ [ERROR] 第 ${i + 1} 请求失败: ${errorMessage}`);
 
       // 如果是最后一次重试，则抛出错误
       if (i === maxRetries - 1) {
-        logger.error("❌ [ERROR] 所有尝试请求失败！");
         throw lastError;
       }
 

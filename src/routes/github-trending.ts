@@ -1,6 +1,5 @@
 import type { RouterData, ListContext, Options, RouterResType, ListItem } from "../types.js";
 import axios from "axios";
-import logger from "../utils/logger.js";
 
 export const handleRoute = async (c: ListContext, noCache: boolean) => {
   const listData = await getList({}, noCache);
@@ -42,8 +41,6 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
       };
     }
 
-    logger.info(`GitHub Trending 获取成功，共 ${items.length} 条`);
-
     return {
       fromCache: false,
       updateTime: new Date().toISOString(),
@@ -59,7 +56,6 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
       })),
     };
   } catch (error: any) {
-    logger.error(`GitHub Trending 获取失败：${error.message || error}`);
     return {
       fromCache: false,
       updateTime: new Date().toISOString(),

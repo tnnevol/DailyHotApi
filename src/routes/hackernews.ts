@@ -1,7 +1,7 @@
 import type { RouterData, ListContext, Options, RouterResType, ListItem } from "../types.js";
 import axios from "axios";
 import { load } from "cheerio";
-import logger from "../utils/logger.js";
+
 
 export const handleRoute = async (c: ListContext, noCache: boolean) => {
   const listData = await getList({}, noCache);
@@ -58,7 +58,6 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
     });
 
     if (items.length === 0) {
-      logger.warn("Hacker News 接口返回空数据");
       return {
         fromCache: false,
         updateTime: new Date().toISOString(),
@@ -66,7 +65,6 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
       };
     }
 
-    logger.info(`Hacker News 获取成功，共 ${items.length} 条`);
 
     return {
       fromCache: false,
@@ -74,7 +72,6 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
       data: items.slice(0, 30),
     };
   } catch (error: any) {
-    logger.error(`Hacker News 获取失败：${error.message || error}`);
     return {
       fromCache: false,
       updateTime: new Date().toISOString(),
