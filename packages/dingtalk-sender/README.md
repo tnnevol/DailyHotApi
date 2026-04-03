@@ -101,7 +101,7 @@ packages/dingtalk-sender/
 
 **职责**: 从 DailyHotApi 获取单个平台的热榜数据
 
-**API 端点**: `https://newsapi.tnnevol.cn/{platform}?token={token}&limit={limit}`
+**API 端点**: `https://newapi.wouqian.cn/{platform}?token={token}&limit={limit}`
 
 **请求次数**: 每个平台调用 1 次
 

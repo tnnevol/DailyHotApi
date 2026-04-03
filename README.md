@@ -5,8 +5,8 @@
 <br />
 <img src="https://img.shields.io/github/last-commit/tnnevol/DailyHotApi" alt="last commit"/>
  <img src="https://img.shields.io/github/languages/code-size/tnnevol/DailyHotApi" alt="code size"/>
-<img src="https://github.com/tnnevol/DailyHotApi/actions/workflows/docker.yml/badge.svg" alt="Publish Docker image"/>
 <img src="https://github.com/tnnevol/DailyHotApi/actions/workflows/npm.yml/badge.svg" alt="Publish npm package"/>
+<img src="https://github.com/tnnevol/DailyHotApi/actions/workflows/deploy-cloudflare.yml/badge.svg" alt="Deploy to Cloudflare Workers"/>
 </div>
 
 ## 🏗️ 项目架构
@@ -49,7 +49,7 @@
 > 示例站点可能由于访问量或者长久未维护而访问异常  
 > 若您也使用了本 API 搭建了网站，欢迎提交您的站点链接
 
-- [今日热榜 - https://newsapi.tnnevol.cn](https://newsapi.tnnevol.cn)
+- [今日热榜 - https://newapi.wouqian.cn](https://newapi.wouqian.cn)
 
 ## 📊 接口总览
 
@@ -60,51 +60,51 @@
 
 | **站点**         | **类别**     | **调用名称**   | **状态**                                                                                                                                                              |
 | ---------------- | ------------ | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 哔哩哔哩         | 热门榜       | bilibili       | ![https://newsapi.tnnevol.cn/bilibili](https://img.shields.io/website.svg?label=bilibili&url=https://newsapi.tnnevol.cn/bilibili&cacheSeconds=7200)                   |
-| AcFun            | 排行榜       | acfun          | ![https://newsapi.tnnevol.cn/acfun](https://img.shields.io/website.svg?label=acfun&url=https://newsapi.tnnevol.cn/acfun&cacheSeconds=7200)                            |
-| 微博             | 热搜榜       | weibo          | ![https://newsapi.tnnevol.cn/weibo](https://img.shields.io/website.svg?label=weibo&url=https://newsapi.tnnevol.cn/weibo&cacheSeconds=7200)                            |
-| 知乎             | 热榜         | zhihu          | ![https://newsapi.tnnevol.cn/zhihu](https://img.shields.io/website.svg?label=zhihu&url=https://newsapi.tnnevol.cn/zhihu&cacheSeconds=7200)                            |
-| 知乎日报         | 推荐榜       | zhihu-daily    | ![https://newsapi.tnnevol.cn/zhihu-daily](https://img.shields.io/website.svg?label=zhihu-daily&url=https://newsapi.tnnevol.cn/zhihu-daily&cacheSeconds=7200)          |
-| 百度             | 热搜榜       | baidu          | ![https://newsapi.tnnevol.cn/baidu](https://img.shields.io/website.svg?label=baidu&url=https://newsapi.tnnevol.cn/baidu&cacheSeconds=7200)                            |
-| 抖音             | 热点榜       | douyin         | ![https://newsapi.tnnevol.cn/douyin](https://img.shields.io/website.svg?label=douyin&url=https://newsapi.tnnevol.cn/douyin&cacheSeconds=7200)                         |
-| 快手             | 热点榜       | kuaishou       | ![https://newsapi.tnnevol.cn/kuaishou](https://img.shields.io/website.svg?label=kuaishou&url=https://newsapi.tnnevol.cn/kuaishou&cacheSeconds=7200)                   |
-| 豆瓣电影         | 新片榜       | douban-movie   | ![https://newsapi.tnnevol.cn/douban-movie](https://img.shields.io/website.svg?label=douban-movie&url=https://newsapi.tnnevol.cn/douban-movie&cacheSeconds=7200)       |
-| 豆瓣讨论小组     | 讨论精选     | douban-group   | ![https://newsapi.tnnevol.cn/douban-group](https://img.shields.io/website.svg?label=douban-group&url=https://newsapi.tnnevol.cn/douban-group&cacheSeconds=7200)       |
-| 百度贴吧         | 热议榜       | tieba          | ![https://newsapi.tnnevol.cn/tieba](https://img.shields.io/website.svg?label=tieba&url=https://newsapi.tnnevol.cn/tieba&cacheSeconds=7200)                            |
-| 少数派           | 热榜         | sspai          | ![https://newsapi.tnnevol.cn/sspai](https://img.shields.io/website.svg?label=sspai&url=https://newsapi.tnnevol.cn/sspai&cacheSeconds=7200)                            |
-| IT之家           | 热榜         | ithome         | ![https://newsapi.tnnevol.cn/ithome](https://img.shields.io/website.svg?label=ithome&url=https://newsapi.tnnevol.cn/ithome&cacheSeconds=7200)                         |
-| IT之家「喜加一」 | 最新动态     | ithome-xijiayi | ![https://newsapi.tnnevol.cn/ithome-xijiayi](https://img.shields.io/website.svg?label=ithome-xijiayi&url=https://newsapi.tnnevol.cn/ithome-xijiayi&cacheSeconds=7200) |
-| 简书             | 热门推荐     | jianshu        | ![https://newsapi.tnnevol.cn/jianshu](https://img.shields.io/website.svg?label=jianshu&url=https://newsapi.tnnevol.cn/jianshu&cacheSeconds=7200)                      |
-| 果壳             | 热门文章     | guokr          | ![https://newsapi.tnnevol.cn/guokr](https://img.shields.io/website.svg?label=guokr&url=https://newsapi.tnnevol.cn/guokr&cacheSeconds=7200)                            |
-| 澎湃新闻         | 热榜         | thepaper       | ![https://newsapi.tnnevol.cn/thepaper](https://img.shields.io/website.svg?label=thepaper&url=https://newsapi.tnnevol.cn/thepaper&cacheSeconds=7200)                   |
-| 今日头条         | 热榜         | toutiao        | ![https://newsapi.tnnevol.cn/toutiao](https://img.shields.io/website.svg?label=toutiao&url=https://newsapi.tnnevol.cn/toutiao&cacheSeconds=7200)                      |
-| 36 氪            | 热榜         | 36kr           | ![https://newsapi.tnnevol.cn/36kr](https://img.shields.io/website.svg?label=36kr&url=https://newsapi.tnnevol.cn/36kr&cacheSeconds=7200)                               |
-| 51CTO            | 推荐榜       | 51cto          | ![https://newsapi.tnnevol.cn/51cto](https://img.shields.io/website.svg?label=51cto&url=https://newsapi.tnnevol.cn/51cto&cacheSeconds=7200)                            |
-| CSDN             | 排行榜       | csdn           | ![https://newsapi.tnnevol.cn/csdn](https://img.shields.io/website.svg?label=csdn&url=https://newsapi.tnnevol.cn/csdn&cacheSeconds=7200)                               |
-| NodeSeek         | 最新动态     | nodeseek       | ![https://newsapi.tnnevol.cn/nodeseek](https://img.shields.io/website.svg?label=nodeseek&url=https://newsapi.tnnevol.cn/nodeseek&cacheSeconds=7200)                   |
-| 稀土掘金         | 热榜         | juejin         | ![https://newsapi.tnnevol.cn/juejin](https://img.shields.io/website.svg?label=juejin&url=https://newsapi.tnnevol.cn/juejin&cacheSeconds=7200)                         |
-| 腾讯新闻         | 热点榜       | qq-news        | ![https://newsapi.tnnevol.cn/qq-news](https://img.shields.io/website.svg?label=qq-news&url=https://newsapi.tnnevol.cn/qq-news&cacheSeconds=7200)                      |
-| 新浪网           | 热榜         | sina           | ![https://newsapi.tnnevol.cn/sina](https://img.shields.io/website.svg?label=sina&url=https://newsapi.tnnevol.cn/sina&cacheSeconds=7200)                               |
-| 新浪新闻         | 热点榜       | sina-news      | ![https://newsapi.tnnevol.cn/sina-news](https://img.shields.io/website.svg?label=sina-news&url=https://newsapi.tnnevol.cn/sina-news&cacheSeconds=7200)                |
-| 网易新闻         | 热点榜       | netease-news   | ![https://newsapi.tnnevol.cn/netease-news](https://img.shields.io/website.svg?label=netease-news&url=https://newsapi.tnnevol.cn/netease-news&cacheSeconds=7200)       |
-| 吾爱破解         | 榜单         | 52pojie        | ![https://newsapi.tnnevol.cn/52pojie](https://img.shields.io/website.svg?label=52pojie&url=https://newsapi.tnnevol.cn/52pojie&cacheSeconds=7200)                      |
-| 全球主机交流     | 榜单         | hostloc        | ![https://newsapi.tnnevol.cn/hostloc](https://img.shields.io/website.svg?label=hostloc&url=https://newsapi.tnnevol.cn/hostloc&cacheSeconds=7200)                      |
-| 虎嗅             | 24小时       | huxiu          | ![https://newsapi.tnnevol.cn/huxiu](https://img.shields.io/website.svg?label=huxiu&url=https://newsapi.tnnevol.cn/huxiu&cacheSeconds=7200)                            |
-| 酷安             | 热榜         | coolapk        | ![https://newsapi.tnnevol.cn/coolapk](https://img.shields.io/website.svg?label=coolapk&url=https://newsapi.tnnevol.cn/coolapk&cacheSeconds=7200)                      |
-| 虎扑             | 步行街热帖   | hupu           | ![https://newsapi.tnnevol.cn/hupu](https://img.shields.io/website.svg?label=hupu&url=https://newsapi.tnnevol.cn/hupu&cacheSeconds=7200)                               |
-| 爱范儿           | 快讯         | ifanr          | ![https://newsapi.tnnevol.cn/ifanr](https://img.shields.io/website.svg?label=ifanr&url=https://newsapi.tnnevol.cn/ifanr&cacheSeconds=7200)                            |
-| 英雄联盟         | 更新公告     | lol            | ![https://newsapi.tnnevol.cn/lol](https://img.shields.io/website.svg?label=lol&url=https://newsapi.tnnevol.cn/lol&cacheSeconds=7200)                                  |
-| 米游社           | 最新消息     | miyoushe       | ![https://newsapi.tnnevol.cn/miyoushe](https://img.shields.io/website.svg?label=miyoushe&url=https://newsapi.tnnevol.cn/miyoushe&cacheSeconds=7200)                   |
-| 原神             | 最新消息     | genshin        | ![https://newsapi.tnnevol.cn/genshin](https://img.shields.io/website.svg?label=genshin&url=https://newsapi.tnnevol.cn/genshin&cacheSeconds=7200)                      |
-| 崩坏3            | 最新动态     | honkai         | ![https://newsapi.tnnevol.cn/honkai](https://img.shields.io/website.svg?label=honkai&url=https://newsapi.tnnevol.cn/honkai&cacheSeconds=7200)                         |
-| 崩坏：星穹铁道   | 最新动态     | starrail       | ![https://newsapi.tnnevol.cn/starrail](https://img.shields.io/website.svg?label=starrail&url=https://newsapi.tnnevol.cn/starrail&cacheSeconds=7200)                   |
-| 微信读书         | 飙升榜       | weread         | ![https://newsapi.tnnevol.cn/weread](https://img.shields.io/website.svg?label=weread&url=https://newsapi.tnnevol.cn/weread&cacheSeconds=7200)                         |
-| NGA              | 热帖         | ngabbs         | ![https://newsapi.tnnevol.cn/ngabbs](https://img.shields.io/website.svg?label=ngabbs&url=https://newsapi.tnnevol.cn/ngabbs&cacheSeconds=7200)                         |
-| V2EX             | 主题榜       | v2ex           | ![https://newsapi.tnnevol.cn/v2ex](https://img.shields.io/website.svg?label=v2ex&url=https://newsapi.tnnevol.cn/v2ex&cacheSeconds=7200)                               |
-| HelloGitHub      | Trending     | hellogithub    | ![https://newsapi.tnnevol.cn/hellogithub](https://img.shields.io/website.svg?label=hellogithub&url=https://newsapi.tnnevol.cn/hellogithub&cacheSeconds=7200)          |
-| 中央气象台       | 全国气象预警 | weatheralarm   | ![https://newsapi.tnnevol.cn/weatheralarm](https://img.shields.io/website.svg?label=weatheralarm&url=https://newsapi.tnnevol.cn/weatheralarm&cacheSeconds=7200)       |
-| 中国地震台       | 地震速报     | earthquake     | ![https://newsapi.tnnevol.cn/earthquake](https://img.shields.io/website.svg?label=earthquake&url=https://newsapi.tnnevol.cn/earthquake&cacheSeconds=7200)             |
-| 历史上的今天     | 月-日        | history        | ![https://newsapi.tnnevol.cn/history](https://img.shields.io/website.svg?label=history&url=https://newsapi.tnnevol.cn/history&cacheSeconds=7200)                      |
+| 哔哩哔哩         | 热门榜       | bilibili       | ![https://newapi.wouqian.cn/bilibili](https://img.shields.io/website.svg?label=bilibili&url=https://newapi.wouqian.cn/bilibili&cacheSeconds=7200)                   |
+| AcFun            | 排行榜       | acfun          | ![https://newapi.wouqian.cn/acfun](https://img.shields.io/website.svg?label=acfun&url=https://newapi.wouqian.cn/acfun&cacheSeconds=7200)                            |
+| 微博             | 热搜榜       | weibo          | ![https://newapi.wouqian.cn/weibo](https://img.shields.io/website.svg?label=weibo&url=https://newapi.wouqian.cn/weibo&cacheSeconds=7200)                            |
+| 知乎             | 热榜         | zhihu          | ![https://newapi.wouqian.cn/zhihu](https://img.shields.io/website.svg?label=zhihu&url=https://newapi.wouqian.cn/zhihu&cacheSeconds=7200)                            |
+| 知乎日报         | 推荐榜       | zhihu-daily    | ![https://newapi.wouqian.cn/zhihu-daily](https://img.shields.io/website.svg?label=zhihu-daily&url=https://newapi.wouqian.cn/zhihu-daily&cacheSeconds=7200)          |
+| 百度             | 热搜榜       | baidu          | ![https://newapi.wouqian.cn/baidu](https://img.shields.io/website.svg?label=baidu&url=https://newapi.wouqian.cn/baidu&cacheSeconds=7200)                            |
+| 抖音             | 热点榜       | douyin         | ![https://newapi.wouqian.cn/douyin](https://img.shields.io/website.svg?label=douyin&url=https://newapi.wouqian.cn/douyin&cacheSeconds=7200)                         |
+| 快手             | 热点榜       | kuaishou       | ![https://newapi.wouqian.cn/kuaishou](https://img.shields.io/website.svg?label=kuaishou&url=https://newapi.wouqian.cn/kuaishou&cacheSeconds=7200)                   |
+| 豆瓣电影         | 新片榜       | douban-movie   | ![https://newapi.wouqian.cn/douban-movie](https://img.shields.io/website.svg?label=douban-movie&url=https://newapi.wouqian.cn/douban-movie&cacheSeconds=7200)       |
+| 豆瓣讨论小组     | 讨论精选     | douban-group   | ![https://newapi.wouqian.cn/douban-group](https://img.shields.io/website.svg?label=douban-group&url=https://newapi.wouqian.cn/douban-group&cacheSeconds=7200)       |
+| 百度贴吧         | 热议榜       | tieba          | ![https://newapi.wouqian.cn/tieba](https://img.shields.io/website.svg?label=tieba&url=https://newapi.wouqian.cn/tieba&cacheSeconds=7200)                            |
+| 少数派           | 热榜         | sspai          | ![https://newapi.wouqian.cn/sspai](https://img.shields.io/website.svg?label=sspai&url=https://newapi.wouqian.cn/sspai&cacheSeconds=7200)                            |
+| IT之家           | 热榜         | ithome         | ![https://newapi.wouqian.cn/ithome](https://img.shields.io/website.svg?label=ithome&url=https://newapi.wouqian.cn/ithome&cacheSeconds=7200)                         |
+| IT之家「喜加一」 | 最新动态     | ithome-xijiayi | ![https://newapi.wouqian.cn/ithome-xijiayi](https://img.shields.io/website.svg?label=ithome-xijiayi&url=https://newapi.wouqian.cn/ithome-xijiayi&cacheSeconds=7200) |
+| 简书             | 热门推荐     | jianshu        | ![https://newapi.wouqian.cn/jianshu](https://img.shields.io/website.svg?label=jianshu&url=https://newapi.wouqian.cn/jianshu&cacheSeconds=7200)                      |
+| 果壳             | 热门文章     | guokr          | ![https://newapi.wouqian.cn/guokr](https://img.shields.io/website.svg?label=guokr&url=https://newapi.wouqian.cn/guokr&cacheSeconds=7200)                            |
+| 澎湃新闻         | 热榜         | thepaper       | ![https://newapi.wouqian.cn/thepaper](https://img.shields.io/website.svg?label=thepaper&url=https://newapi.wouqian.cn/thepaper&cacheSeconds=7200)                   |
+| 今日头条         | 热榜         | toutiao        | ![https://newapi.wouqian.cn/toutiao](https://img.shields.io/website.svg?label=toutiao&url=https://newapi.wouqian.cn/toutiao&cacheSeconds=7200)                      |
+| 36 氪            | 热榜         | 36kr           | ![https://newapi.wouqian.cn/36kr](https://img.shields.io/website.svg?label=36kr&url=https://newapi.wouqian.cn/36kr&cacheSeconds=7200)                               |
+| 51CTO            | 推荐榜       | 51cto          | ![https://newapi.wouqian.cn/51cto](https://img.shields.io/website.svg?label=51cto&url=https://newapi.wouqian.cn/51cto&cacheSeconds=7200)                            |
+| CSDN             | 排行榜       | csdn           | ![https://newapi.wouqian.cn/csdn](https://img.shields.io/website.svg?label=csdn&url=https://newapi.wouqian.cn/csdn&cacheSeconds=7200)                               |
+| NodeSeek         | 最新动态     | nodeseek       | ![https://newapi.wouqian.cn/nodeseek](https://img.shields.io/website.svg?label=nodeseek&url=https://newapi.wouqian.cn/nodeseek&cacheSeconds=7200)                   |
+| 稀土掘金         | 热榜         | juejin         | ![https://newapi.wouqian.cn/juejin](https://img.shields.io/website.svg?label=juejin&url=https://newapi.wouqian.cn/juejin&cacheSeconds=7200)                         |
+| 腾讯新闻         | 热点榜       | qq-news        | ![https://newapi.wouqian.cn/qq-news](https://img.shields.io/website.svg?label=qq-news&url=https://newapi.wouqian.cn/qq-news&cacheSeconds=7200)                      |
+| 新浪网           | 热榜         | sina           | ![https://newapi.wouqian.cn/sina](https://img.shields.io/website.svg?label=sina&url=https://newapi.wouqian.cn/sina&cacheSeconds=7200)                               |
+| 新浪新闻         | 热点榜       | sina-news      | ![https://newapi.wouqian.cn/sina-news](https://img.shields.io/website.svg?label=sina-news&url=https://newapi.wouqian.cn/sina-news&cacheSeconds=7200)                |
+| 网易新闻         | 热点榜       | netease-news   | ![https://newapi.wouqian.cn/netease-news](https://img.shields.io/website.svg?label=netease-news&url=https://newapi.wouqian.cn/netease-news&cacheSeconds=7200)       |
+| 吾爱破解         | 榜单         | 52pojie        | ![https://newapi.wouqian.cn/52pojie](https://img.shields.io/website.svg?label=52pojie&url=https://newapi.wouqian.cn/52pojie&cacheSeconds=7200)                      |
+| 全球主机交流     | 榜单         | hostloc        | ![https://newapi.wouqian.cn/hostloc](https://img.shields.io/website.svg?label=hostloc&url=https://newapi.wouqian.cn/hostloc&cacheSeconds=7200)                      |
+| 虎嗅             | 24小时       | huxiu          | ![https://newapi.wouqian.cn/huxiu](https://img.shields.io/website.svg?label=huxiu&url=https://newapi.wouqian.cn/huxiu&cacheSeconds=7200)                            |
+| 酷安             | 热榜         | coolapk        | ![https://newapi.wouqian.cn/coolapk](https://img.shields.io/website.svg?label=coolapk&url=https://newapi.wouqian.cn/coolapk&cacheSeconds=7200)                      |
+| 虎扑             | 步行街热帖   | hupu           | ![https://newapi.wouqian.cn/hupu](https://img.shields.io/website.svg?label=hupu&url=https://newapi.wouqian.cn/hupu&cacheSeconds=7200)                               |
+| 爱范儿           | 快讯         | ifanr          | ![https://newapi.wouqian.cn/ifanr](https://img.shields.io/website.svg?label=ifanr&url=https://newapi.wouqian.cn/ifanr&cacheSeconds=7200)                            |
+| 英雄联盟         | 更新公告     | lol            | ![https://newapi.wouqian.cn/lol](https://img.shields.io/website.svg?label=lol&url=https://newapi.wouqian.cn/lol&cacheSeconds=7200)                                  |
+| 米游社           | 最新消息     | miyoushe       | ![https://newapi.wouqian.cn/miyoushe](https://img.shields.io/website.svg?label=miyoushe&url=https://newapi.wouqian.cn/miyoushe&cacheSeconds=7200)                   |
+| 原神             | 最新消息     | genshin        | ![https://newapi.wouqian.cn/genshin](https://img.shields.io/website.svg?label=genshin&url=https://newapi.wouqian.cn/genshin&cacheSeconds=7200)                      |
+| 崩坏3            | 最新动态     | honkai         | ![https://newapi.wouqian.cn/honkai](https://img.shields.io/website.svg?label=honkai&url=https://newapi.wouqian.cn/honkai&cacheSeconds=7200)                         |
+| 崩坏：星穹铁道   | 最新动态     | starrail       | ![https://newapi.wouqian.cn/starrail](https://img.shields.io/website.svg?label=starrail&url=https://newapi.wouqian.cn/starrail&cacheSeconds=7200)                   |
+| 微信读书         | 飙升榜       | weread         | ![https://newapi.wouqian.cn/weread](https://img.shields.io/website.svg?label=weread&url=https://newapi.wouqian.cn/weread&cacheSeconds=7200)                         |
+| NGA              | 热帖         | ngabbs         | ![https://newapi.wouqian.cn/ngabbs](https://img.shields.io/website.svg?label=ngabbs&url=https://newapi.wouqian.cn/ngabbs&cacheSeconds=7200)                         |
+| V2EX             | 主题榜       | v2ex           | ![https://newapi.wouqian.cn/v2ex](https://img.shields.io/website.svg?label=v2ex&url=https://newapi.wouqian.cn/v2ex&cacheSeconds=7200)                               |
+| HelloGitHub      | Trending     | hellogithub    | ![https://newapi.wouqian.cn/hellogithub](https://img.shields.io/website.svg?label=hellogithub&url=https://newapi.wouqian.cn/hellogithub&cacheSeconds=7200)          |
+| 中央气象台       | 全国气象预警 | weatheralarm   | ![https://newapi.wouqian.cn/weatheralarm](https://img.shields.io/website.svg?label=weatheralarm&url=https://newapi.wouqian.cn/weatheralarm&cacheSeconds=7200)       |
+| 中国地震台       | 地震速报     | earthquake     | ![https://newapi.wouqian.cn/earthquake](https://img.shields.io/website.svg?label=earthquake&url=https://newapi.wouqian.cn/earthquake&cacheSeconds=7200)             |
+| 历史上的今天     | 月-日        | history        | ![https://newapi.wouqian.cn/history](https://img.shields.io/website.svg?label=history&url=https://newapi.wouqian.cn/history&cacheSeconds=7200)                      |
 
 </details>
 
@@ -209,118 +209,132 @@ serveHotApi(3000);
 
 ## ⚙️ 部署
 
-具体使用说明可参考 [我的博客](https://halo.tnnevol.cn/posts/2024/0408)，下方仅讲解基础操作：
+本项目支持多种部署方式，可根据需求选择：
 
-## 🤖 自动推送
+### Cloudflare Workers 部署（推荐）
 
-本项目支持自动推送热门新闻到钉丁群：
+本项目已适配 Cloudflare Workers 运行环境，支持边缘部署：
 
-- **推送方式**: GitHub Actions 定时任务
-- **推送内容**: 每日热门新闻排行榜
-- **推送格式**: 钉钉 feedCard 类型消息
-- **推送时间**: 每天早上 8:00 (北京时间)
-- **依赖包**: [@tnnevol/robot-ding](https://www.npmjs.com/package/@tnnevol/robot-ding)
+**优势**：
+- 全球边缘节点，低延迟响应
+- 内置 KV 缓存，减少源站请求
+- 免费额度充足，适合中小规模使用
 
-### 配置钉钉推送
+**部署步骤**：
 
-1. 创建钉钉自定义机器人
-2. 获取 Webhook URL 和 Secret
-3. 在 GitHub 仓库的 Secrets 中配置：
-   - `DINGTALK_WEBHOOK_URL`: 钉钉机器人 Webhook 地址
-   - `DINGTALK_SECRET`: 钉钉机器人密钥（可选）
-   - `API_TOKEN`: API 访问令牌
-
-### 工作流程架构
-
-推送工作流程采用合理的业务逻辑分离设计：
-
-- **Workflow 层**：负责调度和环境管理（定时触发、环境变量、平台列表、统计汇总）
-- **脚本层**：负责具体业务逻辑（API 数据获取、数据格式转换、钉钉消息构建、推送结果处理、详细日志输出）
-
-**优化方向**：当前架构中 workflow 和脚本层都存在数据获取逻辑，建议将数据获取统一到脚本层，避免重复请求，提高效率。详情请参阅 [新闻推送工作流程文档](./docs/NEWS_PUSH_WORKFLOW.md)。
-
-### Docker 部署
-
-> 安装及配置 Docker 将不在此处说明，请自行解决
-
-#### 本地构建
-
+1. 安装 Wrangler CLI：
 ```bash
-# 构建
-docker build -t dailyhot-api .
-
-# 运行
-docker run --restart always -p 6688:6688 -d dailyhot-api
-# 或使用 Docker Compose
-docker-compose up -d
+npm install -g wrangler
 ```
 
-#### 在线部署
-
+2. 登录 Cloudflare：
 ```bash
-# 拉取
-docker pull tnnevol/DailyHotApi:latest
-
-# 运行
-docker run tnnevol/DailyHotApi:latest
+wrangler login
 ```
+
+3. 配置环境变量（在 Cloudflare Dashboard 或通过 wrangler secret）：
+```bash
+wrangler secret put API_TOKEN
+wrangler secret put CLOUDFLARE_API_TOKEN
+wrangler secret put CLOUDFLARE_ACCOUNT_ID
+wrangler secret put KV_NAMESPACE_ID
+```
+
+4. 部署：
+```bash
+npm run workers:deploy
+```
+
+**GitHub Actions 自动部署**：
+
+项目已配置 `.github/workflows/deploy-cloudflare.yml`，推送到 `main` 分支会自动触发部署。
+
+**所需 Secrets**：
+- `CLOUDFLARE_API_TOKEN` - Cloudflare API Token
+- `CLOUDFLARE_ACCOUNT_ID` - Cloudflare 账户 ID
+- `KV_NAMESPACE_ID` - KV 命名空间 ID
+- `API_TOKEN` - API 访问令牌
+
+---
+
+### GitHub Actions 部署
+
+本项目支持通过 GitHub Actions 进行自动化部署和定时推送：
+
+**1. 钉钉新闻推送**
+
+每天早上 8:00（北京时间）自动推送热门新闻到钉钉群：
+
+**配置步骤**：
+1. 创建钉钉自定义机器人，获取 Webhook URL 和 Secret
+2. 在 GitHub 仓库 Settings → Secrets 中配置：
+   - `DINGTALK_WEBHOOK_URL` - 钉钉机器人 Webhook 地址
+   - `DINGTALK_SECRET` - 钉钉机器人密钥（可选）
+   - `API_TOKEN` - API 访问令牌
+   - `API_BASE_URL` - API 服务地址
+   - `DEFAULT_IMAGE_URL` - 默认图片地址
+   - `PLATFORMS` - 平台列表（逗号分隔，如 `baidu,weibo,zhihu`）
+
+**推送架构**：
+- Workflow 层：负责调度和环境管理
+- 脚本层：负责业务逻辑（数据获取、格式转换、消息推送）
+
+详见 [新闻推送工作流程文档](./docs/NEWS_PUSH_WORKFLOW.md)。
+
+---
 
 ### 手动部署
 
-最直接的方式，您可以按照以下步骤将 `DailyHotApi` 部署在您的电脑、服务器或者其他任何地方
+最直接的方式，适合自有服务器部署：
 
-#### 安装
-
+**安装**：
 ```bash
 git clone https://github.com/tnnevol/DailyHotApi.git
 cd DailyHotApi
+pnpm install
 ```
 
-然后再执行安装依赖
-
+**配置**：
 ```bash
-npm install
+# 复制配置文件
+cp .env.example .env.local
+# 编辑 .env.local 填入真实配置
 ```
 
-复制 `/.env.example` 文件并重命名为 `/.env` 并修改配置
-
-#### 开发
-
+**开发模式**：
 ```bash
-npm run dev
+pnpm run dev:local
 ```
 
-成功启动后程序会在控制台输出可访问的地址
-
-#### 编译运行
-
+**生产模式**：
 ```bash
-npm run build
-npm run start
+pnpm run build
+pnpm run start:local
 ```
 
-### pm2 部署
-
+**PM2 守护进程**：
 ```bash
 npm i pm2 -g
-sh ./deploy.sh
+pm2 start dist/index.js --name dailyhot-api
 ```
 
-成功启动后程序会在控制台输出可访问的地址
+---
 
-### Vercel 部署
+### 环境变量清单
 
-本项目支持通过 `Vercel` 进行一键部署，点击下方按钮或前往 [项目仓库](https://github.com/tnnevol/DailyHotApi-Vercel) 进行手动部署
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/imsyys-projects/clone?repository-url=https%3A%2F%2Fgithub.com%2Fimsyy%2FDailyHotApi-Vercel)
-
-### Railway 部署
-
-本项目支持使用 [Railway](https://railway.app/) 一键部署，请先将本项目 fork 到您的仓库中，即可使用一键部署。
-
-### Zeabur 部署
-
-本项目支持使用 [Zeabur](https://zeabur.com/) 一键部署，请先将本项目 fork 到您的仓库中，即可使用一键部署。
+| 变量名 | 说明 | 必需 | 默认值 |
+|--------|------|------|--------|
+| `API_TOKEN` | API 访问令牌 | ✅ | - |
+| `API_BASE_URL` | API 服务地址 | ✅ | - |
+| `DEFAULT_IMAGE_URL` | 默认图片地址 | ✅ | - |
+| `DINGTALK_WEBHOOK_URL` | 钉钉机器人 Webhook | ✅ | - |
+| `DINGTALK_SECRET` | 钉钉机器人密钥 | ❌ | - |
+| `PLATFORMS` | 推送平台列表 | ✅ | - |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare API Token | Workers | - |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare 账户 ID | Workers | - |
+| `KV_NAMESPACE_ID` | KV 命名空间 ID | Workers | - |
+| `ALLOWED_DOMAIN` | CORS 允许域名 | ❌ | `*` |
+| `ALLOWED_HOST` | 允许的主机 | ❌ | `tnnevol.cn` |
 
 ## ⚠️ 须知
 
