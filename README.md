@@ -13,7 +13,7 @@
 
 - **框架**: Hono (高性能Web框架)
 - **语言**: TypeScript (提供类型安全保障)
-- **运行时**: Node.js 20+
+- **运行时**: Node.js 20+ / Cloudflare Workers (双运行时支持)
 - **包管理**: pnpm
 - **API设计**: RESTful API + RSS输出模式
 - **中间件**: CORS、压缩、认证、日志等

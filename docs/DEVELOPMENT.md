@@ -7,8 +7,8 @@
 ## 📋 目录
 
 - [环境配置](#环境配置)
-- [开发脚本](#开发脚本)
-- [环境切换](#环境切换)
+- [Node.js 开发环境](#nodejs-开发环境)
+- [Cloudflare Workers 开发环境](#cloudflare-workers-开发环境)
 - [调试技巧](#调试技巧)
 - [常见问题](#常见问题)
 
@@ -18,252 +18,225 @@
 
 ### 环境文件说明
 
-项目支持多种环境配置文件，使用 `dotenv-cli` 管理：
+项目使用 `.env.local` 作为本地配置文件：
 
-| 文件               | 用途             | 是否提交    | 示例                           |
-| ------------------ | ---------------- | ----------- | ------------------------------ |
-| `.env.local`       | **本地个人配置** | ❌ 禁止提交 | 真实 API Token、本地数据库密码 |
-| `.env.development` | **开发环境配置** | ✅ 可提交   | 占位符、公开测试地址           |
-| `.env.production`  | **生产环境配置** | ❌ 禁止提交 | 生产环境 Token、正式数据库     |
+| 文件         | 用途             | 是否提交    |
+| ------------ | ---------------- | ----------- |
+| `.env.local` | 本地个人配置     | ❌ 禁止提交 |
 
-### .env.local 示例
+### .env.local 配置示例
 
 ```bash
 # 服务端口
 PORT=6688
 
-# 允许的域名
-ALLOWED_DOMAIN="*"
-
-# Redis 配置（本地真实配置）
-REDIS_HOST="127.0.0.1"
-REDIS_PORT=6379
-REDIS_PASSWORD="your_real_password"
-
-# 第三方 API Token（真实值，禁止提交）
-ZHIHU_COOKIE="your_real_cookie"
-WEBHOOK_TOKEN="your_real_token"
-```
-
-### .env.development 示例
-
-```bash
-# 服务端口
-PORT=6688
+# API 鉴权 Token（必需）
+API_TOKEN=<YOUR_API_TOKEN>
 
 # 允许的域名
 ALLOWED_DOMAIN="*"
+ALLOWED_HOST="tnnevol.cn"
 
-# Redis 配置（开发环境占位符）
-REDIS_HOST="localhost"
-REDIS_PORT=6379
-REDIS_PASSWORD=""
+# Cloudflare Workers 配置（用于 Workers 部署）
+CLOUDFLARE_API_TOKEN=<YOUR_CLOUDFLARE_API_TOKEN>
+CLOUDFLARE_ACCOUNT_ID=<YOUR_ACCOUNT_ID>
+KV_NAMESPACE_ID=<YOUR_KV_NAMESPACE_ID>
 
-# 第三方 API Token（占位符，可提交）
-ZHIHU_COOKIE="<YOUR_ZHIHU_COOKIE>"
-WEBHOOK_TOKEN="<YOUR_WEBHOOK_TOKEN>"
+# 钉钉推送配置（可选）
+DINGTALK_WEBHOOK_URL=<YOUR_WEBHOOK_URL>
+DINGTALK_SECRET=<YOUR_SECRET>
+
+# 推送服务配置
+API_BASE_URL=https://newapi.wouqian.cn
+DEFAULT_IMAGE_URL=<YOUR_DEFAULT_IMAGE_URL>
 ```
+
+> ⚠️ **安全提醒**：`.env.local` 包含敏感信息，**禁止提交到 Git 仓库**。
 
 ---
 
-## 🚀 开发脚本
+## 🚀 Node.js 开发环境
 
-### 本地开发（推荐）
+### 前置要求
+
+- Node.js 20+
+- pnpm（推荐）
+
+### 安装依赖
 
 ```bash
-# 使用 .env.local 配置启动开发服务器（实时重载）
-npm run dev:local
-
-# 使用 .env.local 配置启动开发服务器（带缓存）
-npm run dev:cache:local
+pnpm install
 ```
 
-**适用场景**:
-
-- ✅ 日常开发调试
-- ✅ 使用本地真实配置测试
-- ✅ 连接本地数据库/Redis
-
-### 开发环境
+### 开发脚本
 
 ```bash
-# 使用 .env.development 配置启动开发服务器（实时重载）
-npm run dev
+# 启动开发服务器（实时重载）
+pnpm run dev:local
 
-# 使用 .env.development 配置启动开发服务器（带缓存）
-npm run dev:cache
-```
-
-**适用场景**:
-
-- ✅ 测试开发环境配置
-- ✅ 验证占位符配置是否正常工作
-- ✅ CI/CD 流水线测试
-
-### 生产环境
-
-```bash
 # 编译项目
-npm run build
+pnpm run build
 
-# 使用 .env.development 配置启动服务
-npm run start
-
-# 使用 .env.local 配置启动服务
-npm run start:local
+# 启动生产服务
+pnpm run start:local
 ```
 
-**适用场景**:
+### 可用脚本
 
-- ✅ 生产部署前测试
-- ✅ 性能测试
-- ✅ 验证编译后的代码
+| 命令              | 说明                        |
+| ----------------- | --------------------------- |
+| `dev:local`       | 开发模式（实时重载）        |
+| `build`           | 编译 TypeScript             |
+| `start:local`     | 启动编译后的服务            |
+| `build:sender`    | 构建 dingtalk-sender 包     |
+| `start:sender`    | 运行钉钉推送脚本            |
 
 ---
 
-## 🔄 环境切换
+## ☁️ Cloudflare Workers 开发环境
 
-### dev:local vs dev 的区别
+### 前置要求
 
-| 特性         | `dev:local`     | `dev`              |
-| ------------ | --------------- | ------------------ |
-| **配置文件** | `.env.local`    | `.env.development` |
-| **用途**     | 个人本地开发    | 开发环境测试       |
-| **配置内容** | 真实 Token/密码 | 占位符/公开配置    |
-| **是否提交** | ❌ 禁止提交     | ✅ 可提交          |
-| **推荐使用** | ✅ 日常开发     | 环境验证           |
+- Wrangler CLI（`npm install -g wrangler`）
+- Cloudflare 账户
 
-### 切换流程
-
-**从开发环境切换到本地环境**:
+### 登录认证
 
 ```bash
-# 1. 停止当前运行的服务（Ctrl+C）
-
-# 2. 启动本地环境
-npm run dev:local
-
-# 3. 验证配置
-curl http://localhost:6688/health
+wrangler login
 ```
 
-**对比调试**:
+### 本地开发
 
 ```bash
-# 终端 1：启动本地环境
-npm run dev:local
+# 启动 Workers 本地开发服务器
+pnpm run workers:dev
+```
 
-# 终端 2：启动开发环境（需要不同端口）
-PORT=6689 npm run dev
+本地开发服务器会在 `http://localhost:8787` 启动，支持热重载。
 
-# 对比两个环境的响应差异
-curl http://localhost:6688/weibo
-curl http://localhost:6689/weibo
+### 类型检查
+
+```bash
+# Workers 类型检查
+pnpm run workers:typecheck
+```
+
+### 部署
+
+```bash
+# 部署到 Cloudflare Workers
+pnpm run workers:deploy
+```
+
+### Wrangler 常用命令
+
+```bash
+# 查看部署状态
+wrangler deployments list
+
+# 查看实时日志
+wrangler tail
+
+# 查看 KV 数据
+wrangler kv:key list --namespace-id=<YOUR_NAMESPACE_ID>
+
+# 设置 Secret
+wrangler secret put API_TOKEN
+```
+
+### 项目结构
+
+```
+├── workers-adapter.ts    # Workers 入口适配器
+├── src/
+│   ├── workers-app.ts       # Workers Hono 应用
+│   ├── workers-registry.ts  # Workers 路由注册
+│   └── adapters/
+│       ├── workers-config.ts    # 配置适配器
+│       ├── workers-kv-cache.ts  # KV 缓存适配器
+│       └── workers-logger.ts    # 日志适配器
+└── wrangler.toml         # Workers 配置（自动生成）
 ```
 
 ---
 
 ## 🐛 调试技巧
 
-### 1. 日志级别设置
-
-在环境文件中设置日志级别：
+### 1. 禁用缓存
 
 ```bash
-# .env.local
-LOG_LEVEL=debug  # 本地开发使用 debug 级别
-```
-
-```bash
-# .env.development
-LOG_LEVEL=info   # 开发环境使用 info 级别
-```
-
-### 2. 禁用缓存调试
-
-```bash
-# 使用 dev:cache 测试缓存效果
-npm run dev:cache
-
-# 禁用缓存（添加 ?cache=false 参数）
+# 添加 ?cache=false 参数
 curl "http://localhost:6688/weibo?cache=false"
 ```
 
-### 3. 环境变量验证
+### 2. 查看环境变量
 
 ```bash
-# 在代码中添加调试输出
-console.log('PORT:', process.env.PORT);
-console.log('REDIS_HOST:', process.env.REDIS_HOST);
+# 验证配置是否正确加载
+node -e "require('dotenv').config(); console.log(process.env.API_TOKEN)"
 ```
 
-### 4. 使用不同端口对比
+### 3. Workers 日志
 
 ```bash
-# 本地环境（端口 6688）
-npm run dev:local
+# 查看实时日志
+wrangler tail
 
-# 开发环境（端口 6689）
-PORT=6689 npm run dev
+# 或通过 Cloudflare Dashboard 查看
+```
 
-# 同时访问两个接口对比
-curl http://localhost:6688/baidu
-curl http://localhost:6689/baidu
+### 4. 本地调试 Workers
+
+```bash
+# 启动本地开发
+pnpm run workers:dev
+
+# 另一个终端测试
+curl "http://localhost:8787/baidu?token=<YOUR_TOKEN>"
 ```
 
 ---
 
 ## ❓ 常见问题
 
-### Q1: 应该使用哪个命令开发？
+### Q1: 应该使用 Node.js 还是 Workers 开发？
 
-**A**: 日常开发优先使用 `npm run dev:local`，原因：
+**A**: 根据部署目标选择：
+- **Node.js**：自有服务器部署、传统部署方式
+- **Workers**：边缘部署、Cloudflare 部署
 
-- ✅ 使用本地真实配置
-- ✅ 连接本地数据库/Redis
-- ✅ 方便调试和测试
+### Q2: Workers 本地开发如何配置环境变量？
 
-### Q2: 什么时候使用 `npm run dev`？
+**A**: 创建 `.dev.vars` 文件（类似 `.env.local`）：
 
-**A**: 以下情况使用开发环境：
+```bash
+# .dev.vars
+API_TOKEN=<YOUR_API_TOKEN>
+```
 
-- 验证 `.env.development` 配置是否正确
-- 测试占位符配置
-- CI/CD 流水线测试
-- 准备提交代码前的验证
+> `.dev.vars` 同样禁止提交。
 
-### Q3: 如何添加新的环境配置？
+### Q3: 如何添加新的路由？
 
-**A**:
-
-1. 创建新的环境文件（如 `.env.test`）
-2. 添加对应的 scripts 命令：
-   ```json
-   "dev:test": "dotenv -e .env.test -- tsx watch src/index.ts"
-   ```
-3. 在文档中说明用途
+**A**: 
+1. 在 `src/routes/` 创建路由文件
+2. 确保不使用 Node.js 专用模块（如 `fs`, `path`）
+3. 在 `workers-registry.ts` 中注册路由
 
 ### Q4: .env.local 被误提交了怎么办？
 
 **A**:
-
-1. 立即从 Git 历史中删除：
-   ```bash
-   git rm --cached .env.local
-   git commit -m "remove .env.local from tracking"
-   ```
+1. 立即从 Git 历史中删除
 2. 将 `.env.local` 添加到 `.gitignore`
-3. 旋转泄露的 Token/密码
+3. **立即轮换所有泄露的 Token/密码**
 
-### Q5: 如何在不同环境间快速切换？
+### Q5: Workers 部署失败怎么办？
 
-**A**: 使用别名（添加到 `~/.bashrc` 或 `~/.zshrc`）：
-
-```bash
-alias dev-local="npm run dev:local"
-alias dev-env="npm run dev"
-alias start-local="npm run start:local"
-```
+**A**: 检查以下配置：
+1. `CLOUDFLARE_API_TOKEN` 权限是否正确
+2. `CLOUDFLARE_ACCOUNT_ID` 是否正确
+3. KV Namespace 是否已创建
 
 ---
 
@@ -271,8 +244,8 @@ alias start-local="npm run start:local"
 
 - [部署指南](./DEPLOYMENT.md) - 生产环境部署
 - [API 文档](./API.md) - 接口使用说明
-- [贡献指南](./CONTRIBUTING.md) - 代码贡献规范
+- [新闻推送工作流程](./NEWS_PUSH_WORKFLOW.md) - 推送功能说明
 
 ---
 
-**最后更新**: 2026-04-01 | **维护者**: DailyHotApi Team
+**最后更新**: 2026-04-03 | **维护者**: DailyHotApi Team
