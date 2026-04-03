@@ -35,3 +35,4 @@ coverage/
 # Local project task orchestration (do not commit)
 .project-spec/
 .github/workflows-draft/
+TODO.md
