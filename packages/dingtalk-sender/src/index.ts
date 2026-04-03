@@ -21,6 +21,8 @@ async function main(): Promise<void> {
     const webhookUrl = process.env.DINGTALK_WEBHOOK_URL;
     const secret = process.env.DINGTALK_SECRET || '';
     const apiToken = process.env.API_TOKEN;
+    const apiBaseUrl = process.env.API_BASE_URL;
+    const defaultImageUrl = process.env.DEFAULT_IMAGE_URL;
     // 从环境变量获取平台列表（逗号分隔）
     const platformsStr = process.env.PLATFORMS || 'baidu,weibo,zhihu,douyin,bilibili,sspai';
     const platforms = platformsStr.split(',').map(p => p.trim()).filter(p => p);
@@ -32,6 +34,16 @@ async function main(): Promise<void> {
 
     if (!apiToken) {
       console.error('❌ API_TOKEN 环境变量未设置');
+      process.exit(1);
+    }
+
+    if (!apiBaseUrl) {
+      console.error('❌ API_BASE_URL 环境变量未设置');
+      process.exit(1);
+    }
+
+    if (!defaultImageUrl) {
+      console.error('❌ DEFAULT_IMAGE_URL 环境变量未设置');
       process.exit(1);
     }
 

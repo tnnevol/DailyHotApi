@@ -16,14 +16,14 @@ pnpm install
 
 推送前需要配置以下环境变量：
 
-| 变量名 | 说明 | 是否必需 | 默认值 |
-|--------|------|----------|--------|
-| `DINGTALK_WEBHOOK_URL` | 钉钉机器人 Webhook 地址 | ✅ 是 | - |
-| `DINGTALK_SECRET` | 钉钉机器人签名密钥 | ❌ 否 | - |
-| `API_TOKEN` | DailyHotApi 访问令牌 | ✅ 是 | - |
-| `PLATFORMS` | 平台列表（逗号分隔） | ✅ 是 | - |
-| `API_BASE_URL` | DailyHotApi 服务地址 | ❌ 否 | https://newsapi.tnnevol.cn |
-| `DEFAULT_IMAGE_URL` | 默认图片地址 | ❌ 否 | 原有默认图片地址 |
+| 变量名 | 说明 | 是否必需 |
+|--------|------|----------|
+| `DINGTALK_WEBHOOK_URL` | 钉钉机器人 Webhook 地址 | ✅ 是 |
+| `DINGTALK_SECRET` | 钉钉机器人签名密钥 | ❌ 否 |
+| `API_TOKEN` | DailyHotApi 访问令牌 | ✅ 是 |
+| `PLATFORMS` | 平台列表（逗号分隔） | ✅ 是 |
+| `API_BASE_URL` | DailyHotApi 服务地址 | ✅ 是 |
+| `DEFAULT_IMAGE_URL` | 默认图片地址 | ✅ 是 |
 
 ### 命令
 

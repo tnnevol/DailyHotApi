@@ -44,7 +44,11 @@ class DingTalkSender {
   }
 
   async getHotNews(platform: string, token: string, limit: number = 5): Promise<ApiResponse> {
-    const apiUrl = `${process.env.API_BASE_URL || 'https://newsapi.tnnevol.cn'}/${platform}?token=${token}&limit=${limit}`;
+    const apiBaseUrl = process.env.API_BASE_URL;
+    if (!apiBaseUrl) {
+      throw new Error('API_BASE_URL 环境变量未设置');
+    }
+    const apiUrl = `${apiBaseUrl}/${platform}?token=${token}&limit=${limit}`;
 
     try {
       const response = await axios.get<ApiResponse>(apiUrl);
@@ -73,13 +77,17 @@ class DingTalkSender {
       });
 
       // 准备feedCard消息数据
+      const defaultImageUrl = process.env.DEFAULT_IMAGE_URL;
+      if (!defaultImageUrl) {
+        throw new Error('DEFAULT_IMAGE_URL 环境变量未设置');
+      }
       const feedItems = data.data.slice(0, 4).map((item) => ({
         title: item.title.substring(0, 25) + (item.title.length > 25 ? "..." : ""), // 限制标题长度并添加省略号
         messageURL: item.url || "#",
         picURL:
           item.cover ||
           item.mobileUrl ||
-          process.env.DEFAULT_IMAGE_URL || "https://files.codelife.cc/wallpaper/wallspic/20250624b3hmgl.jpeg?x-oss-process=image/resize,limit_0,m_fill,w_1920,h_1080/quality,Q_93/format,webp", // 使用默认图片
+          defaultImageUrl, // 使用默认图片
       }));
 
       // 发送消息 - 使用正确的feedCard格式
@@ -142,10 +150,14 @@ class DingTalkSender {
         }
 
         // 准备feedCard消息数据，标题添加平台前缀
+        const defaultImageUrl = process.env.DEFAULT_IMAGE_URL;
+        if (!defaultImageUrl) {
+          console.error('  ❌ DEFAULT_IMAGE_URL 环境变量未设置');
+          continue;
+        }
         const feedItems = data.data.slice(0, 4).map((item) => {
-          // 获取封面图片，优先使用 item.cover 或 item.mobileUrl，其次使用默认 favicon
-          const defaultFavicon = process.env.DEFAULT_IMAGE_URL || "https://newsapi.tnnevol.cn/public/favicon.png";
-          const picUrl = item.cover || item.mobileUrl || defaultFavicon;
+          // 获取封面图片，优先使用 item.cover 或 item.mobileUrl，其次使用默认图片
+          const picUrl = item.cover || item.mobileUrl || defaultImageUrl;
           
           return {
             title: `【${data.title || platform}：${item.title.substring(0, 20)}${item.title.length > 20 ? "..." : ""}】`,
