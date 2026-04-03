@@ -1,6 +1,6 @@
 import type { RouterData, ListContext, Options, RouterResType, ListItem } from "../types.js";
 import axios from "axios";
-import logger from "../utils/logger.js";
+
 
 export const handleRoute = async (c: ListContext, noCache: boolean) => {
   const listData = await getList({}, noCache);
@@ -50,7 +50,6 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
     const list = response.data?.list || [];
 
     if (!list || list.length === 0) {
-      logger.warn("雪球热门接口返回空数据");
       return {
         fromCache: false,
         updateTime: new Date().toISOString(),
@@ -58,7 +57,6 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
       };
     }
 
-    logger.info(`雪球热门获取成功，共 ${list.length} 条`);
 
     return {
       fromCache: false,
@@ -85,7 +83,6 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
         }),
     };
   } catch (error: any) {
-    logger.error(`雪球热门获取失败：${error.message || error}`);
 
     return {
       fromCache: false,

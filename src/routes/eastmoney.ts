@@ -1,6 +1,6 @@
 import type { RouterData, ListContext, Options, RouterResType, ListItem } from "../types.js";
 import axios from "axios";
-import logger from "../utils/logger.js";
+
 
 export const handleRoute = async (c: ListContext, noCache: boolean) => {
   const listData = await getList({}, noCache);
@@ -55,7 +55,6 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
     const fastNewsList = response.data?.data?.fastNewsList || [];
 
     if (!fastNewsList || fastNewsList.length === 0) {
-      logger.warn("东方财富快讯接口返回空数据");
       return {
         fromCache: false,
         updateTime: new Date().toISOString(),
@@ -63,7 +62,6 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
       };
     }
 
-    logger.info(`东方财富快讯获取成功，共 ${fastNewsList.length} 条`);
 
     return {
       fromCache: false,
@@ -91,7 +89,6 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
         }),
     };
   } catch (error: any) {
-    logger.error(`东方财富快讯获取失败：${error.message || error}`);
 
     return {
       fromCache: false,

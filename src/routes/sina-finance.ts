@@ -1,6 +1,6 @@
 import type { RouterData, ListContext, Options, RouterResType, ListItem } from "../types.js";
 import axios from "axios";
-import logger from "../utils/logger.js";
+
 
 export const handleRoute = async (c: ListContext, noCache: boolean) => {
   const listData = await getList({}, noCache);
@@ -60,7 +60,6 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
     const feedList = response.data?.result?.data?.feed?.list || [];
 
     if (!feedList || feedList.length === 0) {
-      logger.warn("新浪财经直播接口返回空数据");
       return {
         fromCache: false,
         updateTime: new Date().toISOString(),
@@ -68,7 +67,6 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
       };
     }
 
-    logger.info(`新浪财经直播获取成功，共 ${feedList.length} 条`);
 
     return {
       fromCache: false,
@@ -104,7 +102,6 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
         }),
     };
   } catch (error: any) {
-    logger.error(`新浪财经直播获取失败：${error.message || error}`);
 
     return {
       fromCache: false,
