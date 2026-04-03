@@ -1,0 +1,20 @@
+name = "dailyhot-api-workers"
+compatibility_date = "2024-01-01"
+main = "workers-adapter.ts"
+
+# This file is a local template only.
+# GitHub Actions will generate wrangler.toml at runtime (production only).
+
+[dev]
+port = 8787
+local_protocol = "http"
+ip = "127.0.0.1"
+
+[vars]
+ALLOWED_DOMAIN = "*"
+ALLOWED_HOST = "tnnevol.cn"
+
+# Production KV binding example (do not put real ID here)
+[[kv_namespaces]]
+binding = "CACHE_KV"
+id = "REPLACE_IN_WORKFLOW"

@@ -1,6 +1,5 @@
 import type { RouterData, ListContext, Options, RouterResType, ListItem } from "../types.js";
 import axios from "axios";
-import logger from "../utils/logger.js";
 
 export const handleRoute = async (c: ListContext, noCache: boolean) => {
   const listData = await getList({}, noCache);
@@ -52,7 +51,7 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
     const realtime = response.data?.data?.realtime || [];
 
     if (!realtime || realtime.length === 0) {
-      logger.warn("微博热搜接口返回空数据");
+      console.warn('⚠️ 微博热搜接口返回空数据');
       return {
         fromCache: false,
         updateTime: new Date().toISOString(),
@@ -60,7 +59,7 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
       };
     }
 
-    logger.info(`微博热搜获取成功，共 ${realtime.length} 条`);
+    console.info(`✅ 微博热搜获取成功，共 ${realtime.length} 条`);
 
     return {
       fromCache: false,
@@ -83,7 +82,7 @@ const getList = async (options: Options, noCache: boolean): Promise<RouterResTyp
         }),
     };
   } catch (error: any) {
-    logger.error(`微博热搜获取失败：${error.message || error}`);
+    console.error(`❌ 微博热搜获取失败：${error.message || error}`);
 
     return {
       fromCache: false,

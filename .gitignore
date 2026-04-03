@@ -31,3 +31,7 @@ Thumbs.db
 # 测试覆盖
 coverage/
 *.lcov
+
+# Local project task orchestration (do not commit)
+.project-spec/
+.github/workflows-draft/
