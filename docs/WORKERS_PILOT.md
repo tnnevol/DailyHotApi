@@ -96,87 +96,61 @@ ALLOWED_DOMAIN=*
 ALLOWED_HOST=tnnevol.cn
 ```
 
-### Cloudflare Workers (wrangler.toml)
+### Cloudflare Workers（production 单环境）
 
-**方式 1: 在 wrangler.toml 中配置 vars（适合非敏感配置）**
+当前部署链路仅支持 **production**，并由 GitHub Actions 在运行时生成 `wrangler.toml`。
+仓库内的 `wrangler.toml` 仅作本地示例模板，不包含真实生产 KV ID。
 
-```toml
-[env.staging]
-vars = { ALLOWED_DOMAIN = "*", ALLOWED_HOST = "tnnevol.cn" }
+**GitHub Actions 注入方式**:
+- `CLOUDFLARE_API_TOKEN` -> GitHub Secrets
+- `CLOUDFLARE_ACCOUNT_ID` -> GitHub Secrets
+- `KV_NAMESPACE_ID` -> GitHub Secrets（用于写入生成的 `wrangler.toml`）
 
-[env.production]
-vars = { ALLOWED_DOMAIN = "*", ALLOWED_HOST = "tnnevol.cn" }
-```
+### 环境变量/密钥说明
 
-**方式 2: 使用 wrangler secret put（适合敏感配置如 API_TOKEN）**
+| 名称 | 用途 | 来源 | 是否敏感 |
+|------|------|------|----------|
+| `CLOUDFLARE_API_TOKEN` | Wrangler 部署认证 | GitHub Secrets | ✅ 是 |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare 账户标识 | GitHub Secrets | ✅ 是 |
+| `KV_NAMESPACE_ID` | 生产环境 KV 命名空间 ID | GitHub Secrets | ✅ 是 |
+| `ALLOWED_DOMAIN` | CORS 允许域名 | workflow 生成的 wrangler.toml | ❌ 否 |
+| `ALLOWED_HOST` | CORS 允许主机 | workflow 生成的 wrangler.toml | ❌ 否 |
 
-```bash
-# 设置生产环境 Secret
-wrangler secret put API_TOKEN --env production
-
-# 设置开发环境 Secret
-wrangler secret put API_TOKEN --env staging
-```
-
-**完整配置示例**:
-
-```toml
-name = "dailyhot-api-workers"
-compatibility_date = "2024-01-01"
-main = "workers-adapter.ts"
-
-[env.production]
-vars = { ALLOWED_DOMAIN = "*", ALLOWED_HOST = "tnnevol.cn" }
-# API_TOKEN 通过 wrangler secret put 设置
-```
-
-### 环境变量说明
-
-| 变量名 | 用途 | 配置方式 | 是否敏感 |
-|--------|------|----------|----------|
-| `API_TOKEN` | API 访问令牌 | wrangler secret put | ✅ 是 |
-| `ALLOWED_DOMAIN` | CORS 允许域名 | wrangler.toml vars | ❌ 否 |
-| `ALLOWED_HOST` | CORS 允许主机 | wrangler.toml vars | ❌ 否 |
+> 后续若新增环境（如 staging），再扩展 workflow 生成逻辑；当前不做多环境预留实现。
 
 ## 📦 部署
 
-### 手动部署
+### 手动部署（production）
 
 ```bash
-# 部署到 staging 环境
-pnpm workers:deploy --env staging
-
 # 部署到 production 环境
 pnpm workers:deploy --env production
 ```
 
 ### GitHub Actions 自动部署
 
-推送到 `dev` 分支时自动部署到 staging 环境。
+当前仅支持 production 单环境：
+- 推送到 `main` 分支时自动部署
+- 或手动 `workflow_dispatch` 触发部署
 
 需要在 GitHub Secrets 中配置:
 - `CLOUDFLARE_API_TOKEN` - Cloudflare API 令牌
 - `CLOUDFLARE_ACCOUNT_ID` - Cloudflare 账户 ID
+- `KV_NAMESPACE_ID` - 生产 KV 命名空间 ID
 
-## 🗂️ KV 缓存配置（可选）
+## 🗂️ KV 缓存配置（production）
 
-如需启用 KV 缓存:
+当前仅 production 单环境：
 
 1. 创建 KV 命名空间:
 ```bash
-wrangler kv:namespace create "CACHE_KV" --env production
-wrangler kv:namespace create "CACHE_KV" --env staging
+wrangler kv namespace create "DAILYHOT_CACHE_PROD"
 ```
 
-2. 更新 `wrangler.toml`:
-```toml
-[[kv_namespaces]]
-binding = "CACHE_KV"
-id = "your-production-kv-id"
-preview_id = "your-staging-kv-id"
-```
+2. 将返回的 namespace id 配置到 GitHub Secrets:
+- `KV_NAMESPACE_ID`
 
-3. 在代码中使用 `globalThis.CACHE_KV`
+3. workflow 在运行时生成 `wrangler.toml` 并注入该 ID。
 
 ## ⚠️ 注意事项
 

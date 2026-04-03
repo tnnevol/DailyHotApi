@@ -2,28 +2,19 @@ name = "dailyhot-api-workers"
 compatibility_date = "2024-01-01"
 main = "workers-adapter.ts"
 
-# 开发环境配置
+# This file is a local template only.
+# GitHub Actions will generate wrangler.toml at runtime (production only).
+
 [dev]
 port = 8787
 local_protocol = "http"
 ip = "127.0.0.1"
 
-# 试点阶段环境变量配置
-# 方式 1: 在 wrangler.toml 中直接配置（适合非敏感配置）
-# 方式 2: 使用 wrangler secret put（适合敏感配置如 API_TOKEN）
+[vars]
+ALLOWED_DOMAIN = "*"
+ALLOWED_HOST = "tnnevol.cn"
 
-# 开发环境（staging）
-[env.staging]
-vars = { ALLOWED_DOMAIN = "*", ALLOWED_HOST = "tnnevol.cn" }
-# API_TOKEN 需要通过 wrangler secret put API_TOKEN --env staging 设置
-
-# 生产环境（production）
-[env.production]
-vars = { ALLOWED_DOMAIN = "*", ALLOWED_HOST = "tnnevol.cn" }
-# API_TOKEN 需要通过 wrangler secret put API_TOKEN --env production 设置
-
-# KV 命名空间绑定（可选，试点阶段暂不启用）
-# [[kv_namespaces]]
-# binding = "CACHE_KV"
-# id = "your-kv-namespace-id"
-# preview_id = "your-preview-kv-namespace-id"
+# Production KV binding example (do not put real ID here)
+[[kv_namespaces]]
+binding = "CACHE_KV"
+id = "REPLACE_IN_WORKFLOW"
