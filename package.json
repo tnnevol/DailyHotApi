@@ -40,7 +40,7 @@
     "build:dts": "pnpm --filter \"@tnnevol/dingtalk-sender\" build",
     "workers:dev": "wrangler dev workers-adapter.ts",
     "workers:deploy": "wrangler deploy workers-adapter.ts",
-    "workers:typecheck": "tsc --noEmit --skipLibCheck workers-adapter.ts",
+    "workers:typecheck": "tsc --noEmit --skipLibCheck --project tsconfig.json",
     "test": "dotenv -e .env.local -- vitest",
     "test:run": "dotenv -e .env.local -- vitest run",
     "test:coverage": "dotenv -e .env.local -- vitest run --coverage"
@@ -85,6 +85,7 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.38.0",
     "unbuild": "^2.0.0",
+    "vite": "^8.0.3",
     "vitest": "^4.1.2"
   },
   "engines": {

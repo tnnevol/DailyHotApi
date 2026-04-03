@@ -45,7 +45,7 @@ export async function createRouteHandler(
   
   // 缓存未命中，获取新数据
   if (!listData) {
-    const module = await routeModules[`../routes/${platform}.ts`]();
+    const module = await routeModules[`../routes/${platform}.ts`]() as { handleRoute: (c: Context, noCache: boolean) => Promise<any> };
     listData = await module.handleRoute(c, noCache);
     
     // 存入缓存（缓存1小时）
