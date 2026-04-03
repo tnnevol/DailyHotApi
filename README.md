@@ -336,6 +336,27 @@ pm2 start dist/index.js --name dailyhot-api
 | `ALLOWED_DOMAIN` | CORS 允许域名 | ❌ | `*` |
 | `ALLOWED_HOST` | 允许的主机 | ❌ | `tnnevol.cn` |
 
+### GitHub Secrets 配置
+
+在 GitHub 仓库 Settings → Secrets and variables → Actions 中配置以下 Secrets：
+
+**必需配置**：
+- `API_TOKEN` - API 访问令牌
+- `API_BASE_URL` - API 服务地址（如 `https://newapi.wouqian.cn`）
+- `DEFAULT_IMAGE_URL` - 默认图片地址
+- `PLATFORMS` - 推送平台列表（如 `baidu,weibo,zhihu,douyin,bilibili,sspai`）
+- `DINGTALK_WEBHOOK_URL` - 钉钉机器人 Webhook 地址
+
+**可选配置**：
+- `DINGTALK_SECRET` - 钉钉机器人签名密钥
+
+**Workers 部署所需**：
+- `CLOUDFLARE_API_TOKEN` - Cloudflare API Token
+- `CLOUDFLARE_ACCOUNT_ID` - Cloudflare 账户 ID
+- `KV_NAMESPACE_ID` - KV 命名空间 ID
+
+> ⚠️ **重要**：所有必需的 Secrets 必须正确配置，否则 workflow 会执行失败。
+
 ## ⚠️ 须知
 
 - 本项目为了避免频繁请求官方数据，默认对数据做了缓存处理，默认为 `60` 分钟，如需更改，请自行修改配置
