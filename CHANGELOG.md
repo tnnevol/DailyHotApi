@@ -2,6 +2,30 @@
 
 本文件用于简短记录项目每次已经落地的功能点、修复点和重要行为变化。
 
+## 2026-04-03
+
+### Added
+- Cloudflare Workers 正式部署链路验证完成
+- KV 缓存功能集成到试点接口（baidu/weibo/zhihu）
+- GitHub Actions workflow 从 draft 移至正式目录
+- `.env.local` 新增 `KV_NAMESPACE_ID` 供本地测试使用
+
+### Changed
+- `src/workers-registry.ts` 集成 KV 缓存逻辑（缓存 1 小时）
+- `wrangler.toml` 配置 KV 命名空间绑定（staging/production）
+- 部署配置方式优化：计划改成 workflow 运行时生成 `wrangler.toml`
+- KV namespace ID 改为通过环境变量/Secrets 注入（不再长期硬编码）
+
+### Fixed
+- 澄清 KV 命名空间 ID 不是敏感凭据，但建议通过注入方式管理
+- 收敛任务文档状态，避免进度与文档脱节
+
+### Notes
+- Workers 试点已完成本地验证 + 正式部署验证
+- 部署 URL: https://dailyhot-api-workers-staging.tnnevol.workers.dev
+- 当前只支持 `production` 单环境，后续如需 `staging` 再扩展
+- 下一步优先处理 workflow 动态生成 `wrangler.toml`
+
 ## 2026-04-02
 
 ### Added
@@ -22,8 +46,8 @@
 ### Fixed
 - 修正 Workers 入口误接 Node 版 app 的问题
 - 修正 Workers 试点路由注册的导入路径问题
-- 收敛试点汇报口径，区分“已实现 / 已验证 / 未验证”
-- 澄清推送架构“重复请求”误解，确认当前批量推送链路正确
+- 收敛试点汇报口径，区分"已实现 / 已验证 / 未验证"
+- 澄清推送架构"重复请求"误解，确认当前批量推送链路正确
 
 ### Notes
 - Workers 试点当前已完成本地验证：`/baidu`、`/weibo`、`/zhihu`

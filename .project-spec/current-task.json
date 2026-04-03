@@ -1,0 +1,25 @@
+{
+  "status": "in_progress",
+  "taskId": "wrangler-toml-dynamic",
+  "agentId": "coding-agent",
+  "sessionKey": "agent:coding-agent:dingtalk-connector:group:cid/em5kfq3ba5piezf5sxs6q==:0424692867782971",
+  "taskDescription": "workflow 动态生成 wrangler.toml（单环境 production），KV namespace ID 通过环境变量注入",
+  "createdAt": "2026-04-03T09:48:00.000Z",
+  "completedAt": null,
+  "notifyTarget": "agent:main:dingtalk-connector:group:cid/em5kfq3ba5piezf5sxs6q==:0424692867782971",
+  "优先级": "high",
+  "截止时间": "2026-04-03",
+  "验收结果": null,
+  "交付物": [
+    "wrangler.toml 改造成模板用途",
+    "GitHub Actions 新增生成 wrangler.toml 步骤",
+    "KV_NAMESPACE_ID 通过 Secrets 注入",
+    "文档说明单环境 production 配置方式"
+  ],
+  "nextAction": "wait-for-commit",
+  "constraints": [
+    "不要把 .env.local 的真实内容写入业务代码、文档或可提交配置",
+    "不要为了多环境预留提前增加复杂度",
+    "先做本地改动和验证，不要 push"
+  ]
+}

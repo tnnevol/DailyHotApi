@@ -16,12 +16,15 @@ import { authMiddleware } from './middleware/auth.js';
 import { handleRoute as baiduRoute } from './routes/baidu.js';
 import { handleRoute as weiboRoute } from './routes/weibo.js';
 import { handleRoute as zhihuRoute } from './routes/zhihu.js';
+import { getCache, setCache } from './adapters/workers-kv-cache.js';
+import type { KVNamespace } from '@cloudflare/workers-types';
 
 // Workers 环境变量类型定义
 export type WorkersEnv = {
   ALLOWED_DOMAIN?: string;
   ALLOWED_HOST?: string;
   API_TOKEN?: string;
+  CACHE_KV?: KVNamespace;
 };
 
 const registry = new Hono<{ Bindings: WorkersEnv }>();
@@ -77,7 +80,24 @@ registry.get('/baidu', async (c) => {
   const limit = c.req.query('limit');
   const rssEnabled = c.req.query('rss') === 'true';
   
-  const listData = await baiduRoute(c, noCache);
+  // 使用 KV 缓存
+  const cacheKey = `baidu_data_${noCache ? 'nocache' : 'cached'}`;
+  let listData;
+  
+  if (!noCache) {
+    // 尝试从缓存获取
+    listData = await getCache(cacheKey, c.env.CACHE_KV);
+  }
+  
+  if (!listData) {
+    // 缓存未命中，获取新数据
+    listData = await baiduRoute(c, noCache);
+    
+    // 存入缓存（缓存1小时）
+    if (!noCache) {
+      await setCache(cacheKey, listData, 3600, c.env.CACHE_KV);
+    }
+  }
   
   if (limit && listData?.data?.length > parseInt(limit)) {
     listData.total = parseInt(limit);
@@ -92,7 +112,24 @@ registry.get('/weibo', async (c) => {
   const limit = c.req.query('limit');
   const rssEnabled = c.req.query('rss') === 'true';
   
-  const listData = await weiboRoute(c, noCache);
+  // 使用 KV 缓存
+  const cacheKey = `weibo_data_${noCache ? 'nocache' : 'cached'}`;
+  let listData;
+  
+  if (!noCache) {
+    // 尝试从缓存获取
+    listData = await getCache(cacheKey, c.env.CACHE_KV);
+  }
+  
+  if (!listData) {
+    // 缓存未命中，获取新数据
+    listData = await weiboRoute(c, noCache);
+    
+    // 存入缓存（缓存1小时）
+    if (!noCache) {
+      await setCache(cacheKey, listData, 3600, c.env.CACHE_KV);
+    }
+  }
   
   if (limit && listData?.data?.length > parseInt(limit)) {
     listData.total = parseInt(limit);
@@ -107,7 +144,24 @@ registry.get('/zhihu', async (c) => {
   const limit = c.req.query('limit');
   const rssEnabled = c.req.query('rss') === 'true';
   
-  const listData = await zhihuRoute(c, noCache);
+  // 使用 KV 缓存
+  const cacheKey = `zhihu_data_${noCache ? 'nocache' : 'cached'}`;
+  let listData;
+  
+  if (!noCache) {
+    // 尝试从缓存获取
+    listData = await getCache(cacheKey, c.env.CACHE_KV);
+  }
+  
+  if (!listData) {
+    // 缓存未命中，获取新数据
+    listData = await zhihuRoute(c, noCache);
+    
+    // 存入缓存（缓存1小时）
+    if (!noCache) {
+      await setCache(cacheKey, listData, 3600, c.env.CACHE_KV);
+    }
+  }
   
   if (limit && listData?.data?.length > parseInt(limit)) {
     listData.total = parseInt(limit);
